@@ -4,6 +4,7 @@ import { allPoints } from '../data/points'
 import { useSubscription } from '../hooks/useSubscription'
 import { useAuth } from '../hooks/useAuth'
 import SceneCanvas from '../components/viewer/SceneCanvas'
+import HeadLateral from '../components/viewer/HeadLateral'
 import InfoPanel from '../components/ui/InfoPanel'
 import FilterControls from '../components/ui/FilterControls'
 import SubscriptionBanner from '../components/ui/SubscriptionGate'
@@ -33,14 +34,9 @@ export default function ViewerPage() {
 
       {/* Main content: canvas + panel */}
       <div className="flex flex-1 min-h-0 flex-col md:flex-row">
-        {/* 3D canvas */}
-        <div className="flex-1 min-h-[300px] md:min-h-0">
-          <SceneCanvas
-            points={allPoints}
-            isSubscribed={isActive}
-            activeZone={activeZone}
-            onSelectPoint={setSelectedPoint}
-          />
+        {/* 2D SVG viewer */}
+        <div className="flex-1 min-h-0 flex items-center justify-center bg-gray-900 overflow-hidden p-4">
+          <HeadLateral onPointSelect={setSelectedPoint} pickerMode={true} />
         </div>
 
         {/* Side panel */}

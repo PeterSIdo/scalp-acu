@@ -15,9 +15,7 @@ export default function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/viewer" element={
-            <ProtectedRoute><ViewerPage /></ProtectedRoute>
-          } />
+          <Route path="/viewer" element={<ViewerPage />} />
           <Route path="/account" element={
             <ProtectedRoute><AccountPage /></ProtectedRoute>
           } />
