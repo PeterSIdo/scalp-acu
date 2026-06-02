@@ -73,12 +73,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="border-t border-gray-800 px-8 py-6 text-center text-gray-600 text-sm space-y-1">
-        <p>© 2026 ScalpAcu · For educational use only</p>
-        <p>
-          3D model: <a href="https://poly.pizza/m/eqJEiOX0Fhl" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 underline">male_base</a> by hedy magroun,{' '}
-          <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 underline">CC-BY 3.0</a>,{' '}
-          via <a href="https://poly.pizza" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 underline">Poly Pizza</a>
-        </p>
+        <p>© CareTrace 2026 · For educational use only</p>
       </footer>
     </div>
   )

@@ -30,6 +30,13 @@ export default function InfoPanel({ point, isSubscribed }) {
 
       <p className="text-gray-300 mb-4">{point.shortDescription}</p>
 
+      {point.location && (
+        <div className="mb-4">
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Location</h3>
+          <p className="text-gray-300 text-sm leading-relaxed">{point.location}</p>
+        </div>
+      )}
+
       <div className="border-t border-gray-700 pt-4 mb-4">
         <p className="text-gray-400 text-sm leading-relaxed">{point.longDescription}</p>
       </div>

@@ -1,19 +1,39 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { allPoints } from '../data/points'
 import { useSubscription } from '../hooks/useSubscription'
 import { useAuth } from '../hooks/useAuth'
-import SceneCanvas from '../components/viewer/SceneCanvas'
 import HeadLateral from '../components/viewer/HeadLateral'
+import HeadFrontalSvg   from '../assets/diagrams/head_front.svg?react'
+import HeadPosteriorSvg from '../assets/diagrams/head_back.svg?react'
+import HeadSuperiorSvg  from '../assets/diagrams/head_top.svg?react'
 import InfoPanel from '../components/ui/InfoPanel'
-import FilterControls from '../components/ui/FilterControls'
 import SubscriptionBanner from '../components/ui/SubscriptionGate'
 
+const VIEWS = ['Lateral', 'Frontal', 'Posterior', 'Superior']
+
 export default function ViewerPage() {
-  const { user, logout } = useAuth()
+  const { logout } = useAuth()
   const { isActive, status } = useSubscription()
   const [selectedPoint, setSelectedPoint] = useState(null)
-  const [activeZone, setActiveZone] = useState('all')
+  const [activeView, setActiveView] = useState('Lateral')
+
+  const ViewTabs = ({ className = '' }) => (
+    <div className={`flex border-b border-gray-800 ${className}`}>
+      {VIEWS.map(view => (
+        <button
+          key={view}
+          onClick={() => setActiveView(view)}
+          className={`flex-1 py-2 text-xs font-semibold transition-colors ${
+            activeView === view
+              ? 'text-amber-400 border-b-2 border-amber-400'
+              : 'text-gray-500 hover:text-gray-200'
+          }`}
+        >
+          {view}
+        </button>
+      ))}
+    </div>
+  )
 
   return (
     <div className="flex flex-col h-screen bg-gray-950 text-gray-100">
@@ -29,29 +49,53 @@ export default function ViewerPage() {
         </div>
       </header>
 
-      {/* Subscription banner */}
       <SubscriptionBanner status={status} />
 
-      {/* Main content: canvas + panel */}
+      {/* ── Mobile view tabs (above diagram) ── */}
+      <ViewTabs className="md:hidden flex-shrink-0" />
+
+      {/* Main content */}
       <div className="flex flex-1 min-h-0 flex-col md:flex-row">
-        {/* 2D SVG viewer */}
+
+        {/* Diagram — fills available space on both mobile and desktop */}
         <div className="flex-1 min-h-0 flex items-center justify-center bg-gray-900 overflow-hidden p-4">
-          <HeadLateral onPointSelect={setSelectedPoint} pickerMode={true} />
+          {activeView === 'Lateral'   && <HeadLateral onPointSelect={setSelectedPoint} />}
+          {activeView === 'Frontal'   && <HeadFrontalSvg   style={{ width: '100%', height: '100%', maxHeight: '100%' }} />}
+          {activeView === 'Posterior' && <HeadPosteriorSvg style={{ width: '100%', height: '100%', maxHeight: '100%' }} />}
+          {activeView === 'Superior'  && <HeadSuperiorSvg  style={{ width: '100%', height: '100%', maxHeight: '100%' }} />}
         </div>
 
-        {/* Side panel */}
-        <div className="w-full md:w-80 lg:w-96 flex flex-col border-t md:border-t-0 md:border-l border-gray-800 bg-gray-950">
-          <FilterControls activeZone={activeZone} onZoneChange={setActiveZone} />
+        {/* ── Desktop side panel ── */}
+        <div className="hidden md:flex w-80 lg:w-96 flex-col border-l border-gray-800 bg-gray-950">
+          <ViewTabs />
           <div className="flex-1 overflow-y-auto">
             <InfoPanel point={selectedPoint} isSubscribed={isActive} />
           </div>
           <div className="px-4 py-2 border-t border-gray-800 text-gray-600 text-xs">
-            <a href="https://poly.pizza/m/eqJEiOX0Fhl" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400">
-              male_base by hedy magroun · CC-BY 3.0 · Poly Pizza
-            </a>
+            © CareTrace 2026
           </div>
         </div>
       </div>
+
+      {/* ── Mobile bottom sheet ── */}
+      {selectedPoint && (
+        <div className="md:hidden fixed inset-x-0 bottom-0 z-50 flex flex-col bg-gray-950 rounded-t-2xl shadow-2xl max-h-[65vh]">
+          {/* Handle + close */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800 flex-shrink-0">
+            <div className="w-10 h-1 bg-gray-600 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 top-2" />
+            <span className="text-sm font-semibold text-gray-200">{selectedPoint.name}</span>
+            <button
+              onClick={() => setSelectedPoint(null)}
+              className="text-gray-400 hover:text-white text-2xl leading-none ml-3"
+              aria-label="Close"
+            >×</button>
+          </div>
+          {/* Scrollable content */}
+          <div className="overflow-y-auto flex-1">
+            <InfoPanel point={selectedPoint} isSubscribed={isActive} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
