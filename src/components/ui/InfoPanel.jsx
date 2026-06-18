@@ -1,3 +1,5 @@
+const Divider = () => <hr className="border-gray-700/60 my-4" />
+
 export default function InfoPanel({ point, isSubscribed }) {
   if (!point) {
     return (
@@ -30,35 +32,57 @@ export default function InfoPanel({ point, isSubscribed }) {
 
       <p className="text-gray-300 mb-4">{point.shortDescription}</p>
 
-      {point.location && (
-        <div className="mb-4">
-          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Location</h3>
-          <p className="text-gray-300 text-sm leading-relaxed">{point.location}</p>
-        </div>
+      {point.reactionArea && (
+        <>
+          <Divider />
+          <div className="mb-4">
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Reaction Area</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">{point.reactionArea}</p>
+          </div>
+        </>
       )}
 
-      <div className="border-t border-gray-700 pt-4 mb-4">
-        <p className="text-gray-400 text-sm leading-relaxed">{point.longDescription}</p>
-      </div>
+      {point.location && (
+        <>
+          <Divider />
+          <div className="mb-4">
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Location</h3>
+            <p className="text-gray-300 text-sm leading-relaxed">{point.location}</p>
+          </div>
+        </>
+      )}
+
+      {point.longDescription && (
+        <>
+          <Divider />
+          <p className="text-gray-400 text-sm leading-relaxed mb-4">{point.longDescription}</p>
+        </>
+      )}
 
       {point.indications?.length > 0 && (
-        <div className="mb-4">
-          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Indications</h3>
-          <div className="flex flex-wrap gap-1.5">
-            {point.indications.map(ind => (
-              <span key={ind} className="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">
-                {ind}
-              </span>
-            ))}
+        <>
+          <Divider />
+          <div className="mb-4">
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Indications</h3>
+            <div className="flex flex-wrap gap-1.5">
+              {point.indications.map(ind => (
+                <span key={ind} className="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">
+                  {ind}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {point.needlingDepth && (
-        <div>
-          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Needling Depth</h3>
-          <p className="text-gray-300 text-sm">{point.needlingDepth}</p>
-        </div>
+        <>
+          <Divider />
+          <div>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Needling Depth</h3>
+            <p className="text-gray-300 text-sm">{point.needlingDepth}</p>
+          </div>
+        </>
       )}
     </div>
   )

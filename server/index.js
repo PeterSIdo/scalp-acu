@@ -5,19 +5,13 @@ import cors from 'cors'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import authRouter from './routes/auth.js'
-import stripeRouter from './routes/stripe.js'
+// import stripeRouter from './routes/stripe.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = process.env.PORT || 3001
 const isProd = process.env.NODE_ENV === 'production'
 
-// Stripe webhook needs raw body — must be before express.json()
-app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), (req, res, next) => {
-  // Re-attach to stripe router as raw buffer
-  req.rawBody = req.body
-  next()
-})
 
 app.use(cors({
   origin: isProd ? process.env.APP_URL : 'http://localhost:5173',
@@ -27,7 +21,7 @@ app.use(cookieParser())
 app.use(express.json())
 
 app.use('/api/auth', authRouter)
-app.use('/api/stripe', stripeRouter)
+// app.use('/api/stripe', stripeRouter)
 
 // Serve the React frontend in production
 if (isProd) {

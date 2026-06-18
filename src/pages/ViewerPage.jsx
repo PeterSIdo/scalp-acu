@@ -6,6 +6,7 @@ import HeadLateral from '../components/viewer/HeadLateral'
 import HeadFrontalSvg   from '../assets/diagrams/head_front.svg?react'
 import HeadPosteriorSvg from '../assets/diagrams/head_back.svg?react'
 import HeadSuperiorSvg  from '../assets/diagrams/head_top.svg?react'
+import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
 import SubscriptionBanner from '../components/ui/SubscriptionGate'
 
@@ -58,11 +59,13 @@ export default function ViewerPage() {
       <div className="flex flex-1 min-h-0 flex-col md:flex-row">
 
         {/* Diagram — fills available space on both mobile and desktop */}
-        <div className="flex-1 min-h-0 flex items-center justify-center bg-gray-900 overflow-hidden p-4">
-          {activeView === 'Lateral'   && <HeadLateral onPointSelect={setSelectedPoint} />}
-          {activeView === 'Frontal'   && <HeadFrontalSvg   style={{ width: '100%', height: '100%', maxHeight: '100%' }} />}
-          {activeView === 'Posterior' && <HeadPosteriorSvg style={{ width: '100%', height: '100%', maxHeight: '100%' }} />}
-          {activeView === 'Superior'  && <HeadSuperiorSvg  style={{ width: '100%', height: '100%', maxHeight: '100%' }} />}
+        <div className="flex-1 min-h-0 bg-gray-900 overflow-hidden p-4">
+          <ZoomableView>
+            {activeView === 'Lateral'   && <HeadLateral onPointSelect={setSelectedPoint} />}
+            {activeView === 'Frontal'   && <HeadFrontalSvg   style={{ width: '100%', height: '100%', maxHeight: '100%' }} />}
+            {activeView === 'Posterior' && <HeadPosteriorSvg style={{ width: '100%', height: '100%', maxHeight: '100%' }} />}
+            {activeView === 'Superior'  && <HeadSuperiorSvg  style={{ width: '100%', height: '100%', maxHeight: '100%' }} />}
+          </ZoomableView>
         </div>
 
         {/* ── Desktop side panel ── */}
