@@ -397,6 +397,126 @@
       ]
     },
     {
+      "id": "YNSA-D1-yin",
+      "name": "D1 Yin",
+      "shortDescription": "D1 Yin targets the L1 lumbar vertebra and its associated structures.",
+      "longDescription": "Basic Point D Yin is a major YNSA scalp acupuncture point associated with the lower body, including the lumbar spine, sacrum, coccyx, and lower extremities. The point is further divided into six smaller segments, D1–D6, which correspond to specific anatomical regions of the lower spine. D1 corresponds to the L1 vertebra, D2–D5 correspond to L2–L5, and D6 represents the sacrum and coccyx. These points form a vertical line resembling a string of beads and allow highly targeted treatment of individual lumbar vertebral levels, including pain, nerve irritation, and functional disturbances.",
+      "location": "Part of the D1–D6 Yin subdivision, situated immediately anterior to the ear above the temporomandibular joint. D1 is the most superior point in the vertical line.",
+      "reactionArea": "Lumbar vertebra L1.",
+      "indications": ["Low back pain","Lumbago","Lumbar disc herniation","Sciatica","Neuralgia","Rheumatism","Arthritis","Muscle cramps","Post-traumatic pain","Post-operative pain","Fractures","Sprains","Circulatory disorders of the legs","Raynaud's syndrome","Hemiplegia","Paraplegia","Parkinson's syndrome","Multiple sclerosis","Gout","Prostatic hypertrophy","Motor disturbances","Disorders of internal organs related to lumbar nerve distribution"],
+      "tags": ["Low Back Pain","Sciatica","L1","Lumbar Spine","Disc Herniation","Lower Extremity","Neurological Disorders","Rehabilitation"]
+    },
+    {
+      "id": "YNSA-D2-yin",
+      "name": "D2 Yin",
+      "shortDescription": "D2 Yin targets the L2 lumbar vertebra and its associated structures.",
+      "longDescription": "Basic Point D Yin is a major YNSA scalp acupuncture point associated with the lower body, including the lumbar spine, sacrum, coccyx, and lower extremities. The point is further divided into six smaller segments, D1–D6, which correspond to specific anatomical regions of the lower spine. D1 corresponds to the L1 vertebra, D2–D5 correspond to L2–L5, and D6 represents the sacrum and coccyx. These points form a vertical line resembling a string of beads and allow highly targeted treatment of individual lumbar vertebral levels, including pain, nerve irritation, and functional disturbances.",
+      "location": "Part of the D1–D6 Yin subdivision, situated immediately anterior to the ear above the temporomandibular joint, second from the top of the vertical line.",
+      "reactionArea": "Lumbar vertebra L2.",
+      "indications": ["Low back pain","Lumbago","Lumbar disc herniation","Sciatica","Neuralgia","Rheumatism","Arthritis","Muscle cramps","Post-traumatic pain","Post-operative pain","Fractures","Sprains","Circulatory disorders of the legs","Raynaud's syndrome","Hemiplegia","Paraplegia","Parkinson's syndrome","Multiple sclerosis","Gout","Prostatic hypertrophy","Motor disturbances","Disorders of internal organs related to lumbar nerve distribution"],
+      "tags": ["Low Back Pain","Sciatica","L2","Lumbar Spine","Disc Herniation","Lower Extremity","Neurological Disorders","Rehabilitation"]
+    },
+    {
+      "id": "YNSA-D3-yin",
+      "name": "D3 Yin",
+      "shortDescription": "D3 Yin targets the L3 lumbar vertebra and its associated structures.",
+      "longDescription": "Basic Point D Yin is a major YNSA scalp acupuncture point associated with the lower body, including the lumbar spine, sacrum, coccyx, and lower extremities. The point is further divided into six smaller segments, D1–D6, which correspond to specific anatomical regions of the lower spine. D1 corresponds to the L1 vertebra, D2–D5 correspond to L2–L5, and D6 represents the sacrum and coccyx. These points form a vertical line resembling a string of beads and allow highly targeted treatment of individual lumbar vertebral levels, including pain, nerve irritation, and functional disturbances.",
+      "location": "Part of the D1–D6 Yin subdivision, situated immediately anterior to the ear above the temporomandibular joint, middle of the vertical line.",
+      "reactionArea": "Lumbar vertebra L3.",
+      "indications": ["Low back pain","Lumbago","Lumbar disc herniation","Sciatica","Neuralgia","Rheumatism","Arthritis","Muscle cramps","Post-traumatic pain","Post-operative pain","Fractures","Sprains","Circulatory disorders of the legs","Raynaud's syndrome","Hemiplegia","Paraplegia","Parkinson's syndrome","Multiple sclerosis","Gout","Prostatic hypertrophy","Motor disturbances","Disorders of internal organs related to lumbar nerve distribution"],
+      "tags": ["Low Back Pain","Sciatica","L3","Lumbar Spine","Disc Herniation","Lower Extremity","Neurological Disorders","Rehabilitation"]
+    },
+    {
+      "id": "YNSA-D4-yin",
+      "name": "D4 Yin",
+      "shortDescription": "D4 Yin targets the L4 lumbar vertebra and its associated structures.",
+      "longDescription": "Basic Point D Yin is a major YNSA scalp acupuncture point associated with the lower body, including the lumbar spine, sacrum, coccyx, and lower extremities. The point is further divided into six smaller segments, D1–D6, which correspond to specific anatomical regions of the lower spine. D1 corresponds to the L1 vertebra, D2–D5 correspond to L2–L5, and D6 represents the sacrum and coccyx. These points form a vertical line resembling a string of beads and allow highly targeted treatment of individual lumbar vertebral levels, including pain, nerve irritation, and functional disturbances.",
+      "location": "Part of the D1–D6 Yin subdivision, situated immediately anterior to the ear above the temporomandibular joint, second from the bottom of the vertical line.",
+      "reactionArea": "Lumbar vertebra L4.",
+      "indications": ["Low back pain","Lumbago","Lumbar disc herniation","Sciatica","Neuralgia","Rheumatism","Arthritis","Muscle cramps","Post-traumatic pain","Post-operative pain","Fractures","Sprains","Circulatory disorders of the legs","Raynaud's syndrome","Hemiplegia","Paraplegia","Parkinson's syndrome","Multiple sclerosis","Gout","Prostatic hypertrophy","Motor disturbances","Disorders of internal organs related to lumbar nerve distribution"],
+      "tags": ["Low Back Pain","Sciatica","L4","Lumbar Spine","Disc Herniation","Lower Extremity","Neurological Disorders","Rehabilitation"]
+    },
+    {
+      "id": "YNSA-D5-yin",
+      "name": "D5 Yin",
+      "shortDescription": "D5 Yin targets the L5 lumbar vertebra and its associated structures.",
+      "longDescription": "Basic Point D Yin is a major YNSA scalp acupuncture point associated with the lower body, including the lumbar spine, sacrum, coccyx, and lower extremities. The point is further divided into six smaller segments, D1–D6, which correspond to specific anatomical regions of the lower spine. D1 corresponds to the L1 vertebra, D2–D5 correspond to L2–L5, and D6 represents the sacrum and coccyx. These points form a vertical line resembling a string of beads and allow highly targeted treatment of individual lumbar vertebral levels, including pain, nerve irritation, and functional disturbances.",
+      "location": "Part of the D1–D6 Yin subdivision, situated immediately anterior to the ear above the temporomandibular joint, second from the bottom of the vertical line.",
+      "reactionArea": "Lumbar vertebra L5.",
+      "indications": ["Low back pain","Lumbago","Lumbar disc herniation","Sciatica","Neuralgia","Rheumatism","Arthritis","Muscle cramps","Post-traumatic pain","Post-operative pain","Fractures","Sprains","Circulatory disorders of the legs","Raynaud's syndrome","Hemiplegia","Paraplegia","Parkinson's syndrome","Multiple sclerosis","Gout","Prostatic hypertrophy","Motor disturbances","Disorders of internal organs related to lumbar nerve distribution"],
+      "tags": ["Low Back Pain","Sciatica","L5","Lumbar Spine","Disc Herniation","Lower Extremity","Neurological Disorders","Rehabilitation"]
+    },
+    {
+      "id": "YNSA-D6-yin",
+      "name": "D6 Yin",
+      "shortDescription": "D6 Yin targets the sacrum and coccyx.",
+      "longDescription": "Basic Point D Yin is a major YNSA scalp acupuncture point associated with the lower body, including the lumbar spine, sacrum, coccyx, and lower extremities. The point is further divided into six smaller segments, D1–D6, which correspond to specific anatomical regions of the lower spine. D1 corresponds to the L1 vertebra, D2–D5 correspond to L2–L5, and D6 represents the sacrum and coccyx. These points form a vertical line resembling a string of beads and allow highly targeted treatment of individual lumbar vertebral levels, including pain, nerve irritation, and functional disturbances.",
+      "location": "Part of the D1–D6 Yin subdivision, situated immediately anterior to the ear above the temporomandibular joint. D6 is the most inferior point in the vertical line.",
+      "reactionArea": "Coccyx.",
+      "indications": ["Low back pain","Lumbago","Lumbar disc herniation","Sciatica","Neuralgia","Rheumatism","Arthritis","Muscle cramps","Post-traumatic pain","Post-operative pain","Fractures","Sprains","Circulatory disorders of the legs","Raynaud's syndrome","Hemiplegia","Paraplegia","Parkinson's syndrome","Multiple sclerosis","Gout","Prostatic hypertrophy","Motor disturbances","Disorders of internal organs related to lumbar nerve distribution"],
+      "tags": ["Low Back Pain","Sciatica","Sacrum","Coccyx","Lumbar Spine","Lower Extremity","Neurological Disorders","Rehabilitation"]
+    },
+    {
+      "id": "YNSA-D1-yang",
+      "name": "D1 Yang",
+      "shortDescription": "D1 Yang targets the L1 lumbar vertebra and its associated structures.",
+      "longDescription": "Basic Point D Yang follows the same general representation of the lower body as D Yin but does not reflect the D1–D6 subdivisions as precisely. The Yang divisions are positioned behind the pinna in a slightly curved horizontal line measuring approximately 1–1.5 cm in length.",
+      "location": "Part of the D1–D6 Yang subdivision, positioned behind the pinna in a slightly curved horizontal line. D1 Yang is the most anterior point of the line.",
+      "reactionArea": "Lumbar vertebra L1.",
+      "indications": ["Low back pain","Lumbago","Lumbar disc herniation","Sciatica","Neuralgia","Rheumatism","Arthritis","Muscle cramps","Post-traumatic pain","Post-operative pain","Fractures","Sprains","Circulatory disorders of the legs","Raynaud's syndrome","Hemiplegia","Paraplegia","Parkinson's syndrome","Multiple sclerosis","Gout","Prostatic hypertrophy","Motor disturbances","Disorders of internal organs related to lumbar nerve distribution"],
+      "tags": ["Low Back Pain","Sciatica","L1","Lumbar Spine","Disc Herniation","Lower Extremity","Neurological Disorders","Rehabilitation"]
+    },
+    {
+      "id": "YNSA-D2-yang",
+      "name": "D2 Yang",
+      "shortDescription": "D2 Yang targets the L2 lumbar vertebra and its associated structures.",
+      "longDescription": "Basic Point D Yang follows the same general representation of the lower body as D Yin but does not reflect the D1–D6 subdivisions as precisely. The Yang divisions are positioned behind the pinna in a slightly curved horizontal line measuring approximately 1–1.5 cm in length.",
+      "location": "Part of the D1–D6 Yang subdivision, positioned behind the pinna in a slightly curved horizontal line, second from the anterior end.",
+      "reactionArea": "Lumbar vertebra L2.",
+      "indications": ["Low back pain","Lumbago","Lumbar disc herniation","Sciatica","Neuralgia","Rheumatism","Arthritis","Muscle cramps","Post-traumatic pain","Post-operative pain","Fractures","Sprains","Circulatory disorders of the legs","Raynaud's syndrome","Hemiplegia","Paraplegia","Parkinson's syndrome","Multiple sclerosis","Gout","Prostatic hypertrophy","Motor disturbances","Disorders of internal organs related to lumbar nerve distribution"],
+      "tags": ["Low Back Pain","Sciatica","L2","Lumbar Spine","Disc Herniation","Lower Extremity","Neurological Disorders","Rehabilitation"]
+    },
+    {
+      "id": "YNSA-D3-yang",
+      "name": "D3 Yang",
+      "shortDescription": "D3 Yang targets the L3 lumbar vertebra and its associated structures.",
+      "longDescription": "Basic Point D Yang follows the same general representation of the lower body as D Yin but does not reflect the D1–D6 subdivisions as precisely. The Yang divisions are positioned behind the pinna in a slightly curved horizontal line measuring approximately 1–1.5 cm in length.",
+      "location": "Part of the D1–D6 Yang subdivision, positioned behind the pinna in a slightly curved horizontal line, middle of the line.",
+      "reactionArea": "Lumbar vertebra L3.",
+      "indications": ["Low back pain","Lumbago","Lumbar disc herniation","Sciatica","Neuralgia","Rheumatism","Arthritis","Muscle cramps","Post-traumatic pain","Post-operative pain","Fractures","Sprains","Circulatory disorders of the legs","Raynaud's syndrome","Hemiplegia","Paraplegia","Parkinson's syndrome","Multiple sclerosis","Gout","Prostatic hypertrophy","Motor disturbances","Disorders of internal organs related to lumbar nerve distribution"],
+      "tags": ["Low Back Pain","Sciatica","L3","Lumbar Spine","Disc Herniation","Lower Extremity","Neurological Disorders","Rehabilitation"]
+    },
+    {
+      "id": "YNSA-D4-yang",
+      "name": "D4 Yang",
+      "shortDescription": "D4 Yang targets the L4 lumbar vertebra and its associated structures.",
+      "longDescription": "Basic Point D Yang follows the same general representation of the lower body as D Yin but does not reflect the D1–D6 subdivisions as precisely. The Yang divisions are positioned behind the pinna in a slightly curved horizontal line measuring approximately 1–1.5 cm in length.",
+      "location": "Part of the D1–D6 Yang subdivision, positioned behind the pinna in a slightly curved horizontal line, second from the posterior end.",
+      "reactionArea": "Lumbar vertebra L4.",
+      "indications": ["Low back pain","Lumbago","Lumbar disc herniation","Sciatica","Neuralgia","Rheumatism","Arthritis","Muscle cramps","Post-traumatic pain","Post-operative pain","Fractures","Sprains","Circulatory disorders of the legs","Raynaud's syndrome","Hemiplegia","Paraplegia","Parkinson's syndrome","Multiple sclerosis","Gout","Prostatic hypertrophy","Motor disturbances","Disorders of internal organs related to lumbar nerve distribution"],
+      "tags": ["Low Back Pain","Sciatica","L4","Lumbar Spine","Disc Herniation","Lower Extremity","Neurological Disorders","Rehabilitation"]
+    },
+    {
+      "id": "YNSA-D5-yang",
+      "name": "D5 Yang",
+      "shortDescription": "D5 Yang targets the L5 lumbar vertebra and its associated structures.",
+      "longDescription": "Basic Point D Yang follows the same general representation of the lower body as D Yin but does not reflect the D1–D6 subdivisions as precisely. The Yang divisions are positioned behind the pinna in a slightly curved horizontal line measuring approximately 1–1.5 cm in length.",
+      "location": "Part of the D1–D6 Yang subdivision, positioned behind the pinna in a slightly curved horizontal line, second from the posterior end.",
+      "reactionArea": "Lumbar vertebra L5.",
+      "indications": ["Low back pain","Lumbago","Lumbar disc herniation","Sciatica","Neuralgia","Rheumatism","Arthritis","Muscle cramps","Post-traumatic pain","Post-operative pain","Fractures","Sprains","Circulatory disorders of the legs","Raynaud's syndrome","Hemiplegia","Paraplegia","Parkinson's syndrome","Multiple sclerosis","Gout","Prostatic hypertrophy","Motor disturbances","Disorders of internal organs related to lumbar nerve distribution"],
+      "tags": ["Low Back Pain","Sciatica","L5","Lumbar Spine","Disc Herniation","Lower Extremity","Neurological Disorders","Rehabilitation"]
+    },
+    {
+      "id": "YNSA-D6-yang",
+      "name": "D6 Yang",
+      "shortDescription": "D6 Yang targets the sacrum and coccyx.",
+      "longDescription": "Basic Point D Yang follows the same general representation of the lower body as D Yin but does not reflect the D1–D6 subdivisions as precisely. The Yang divisions are positioned behind the pinna in a slightly curved horizontal line measuring approximately 1–1.5 cm in length.",
+      "location": "Part of the D1–D6 Yang subdivision, positioned behind the pinna in a slightly curved horizontal line. D6 Yang is the most posterior point of the line.",
+      "reactionArea": "Coccyx.",
+      "indications": ["Low back pain","Lumbago","Lumbar disc herniation","Sciatica","Neuralgia","Rheumatism","Arthritis","Muscle cramps","Post-traumatic pain","Post-operative pain","Fractures","Sprains","Circulatory disorders of the legs","Raynaud's syndrome","Hemiplegia","Paraplegia","Parkinson's syndrome","Multiple sclerosis","Gout","Prostatic hypertrophy","Motor disturbances","Disorders of internal organs related to lumbar nerve distribution"],
+      "tags": ["Low Back Pain","Sciatica","Sacrum","Coccyx","Lumbar Spine","Lower Extremity","Neurological Disorders","Rehabilitation"]
+    },
+    {
       "id": "YNSA-E-yin",
       "name": "E Yin",
       "shortDescription": "Basic Point E Yin represents the thoracic spine, ribs, thoracic cavity, and internal organs associated with thoracic nerve distribution.",
@@ -533,12 +653,165 @@
       ]
     },
     {
+      "id": "YNSA-G1-yin",
+      "name": "G1 Yin",
+      "shortDescription": "G1 Yin represents the medial aspect of the knee joint.",
+      "longDescription": "Basic Point G Yin is divided into three subpoints representing different regions of the knee joint. G1 corresponds to the medial knee, G2 to the frontal knee, and G3 to the lateral knee. G1 is the most anterior. These points are located above Basic Point D and are used for precise treatment of knee-related disorders.",
+      "location": "Located above Basic Point D, the most anterior of the three G Yin subpoints.",
+      "reactionArea": "Medial knee.",
+      "indications": [
+        "Knee joint disorders",
+        "Post-traumatic knee pain",
+        "Bursitis",
+        "Rheumatism",
+        "Arthritis",
+        "Patella fractures",
+        "Sprains"
+      ],
+      "tags": [
+        "Knee Pain",
+        "Medial Knee",
+        "Patella",
+        "Arthritis",
+        "Bursitis",
+        "Sprain",
+        "Joint Injury"
+      ]
+    },
+    {
+      "id": "YNSA-G2-yin",
+      "name": "G2 Yin",
+      "shortDescription": "G2 Yin represents the frontal aspect of the knee joint.",
+      "longDescription": "Basic Point G Yin is divided into three subpoints representing different regions of the knee joint. G1 corresponds to the medial knee, G2 to the frontal knee, and G3 to the lateral knee. These points are located above Basic Point D and are used for precise treatment of knee-related disorders.",
+      "location": "Located above Basic Point D, between G1 and G3.",
+      "reactionArea": "Frontal knee.",
+      "indications": [
+        "Knee joint disorders",
+        "Post-traumatic knee pain",
+        "Bursitis",
+        "Rheumatism",
+        "Arthritis",
+        "Patella fractures",
+        "Sprains"
+      ],
+      "tags": [
+        "Knee Pain",
+        "Frontal Knee",
+        "Patella",
+        "Arthritis",
+        "Bursitis",
+        "Sprain",
+        "Joint Injury"
+      ]
+    },
+    {
+      "id": "YNSA-G3-yin",
+      "name": "G3 Yin",
+      "shortDescription": "G3 Yin represents the lateral aspect of the knee joint.",
+      "longDescription": "Basic Point G Yin is divided into three subpoints representing different regions of the knee joint. G1 corresponds to the medial knee, G2 to the frontal knee, and G3 to the lateral knee. G3 is the most lateral. These points are located above Basic Point D and are used for precise treatment of knee-related disorders.",
+      "location": "Located above Basic Point D, the most lateral of the three G Yin subpoints.",
+      "reactionArea": "Lateral knee.",
+      "indications": [
+        "Knee joint disorders",
+        "Post-traumatic knee pain",
+        "Bursitis",
+        "Rheumatism",
+        "Arthritis",
+        "Patella fractures",
+        "Sprains"
+      ],
+      "tags": [
+        "Knee Pain",
+        "Lateral Knee",
+        "Patella",
+        "Arthritis",
+        "Bursitis",
+        "Sprain",
+        "Joint Injury"
+      ]
+    },
+    {
+      "id": "YNSA-G1-yang",
+      "name": "G1 Yang",
+      "shortDescription": "G1 Yang represents the medial aspect of the knee joint in the occipital Yang region.",
+      "longDescription": "Basic Point G Yang corresponds to the knee joint in the Yang system. G1 Yang is the most superior of the three G Yang subpoints and is used for treatment of knee-related disorders including pain, trauma, and degenerative conditions.",
+      "location": "Located around the edge of the mastoid process, the most superior of the three G Yang subpoints.",
+      "reactionArea": "Medial knee.",
+      "indications": [
+        "Knee joint disorders",
+        "Post-traumatic knee pain",
+        "Bursitis",
+        "Rheumatism",
+        "Arthritis",
+        "Patella fractures",
+        "Sprains"
+      ],
+      "tags": [
+        "Knee Pain",
+        "Medial Knee",
+        "Arthritis",
+        "Bursitis",
+        "Joint Injury",
+        "Rehabilitation"
+      ]
+    },
+    {
+      "id": "YNSA-G2-yang",
+      "name": "G2 Yang",
+      "shortDescription": "G2 Yang represents the frontal aspect of the knee joint in the occipital Yang region.",
+      "longDescription": "Basic Point G Yang corresponds to the knee joint in the Yang system. G2 Yang is the middle of the three G Yang subpoints and is used for treatment of knee-related disorders including pain, trauma, and degenerative conditions.",
+      "location": "Located around the edge of the mastoid process, between G1 Yang and G3 Yang.",
+      "reactionArea": "Frontal knee.",
+      "indications": [
+        "Knee joint disorders",
+        "Post-traumatic knee pain",
+        "Bursitis",
+        "Rheumatism",
+        "Arthritis",
+        "Patella fractures",
+        "Sprains"
+      ],
+      "tags": [
+        "Knee Pain",
+        "Medial Knee",
+        "Arthritis",
+        "Bursitis",
+        "Joint Injury",
+        "Rehabilitation"
+      ]
+    },
+    {
+      "id": "YNSA-G3-yang",
+      "name": "G3 Yang",
+      "shortDescription": "G3 Yang represents the lateral aspect of the knee joint in the occipital Yang region.",
+      "longDescription": "Basic Point G Yang corresponds to the knee joint in the Yang system. G3 Yang is the most inferior of the three G Yang subpoints and is used for treatment of knee-related disorders including pain, trauma, and degenerative conditions.",
+      "location": "Located around the edge of the mastoid process, the most inferior of the three G Yang subpoints.",
+      "reactionArea": "Lateral knee.",
+      "indications": [
+        "Knee joint disorders",
+        "Post-traumatic knee pain",
+        "Bursitis",
+        "Rheumatism",
+        "Arthritis",
+        "Patella fractures",
+        "Sprains"
+      ],
+      "tags": [
+        "Knee Pain",
+        "Medial Knee",
+        "Arthritis",
+        "Bursitis",
+        "Joint Injury",
+        "Rehabilitation"
+      ]
+    },
+    {
       "id": "YNSA-H",
       "name": "H",
       "shortDescription": "Basic Point H is a complementary lumbar point used to enhance the effect of Basic Point D.",
       "longDescription": "Basic Point H is an auxiliary YNSA point used in combination with Basic Point D. It is rarely used alone and serves to enhance treatment outcomes in chronic lumbar and lower limb disorders. The point becomes more prominent and palpable in cases of lumbago or lower extremity dysfunction, reflecting its diagnostic and therapeutic relevance.",
-      "location": "Located caudally (inferior) from Basic Point B.",
-      "reactionArea": "Extra-lumbar point 2, the lower extremities, and the knee.",
+      "location": "Located 1 cm above Basic Point B.",
+      "reactionArea": "The lower extremities, and the knee.",
       "indications": [
         "Chronic lumbago",
         "Lower back pain",
@@ -558,8 +831,8 @@
       "name": "I",
       "shortDescription": "Basic Point I is a complementary lumbar point used alongside Basic Point D for chronic pain conditions.",
       "longDescription": "Basic Point I is a supplementary YNSA point used in combination with Basic Point D. It is rarely used as a standalone point and is primarily indicated for chronic lumbar pain and lower limb dysfunction. Like Basic Point H, it becomes more palpable in pathological conditions and enhances the therapeutic effect of D points.",
-      "location": "Located approximately 1 cm caudal to Basic Point C.",
-      "reactionArea": "Extra-lumbar point 3, a complete somatotype that covers the entire body.",
+      "location": "Identify the apex of the ear and draw an imaginary apex line extending vertically upward from it. Yin aspect: Located approximately 4 cm above the ear apex and 2–3 cm in front of the apex line. Yang aspect: Located approximately 4 cm above the ear apex and 2–3 cm behind the apex line.",
+      "reactionArea": "Lower extremities. Located in the temple region above the ear, the I point has become a key point for pain treatment and has developed into its own somatotope. This somatotope is believed to represent the whole body, and needling the point may have therapeutic effects on the body as a whole.",
       "indications": [
         "Chronic lumbago",
         "Lower back pain",
@@ -572,6 +845,136 @@
         "Lumbar Spine",
         "Neuropathy",
         "Rehabilitation"
+      ]
+    },
+    {
+      "id": "YNSA-Ear",
+      "name": "Ear Point",
+      "shortDescription": "The Ear sensory point treats auricular disorders including otitis, tinnitus, and ear pain.",
+      "longDescription": "The YNSA Sensory Points (Eye, Nose, Mouth, Ear) are arranged vertically in the frontal yin zone at approximately 1 cm intervals, starting from the lowest Basic A point and situated 1 cm lateral to the midline. A corresponding Yang representation of all sensory points is located in the occipital region. The Ear point is positioned approximately 1.5 cm from Basic C on a 45-degree line drawn between Basic C and the root of the nose.",
+      "location": "Approximately 1.5 cm from Basic Point C, on a 45-degree line drawn between Basic C and the root of the nose.",
+      "reactionArea": "The ear and surrounding auricular structures.",
+      "indications": [
+        "Auricular disorders",
+        "Otitis externa",
+        "Tinnitus",
+        "Post-traumatic ear pain",
+        "Post-operative ear pain"
+      ],
+      "tags": [
+        "Sensory Point",
+        "Ear",
+        "Tinnitus",
+        "Otitis",
+        "Auricular disorders",
+        "Hearing"
+      ]
+    },
+    {
+      "id": "YNSA-Extra-Ear-Yin",
+      "name": "Extra Ear Point Yin",
+      "shortDescription": "Extra Ear Points are complementary points to treat tinnitus. For tinnitus treatment needle both Ear Yin and Yang points in combination with both Extra Ear Yin and Yang.",
+      "longDescription": "Extra Ear Point Yin is a complementary sensory point used alongside the Ear Yin and Ear Yang points specifically for tinnitus treatment. It is not used in isolation; optimal results are achieved when all four ear points (Ear Yin, Ear Yang, Extra Ear Yin, Extra Ear Yang) are combined.",
+      "location": "Midway between Ear Yin and Ear Yang, approximately 3 cm above the line connecting the Ear Yin and Ear Yang points.",
+      "reactionArea": "The ear and surrounding auricular structures.",
+      "indications": [
+        "Tinnitus"
+      ],
+      "tags": [
+        "Sensory Point",
+        "Ear",
+        "Tinnitus",
+        "Extra Ear"
+      ]
+    },
+    {
+      "id": "YNSA-Extra-Ear-Yang",
+      "name": "Extra Ear Point Yang",
+      "shortDescription": "Extra Ear Points are complementary points to treat tinnitus. For tinnitus treatment needle both Ear Yin and Yang points in combination with both Extra Ear Yin and Yang.",
+      "longDescription": "Extra Ear Point Yang is a complementary sensory point used alongside the Ear Yin and Ear Yang points specifically for tinnitus treatment. It is not used in isolation; optimal results are achieved when all four ear points (Ear Yin, Ear Yang, Extra Ear Yin, Extra Ear Yang) are combined.",
+      "location": "Midway between Ear Yin and Ear Yang, approximately 3 cm above the line connecting the Ear Yin and Ear Yang points.",
+      "reactionArea": "The ear and surrounding auricular structures.",
+      "indications": [
+        "Tinnitus"
+      ],
+      "tags": [
+        "Sensory Point",
+        "Ear",
+        "Tinnitus",
+        "Extra Ear"
+      ]
+    },
+    {
+      "id": "YNSA-Eye",
+      "name": "Eye Point",
+      "shortDescription": "The Eye sensory point treats ophthalmic disorders and ocular pain.",
+      "longDescription": "The YNSA Sensory Points (Eye, Nose, Mouth, Ear) are arranged vertically in the frontal yin zone at approximately 1 cm intervals, starting from the lowest Basic A point and situated 1 cm lateral to the midline. A corresponding Yang representation of all sensory points is located in the occipital region.",
+      "location": "Arranged vertically with the other sensory points (Nose, Mouth) at approximately 1 cm intervals, starting from the lowest Basic A point, situated 1 cm lateral to the midline.",
+      "reactionArea": "The eye and visual system.",
+      "indications": [
+        "Impaired vision",
+        "Glaucoma",
+        "Conjunctivitis",
+        "Strabismus",
+        "Epiphora (excessive tearing)",
+        "Post-traumatic eye pain and discomfort",
+        "Post-operative eye pain and discomfort"
+      ],
+      "tags": [
+        "Sensory Point",
+        "Eye",
+        "Vision",
+        "Glaucoma",
+        "Conjunctivitis",
+        "Ocular Pain"
+      ]
+    },
+    {
+      "id": "YNSA-Nose",
+      "name": "Nose Point",
+      "shortDescription": "The Nose sensory point treats conditions affecting the nose and nasal passages.",
+      "longDescription": "The YNSA Sensory Points (Eye, Nose, Mouth, Ear) are arranged vertically in the frontal yin zone at approximately 1 cm intervals, starting from the lowest Basic A point and situated 1 cm lateral to the midline. A corresponding Yang representation of all sensory points is located in the occipital region.",
+      "location": "Arranged vertically with the other sensory points (Eye, Mouth) at approximately 1 cm intervals, starting from the lowest Basic A point, situated 1 cm lateral to the midline.",
+      "reactionArea": "The nose and nasal passages.",
+      "indications": [
+        "Allergic rhinitis",
+        "Rhinitis",
+        "Sinusitis",
+        "Nasal obstruction or congestion",
+        "Post-traumatic nasal pain",
+        "Post-operative nasal pain"
+      ],
+      "tags": [
+        "Sensory Point",
+        "Nose",
+        "Rhinitis",
+        "Sinusitis",
+        "Nasal Congestion",
+        "Allergy"
+      ]
+    },
+    {
+      "id": "YNSA-Mouth",
+      "name": "Mouth Point",
+      "shortDescription": "The Mouth sensory point treats disorders affecting the mouth and oral cavity.",
+      "longDescription": "The YNSA Sensory Points (Eye, Nose, Mouth, Ear) are arranged vertically in the frontal yin zone at approximately 1 cm intervals, starting from the lowest Basic A point and situated 1 cm lateral to the midline. A corresponding Yang representation of all sensory points is located in the occipital region.",
+      "location": "Arranged vertically with the other sensory points (Eye, Nose) at approximately 1 cm intervals, starting from the lowest Basic A point, situated 1 cm lateral to the midline.",
+      "reactionArea": "The mouth and oral cavity.",
+      "indications": [
+        "Stomatopathy",
+        "Stomatitis",
+        "Herpes simplex infections",
+        "Toothache",
+        "Pain following tooth extraction",
+        "Aphasia"
+      ],
+      "tags": [
+        "Sensory Point",
+        "Mouth",
+        "Oral cavity",
+        "Stomatitis",
+        "Toothache",
+        "Herpes simplex"
       ]
     }
   ]
