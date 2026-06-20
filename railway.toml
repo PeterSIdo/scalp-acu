@@ -1,6 +1,6 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "npm install && npm run build && npm run db:generate && npm run db:migrate"
+buildCommand = "npm install && npm run build && npx prisma generate && npx prisma db push"
 
 [deploy]
 startCommand = "node server/index.js"

@@ -101,7 +101,7 @@ const POINTS = [
   { id: 'Basal-ganglia',   cx: 238.436, cy: 132.95,  color: LIME, rx: 4, ry: 7.5 },
 ]
 
-export default function HeadPosterior({ pickerMode = false, onPointSelect }) {
+export default function HeadPosterior({ pickerMode = false, onPointSelect, highlightJsonId = null }) {
   const [pickerPos, setPickerPos]   = useState(null)
   const [selectedId, setSelectedId] = useState(null)
   const [hoveredId,  setHoveredId]  = useState(null)
@@ -162,6 +162,20 @@ export default function HeadPosterior({ pickerMode = false, onPointSelect }) {
           </g>
         )
       })}
+
+      {/* Search highlight — pulsing ring */}
+      {highlightJsonId && POINTS
+        .filter(p => POINT_JSON_ID[p.id] === highlightJsonId)
+        .map(({ cx, cy }) => (
+          <g key={`hl-${cx}-${cy}`} pointerEvents="none">
+            <circle cx={cx} cy={cy} r={11} fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.9" />
+            <circle cx={cx} cy={cy} r={11} fill="none" stroke="#ffffff" strokeWidth="2">
+              <animate attributeName="r"       values="11;22;11" dur="1.6s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
+            </circle>
+          </g>
+        ))
+      }
 
       {hoveredId && (() => {
         const pt     = POINTS.find(p => p.id === hoveredId)

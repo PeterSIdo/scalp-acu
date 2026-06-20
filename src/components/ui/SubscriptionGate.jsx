@@ -21,9 +21,9 @@ export default function SubscriptionBanner({ status }) {
   if (status === 'trialing') {
     return (
       <div className="bg-amber-500/10 border-b border-amber-500/30 px-4 py-2 text-center text-sm">
-        <span className="text-amber-400">Free trial active</span>
-        <span className="text-gray-400 ml-2">— subscribe before it ends to keep full access.</span>
-        <button onClick={handleSubscribe} disabled={loading} className="ml-3 text-amber-400 underline hover:no-underline">
+        <span className="text-amber-600 dark:text-amber-400">Free trial active</span>
+        <span className="text-gray-500 dark:text-gray-400 ml-2">— subscribe before it ends to keep full access.</span>
+        <button onClick={handleSubscribe} disabled={loading} className="ml-3 text-amber-600 dark:text-amber-400 underline hover:no-underline">
           Subscribe now
         </button>
       </div>
@@ -33,16 +33,16 @@ export default function SubscriptionBanner({ status }) {
   if (status === 'past_due') {
     return (
       <div className="bg-red-500/10 border-b border-red-500/30 px-4 py-2 text-center text-sm">
-        <span className="text-red-400 font-semibold">Payment failed</span>
-        <span className="text-gray-400 ml-2">— please update your payment method.</span>
-        <Link to="/account" className="ml-3 text-red-400 underline hover:no-underline">Manage billing</Link>
+        <span className="text-red-500 dark:text-red-400 font-semibold">Payment failed</span>
+        <span className="text-gray-500 dark:text-gray-400 ml-2">— please update your payment method.</span>
+        <Link to="/account" className="ml-3 text-red-500 dark:text-red-400 underline hover:no-underline">Manage billing</Link>
       </div>
     )
   }
 
   return (
-    <div className="bg-gray-900/80 border-b border-gray-700 px-4 py-2 text-center text-sm flex items-center justify-center gap-3">
-      <span className="text-gray-400">Demo mode — 3 points unlocked.</span>
+    <div className="bg-gray-100 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-700 px-4 py-2 text-center text-sm flex items-center justify-center gap-3">
+      <span className="text-gray-500 dark:text-gray-400">Demo mode — 3 points unlocked.</span>
       <button
         onClick={handleSubscribe}
         disabled={loading}
