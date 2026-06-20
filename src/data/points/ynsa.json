@@ -954,6 +954,66 @@
       ]
     },
     {
+      "id": "YNSA-Brain-Cerebrum-yin",
+      "name": "Cerebrum Point Yin",
+      "shortDescription": "The Cerebrum Point is one of three YNSA Brain Points used to treat neurological and neuropsychiatric conditions. It has corresponding diagnostic zones on the abdomen and neck.",
+      "longDescription": "The three YNSA Brain Points — Cerebrum, Cerebellum, and Basal Ganglia — form a distinct point group for treating neurological diseases. In the Yin (frontal) aspect, the Cerebrum Point lies approximately 1 cm lateral to the midline on both sides, along a line extending posteriorly from Basic Point A8. The group begins approximately 3 cm anterior to the coronal suture and extends 1.5–2 cm toward Basic Point A8, starting just posterior to the edge of the galea aponeurotica.",
+      "location": "Approximately 1 cm lateral to the midline on both sides of the head, along a posteriorly directed line from Basic Point A8. The Brain Points originate just posterior to the galea aponeurotica, beginning about 3 cm anterior to the coronal suture and extending approximately 1.5–2 cm toward Basic Point A8.",
+      "reactionArea": "The cerebrum and its associated cortical functions.",
+      "indications": ["All motor disturbances","Hemiplegia and paraplegia","Migraine and trigeminal neuritis","Parkinson's syndrome","Multiple sclerosis","Endocrine disturbances","Vertigo","Disturbed vision","Tinnitus","Aphasia","Dementia and Alzheimer's disease","Epilepsy","Insomnia, depression, and psychological disturbances"],
+      "tags": ["Brain Point","Cerebrum","Neurological","Motor Disturbances","Hemiplegia","Parkinson's Disease","Multiple Sclerosis","Epilepsy","Dementia","Alzheimer's","Migraine","Aphasia","Psychological Disturbances"]
+    },
+    {
+      "id": "YNSA-Brain-Cerebrum-yang",
+      "name": "Cerebrum Point Yang",
+      "shortDescription": "The Cerebrum Point Yang is the occipital counterpart to the Yin Brain Point, sharing the same neurological indications.",
+      "longDescription": "The Yang (occipital) Brain Points mirror the Yin group in anatomical arrangement and clinical application. The Cerebrum Point Yang is located superior to the lambdoidal suture in the occipital Yang region and is treated for the same range of neurological and neuropsychiatric conditions as its Yin counterpart. Diagnostic zones for all Brain Points are found on the abdomen and neck.",
+      "location": "Located in the occipital Yang region, superior to the lambdoidal suture, approximately 1 cm lateral to the midline on both sides. The arrangement mirrors the Yin Brain Points.",
+      "reactionArea": "The cerebrum and its associated cortical functions.",
+      "indications": ["All motor disturbances","Hemiplegia and paraplegia","Migraine and trigeminal neuritis","Parkinson's syndrome","Multiple sclerosis","Endocrine disturbances","Vertigo","Disturbed vision","Tinnitus","Aphasia","Dementia and Alzheimer's disease","Epilepsy","Insomnia, depression, and psychological disturbances"],
+      "tags": ["Brain Point","Cerebrum","Yang","Neurological","Motor Disturbances","Hemiplegia","Parkinson's Disease","Multiple Sclerosis","Epilepsy","Dementia","Migraine","Aphasia"]
+    },
+    {
+      "id": "YNSA-Brain-Cerebellum-yin",
+      "name": "Cerebellum Point Yin",
+      "shortDescription": "The Cerebellum Point is one of three YNSA Brain Points used to treat neurological and neuropsychiatric conditions. It has corresponding diagnostic zones on the abdomen and neck.",
+      "longDescription": "The Cerebellum Point Yin lies approximately 1 cm lateral to the midline on both sides, in the same posterior line from Basic Point A8 as the Cerebrum Point. Together with the Cerebrum and Basal Ganglia Points, it forms the YNSA Brain Point group. The points originate just posterior to the edge of the galea aponeurotica, approximately 3 cm anterior to the coronal suture, extending 1.5–2 cm toward Basic Point A8.",
+      "location": "Approximately 1 cm lateral to the midline on both sides, along a posteriorly directed line from Basic Point A8 — positioned more posteriorly along this line relative to the Cerebrum Point. The group begins just posterior to the galea aponeurotica, about 3 cm anterior to the coronal suture.",
+      "reactionArea": "The cerebellum and its associated functions of balance and motor coordination.",
+      "indications": ["All motor disturbances","Hemiplegia and paraplegia","Migraine and trigeminal neuritis","Parkinson's syndrome","Multiple sclerosis","Endocrine disturbances","Vertigo","Disturbed vision","Tinnitus","Aphasia","Dementia and Alzheimer's disease","Epilepsy","Insomnia, depression, and psychological disturbances"],
+      "tags": ["Brain Point","Cerebellum","Neurological","Motor Disturbances","Balance","Vertigo","Hemiplegia","Parkinson's Disease","Multiple Sclerosis","Epilepsy","Migraine"]
+    },
+    {
+      "id": "YNSA-Brain-BasalGanglia-yin",
+      "name": "Basal Ganglia Point Yin",
+      "shortDescription": "The Basal Ganglia Point is one of three YNSA Brain Points used to treat neurological and neuropsychiatric conditions. It has an elongated shape and corresponding diagnostic zones on the abdomen and neck.",
+      "longDescription": "The Basal Ganglia Point Yin is situated on the midline, between the Cerebrum and Cerebellum Points. Unlike the other two Brain Points, it has an elongated shape and extends slightly further posteriorly. Together the three Brain Points begin just posterior to the galea aponeurotica, approximately 3 cm anterior to the coronal suture, extending 1.5–2 cm toward Basic Point A8.",
+      "location": "Located on the midline, between the Cerebrum Point and Cerebellum Point Yin. The point is elongated and extends slightly more posteriorly than the flanking brain points. The Brain Point group begins just posterior to the galea aponeurotica, about 3 cm anterior to the coronal suture.",
+      "reactionArea": "The basal ganglia and their role in motor control and movement regulation.",
+      "indications": ["All motor disturbances","Hemiplegia and paraplegia","Migraine and trigeminal neuritis","Parkinson's syndrome","Multiple sclerosis","Endocrine disturbances","Vertigo","Disturbed vision","Tinnitus","Aphasia","Dementia and Alzheimer's disease","Epilepsy","Insomnia, depression, and psychological disturbances"],
+      "tags": ["Brain Point","Basal Ganglia","Neurological","Motor Disturbances","Parkinson's Disease","Multiple Sclerosis","Hemiplegia","Epilepsy","Dementia","Movement Disorders"]
+    },
+    {
+      "id": "YNSA-Brain-BasalGanglia-yang",
+      "name": "Basal Ganglia Point Yang",
+      "shortDescription": "The Basal Ganglia Point Yang is the occipital counterpart, sharing the same elongated morphology and neurological indications as the Yin point.",
+      "longDescription": "The Basal Ganglia Point Yang is located in the occipital Yang region, superior to the lambdoidal suture, on the midline between the Cerebrum and Cerebellum Yang Points. It retains the elongated shape characteristic of the Basal Ganglia point and extends slightly more posteriorly than the flanking points. Diagnostic zones for all Brain Points are found on the abdomen and neck.",
+      "location": "Located on the midline in the occipital Yang region, superior to the lambdoidal suture, between the Cerebrum Point Yang and Cerebellum Point Yang. The point is elongated and positioned slightly more posteriorly than the flanking brain points.",
+      "reactionArea": "The basal ganglia and their role in motor control and movement regulation.",
+      "indications": ["All motor disturbances","Hemiplegia and paraplegia","Migraine and trigeminal neuritis","Parkinson's syndrome","Multiple sclerosis","Endocrine disturbances","Vertigo","Disturbed vision","Tinnitus","Aphasia","Dementia and Alzheimer's disease","Epilepsy","Insomnia, depression, and psychological disturbances"],
+      "tags": ["Brain Point","Basal Ganglia","Yang","Neurological","Motor Disturbances","Parkinson's Disease","Movement Disorders","Epilepsy","Hemiplegia"]
+    },
+    {
+      "id": "YNSA-Brain-Cerebellum-yang",
+      "name": "Cerebellum Point Yang",
+      "shortDescription": "The Cerebellum Point Yang is the occipital counterpart to the Yin Cerebellum Point, sharing the same neurological indications.",
+      "longDescription": "The Cerebellum Point Yang is located in the occipital Yang region, superior to the lambdoidal suture, and mirrors the Yin point in both arrangement and clinical use. It is treated for the full range of neurological conditions addressed by the YNSA Brain Point group. Diagnostic zones for all Brain Points are located on the abdomen and neck.",
+      "location": "Located in the occipital Yang region, superior to the lambdoidal suture, approximately 1 cm lateral to the midline. Mirrors the arrangement of the Yin Brain Points.",
+      "reactionArea": "The cerebellum and its associated functions of balance and motor coordination.",
+      "indications": ["All motor disturbances","Hemiplegia and paraplegia","Migraine and trigeminal neuritis","Parkinson's syndrome","Multiple sclerosis","Endocrine disturbances","Vertigo","Disturbed vision","Tinnitus","Aphasia","Dementia and Alzheimer's disease","Epilepsy","Insomnia, depression, and psychological disturbances"],
+      "tags": ["Brain Point","Cerebellum","Yang","Neurological","Balance","Vertigo","Motor Disturbances","Parkinson's Disease","Multiple Sclerosis","Epilepsy"]
+    },
+    {
       "id": "YNSA-Mouth",
       "name": "Mouth Point",
       "shortDescription": "The Mouth sensory point treats disorders affecting the mouth and oral cavity.",

@@ -2,15 +2,14 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSubscription } from '../hooks/useSubscription'
 import { useAuth } from '../hooks/useAuth'
-import HeadLateral from '../components/viewer/HeadLateral'
-import HeadFrontalSvg   from '../assets/diagrams/head_front.svg?react'
-import HeadPosteriorSvg from '../assets/diagrams/head_back.svg?react'
-import HeadSuperiorSvg  from '../assets/diagrams/head_top.svg?react'
+import HeadLateral   from '../components/viewer/HeadLateral'
+import HeadFrontal   from '../components/viewer/HeadFrontal'
+import HeadPosterior from '../components/viewer/HeadPosterior'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
 import SubscriptionBanner from '../components/ui/SubscriptionGate'
 
-const VIEWS = ['Lateral', 'Frontal', 'Posterior', 'Superior']
+const VIEWS = ['Lateral', 'Frontal', 'Posterior']
 
 export default function ViewerPage() {
   const { logout } = useAuth()
@@ -61,10 +60,9 @@ export default function ViewerPage() {
         {/* Diagram — fills available space on both mobile and desktop */}
         <div className="flex-1 min-h-0 bg-gray-900 overflow-hidden p-4">
           <ZoomableView>
-            {activeView === 'Lateral'   && <HeadLateral onPointSelect={setSelectedPoint} />}
-            {activeView === 'Frontal'   && <HeadFrontalSvg   style={{ width: '100%', height: '100%', maxHeight: '100%' }} />}
-            {activeView === 'Posterior' && <HeadPosteriorSvg style={{ width: '100%', height: '100%', maxHeight: '100%' }} />}
-            {activeView === 'Superior'  && <HeadSuperiorSvg  style={{ width: '100%', height: '100%', maxHeight: '100%' }} />}
+            {activeView === 'Lateral'   && <HeadLateral   onPointSelect={setSelectedPoint} />}
+            {activeView === 'Frontal'   && <HeadFrontal   onPointSelect={setSelectedPoint} />}
+            {activeView === 'Posterior' && <HeadPosterior onPointSelect={setSelectedPoint} />}
           </ZoomableView>
         </div>
 
