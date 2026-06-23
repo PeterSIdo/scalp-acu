@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { allPoints } from '../../data/points'
-import headSideSvg from '../../assets/diagrams/head_side.svg'
+import HeadSideSvg from '../../assets/diagrams/head_side.svg?react'
 
 const ORANGE = '#CB6608'
 const RED    = '#FF0808'
@@ -46,8 +46,7 @@ const POINT_JSON_ID = {
   'extra-ear-yang': 'YNSA-Extra-Ear-Yang',
 }
 
-// Exact coordinates from head_side.svg (viewBox 0 0 556 712)
-// Path-circle centres extracted from their M cx cy command
+// Exact coordinates read from head_side.svg (viewBox 0 0 556 712)
 const POINTS = [
   // ── Ear points ───────────────────────────────────────
   { id: 'ear-yin',        cx: 166,   cy: 165.5,   color: BLUE   },
@@ -58,57 +57,74 @@ const POINTS = [
   { id: 'H-yin',    cx: 161,   cy: 105.5,   color: GREEN  },
   { id: 'H-yang',   cx: 495,   cy: 213.5,   color: GREEN  },
   // ── I (extra lumbar) ─────────────────────────────────
-  { id: 'I-yin',    cx: 272,   cy:  97.5,   color: GREEN  },
+  { id: 'I-yin',    cx: 227,   cy: 115.5,   color: GREEN  },
   { id: 'I-yang',   cx: 460,   cy: 232.5,   color: GREEN  },
   // ── A zone ───────────────────────────────────────────
-  { id: 'A8-yin',   cx: 128,   cy: 115.5,   color: ORANGE },
   { id: 'A1-yin',   cx: 106,   cy: 139.5,   color: ORANGE },
-  { id: 'A8-yang',  cx: 520,   cy: 203.5,   color: RED    },
-  { id: 'A1-yang',  cx: 531,   cy: 228.5,   color: RED    },
+  { id: 'A8-yin',   cx: 128,   cy: 115.5,   color: ORANGE },
+  { id: 'A1-yang',  cx: 534,   cy: 223.5,   color: RED    },
+  { id: 'A8-yang',  cx: 524,   cy: 206.5,   color: RED    },
   // ── B zone ───────────────────────────────────────────
   { id: 'B-yin',    cx: 154,   cy: 123.5,   color: ORANGE },
-  { id: 'B-yang',   cx: 505,   cy: 228.5,   color: RED    },
+  { id: 'B-yang',   cx: 511,   cy: 227.5,   color: RED    },
   // ── C zone ───────────────────────────────────────────
   { id: 'C-yin',    cx: 215.5, cy: 127.5,   color: ORANGE },
-  { id: 'C-yang',   cx: 471,   cy: 245.5,   color: RED    },
-  // ── D zone — single point ────────────────────────────
+  { id: 'C-yang',   cx: 474,   cy: 240.5,   color: RED    },
+  // ── D zone (single parent point) ─────────────────────
   { id: 'D-yin',    cx: 227,   cy: 299.5,   color: ORANGE },
-  { id: 'D-yang',   cx: 407,   cy: 306.5,   color: RED    },
-  // ── D sub-points yin (D1=L1 … D6=Sacrum) ────────────
+  { id: 'D-yang',   cx: 409,   cy: 305.5,   color: RED    },
+  // ── D zone (individual vertebrae) ────────────────────
   { id: 'D1-yin',   cx: 272.5, cy: 280,     color: ORANGE },
   { id: 'D2-yin',   cx: 272.5, cy: 287.875, color: ORANGE },
   { id: 'D3-yin',   cx: 272.5, cy: 295.75,  color: ORANGE },
   { id: 'D4-yin',   cx: 272.5, cy: 303.625, color: ORANGE },
   { id: 'D5-yin',   cx: 272.5, cy: 311.5,   color: ORANGE },
   { id: 'D6-yin',   cx: 272.5, cy: 319.375, color: ORANGE },
-  // ── D sub-points yang (D1=L1 … D6=Sacrum) ───────────
-  { id: 'D1-yang',  cx: 327,   cy: 245.5,   color: RED    },
-  { id: 'D2-yang',  cx: 336,   cy: 246.5,   color: RED    },
-  { id: 'D3-yang',  cx: 345,   cy: 249.5,   color: RED    },
-  { id: 'D4-yang',  cx: 353,   cy: 254.5,   color: RED    },
-  { id: 'D5-yang',  cx: 360,   cy: 260.5,   color: RED    },
-  { id: 'D6-yang',  cx: 365,   cy: 267.5,   color: RED    },
+  { id: 'D1-yang',  cx: 330,   cy: 240.5,   color: RED    },
+  { id: 'D2-yang',  cx: 339,   cy: 241.5,   color: RED    },
+  { id: 'D3-yang',  cx: 348,   cy: 244.5,   color: RED    },
+  { id: 'D4-yang',  cx: 356,   cy: 249.5,   color: RED    },
+  { id: 'D5-yang',  cx: 363,   cy: 255.5,   color: RED    },
+  { id: 'D6-yang',  cx: 368,   cy: 262.5,   color: RED    },
   // ── E zone ───────────────────────────────────────────
-  { id: 'E12-yin',  cx:  74,   cy: 215.5,   color: ORANGE },
   { id: 'E1-yin',   cx: 107,   cy: 206.5,   color: ORANGE },
-  { id: 'E1-yang',  cx: 512,   cy: 302.5,   color: RED    },
-  { id: 'E12-yang', cx: 529,   cy: 310.5,   color: RED    },
+  { id: 'E12-yin',  cx: 74,    cy: 215.5,   color: ORANGE },
+  { id: 'E1-yang',  cx: 515,   cy: 297.5,   color: RED    },
+  { id: 'E12-yang', cx: 532,   cy: 305.5,   color: RED    },
   // ── F zone ───────────────────────────────────────────
-  { id: 'F-yang',   cx: 361,   cy: 398.5,   color: RED    },
-  // ── G zone (medial / frontal / lateral knee) ─────────
+  { id: 'F-yang',   cx: 364,   cy: 393.5,   color: RED    },
+  // ── G zone ───────────────────────────────────────────
   { id: 'G1-yin',   cx: 216,   cy: 284.5,   color: ORANGE },
   { id: 'G2-yin',   cx: 226.5, cy: 284.5,   color: ORANGE },
   { id: 'G3-yin',   cx: 237,   cy: 284.5,   color: ORANGE },
-  { id: 'G1-yang',  cx: 327,   cy: 431.5,   color: RED    },
-  { id: 'G2-yang',  cx: 338,   cy: 437.5,   color: RED    },
-  { id: 'G3-yang',  cx: 348,   cy: 431.5,   color: RED    },
+  { id: 'G1-yang',  cx: 330,   cy: 426.5,   color: RED    },
+  { id: 'G2-yang',  cx: 341,   cy: 432.5,   color: RED    },
+  { id: 'G3-yang',  cx: 351,   cy: 426.5,   color: RED    },
 ]
 
-export default function HeadLateral({ pickerMode = false, onPointSelect, highlightJsonId = null }) {
+// head_side.svg groups:
+//   basic-yin / basic-yang (and their sub-groups) → ABCDEFGHI yin/yang
+//   extra-lumbar-point → H, I
+//   ear-points → ear sensory (blue)
+// No brain points exist in the lateral view.
+const SVG_HIDE = {
+  'ynsa-basic':   ['[id="ear-points"]'],
+  'ynsa-sensory': ['[id="basic-yin"]', '[id="basic-yang"]', '[id="extra-lumbar-point"]'],
+}
+
+function buildHideStyle(activeSubgroup) {
+  const selectors = SVG_HIDE[activeSubgroup]
+  if (!selectors) return ''
+  return selectors.map(s => `.svg-lateral ${s}`).join(',\n') + ' { display: none; }'
+}
+
+export default function HeadLateral({ pickerMode = false, onPointSelect, highlightJsonId = null, pointFilter = null, activeSubgroup = null }) {
   const [pickerPos, setPickerPos]   = useState(null)
   const [selectedId, setSelectedId] = useState(null)
   const [hoveredId,  setHoveredId]  = useState(null)
   const svgRef = useRef(null)
+  const visiblePoints = pointFilter ? POINTS.filter(p => pointFilter.has(POINT_JSON_ID[p.id])) : POINTS
+  const hideStyle = buildHideStyle(activeSubgroup)
 
   function selectPoint(id, e) {
     e?.stopPropagation()
@@ -133,87 +149,85 @@ export default function HeadLateral({ pickerMode = false, onPointSelect, highlig
   }
 
   return (
-    <svg
-      ref={svgRef}
-      viewBox="0 0 556 712"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      style={{ width: '100%', height: '100%', maxHeight: '100%', cursor: pickerMode ? 'crosshair' : 'default' }}
-      onClick={handleSvgClick}
-    >
-      {/* SVG file is the single source of truth for all visuals */}
-      <image href={headSideSvg} x="0" y="0" width="556" height="712" />
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      {hideStyle && <style>{hideStyle}</style>}
 
-      {/* Transparent interactive overlay — one circle per point */}
-      {POINTS.map(({ id, cx, cy, color }) => (
-        <g
-          key={id}
-          onClick={(e) => selectPoint(id, e)}
-          onMouseEnter={() => setHoveredId(id)}
-          onMouseLeave={() => setHoveredId(null)}
-          style={{ cursor: 'pointer' }}
-        >
-          {selectedId === id && (
-            <circle cx={cx} cy={cy} r={9} fill="none" stroke={color} strokeWidth="2" opacity="0.85" />
-          )}
-          <circle cx={cx} cy={cy} r={7} fill="transparent" />
-        </g>
-      ))}
+      <HeadSideSvg
+        className="svg-lateral"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+      />
 
-      {/* Search highlight — pulsing ring */}
-      {highlightJsonId && POINTS
-        .filter(p => POINT_JSON_ID[p.id] === highlightJsonId)
-        .map(({ cx, cy }) => (
-          <g key={`hl-${cx}-${cy}`} pointerEvents="none">
-            <circle cx={cx} cy={cy} r={11} fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.9" />
-            <circle cx={cx} cy={cy} r={11} fill="none" stroke="#ffffff" strokeWidth="2">
-              <animate attributeName="r"       values="11;22;11" dur="1.6s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
-            </circle>
+      <svg
+        ref={svgRef}
+        viewBox="0 0 556 712"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', cursor: pickerMode ? 'crosshair' : 'default' }}
+        onClick={handleSvgClick}
+      >
+        {visiblePoints.map(({ id, cx, cy, color }) => (
+          <g
+            key={id}
+            onClick={(e) => selectPoint(id, e)}
+            onMouseEnter={() => setHoveredId(id)}
+            onMouseLeave={() => setHoveredId(null)}
+            style={{ cursor: 'pointer' }}
+          >
+            {selectedId === id && (
+              <circle cx={cx} cy={cy} r={9} fill="none" stroke={color} strokeWidth="2" opacity="0.85" />
+            )}
+            <circle cx={cx} cy={cy} r={7} fill="transparent" />
           </g>
-        ))
-      }
+        ))}
 
-      {/* Hover tooltip */}
-      {hoveredId && (() => {
-        const pt     = POINTS.find(p => p.id === hoveredId)
-        if (!pt) return null
-        const jsonId = POINT_JSON_ID[hoveredId]
-        const data   = allPoints.find(p => p.id === jsonId)
-        const label  = data?.name ?? hoveredId
-        const pad    = 6
-        const fSize  = 11
-        const w      = label.length * 6.2 + pad * 2
-        const h      = fSize + pad * 2
-        // offset tooltip above-right; flip left if near right edge
-        const tx = pt.cx + 12 + w > 556 ? pt.cx - w - 8 : pt.cx + 12
-        const ty = pt.cy - h - 4
-        return (
-          <g pointerEvents="none">
-            <rect x={tx} y={ty} width={w} height={h} rx={4} fill="rgba(0,0,0,0.72)" />
-            <text
-              x={tx + pad}
-              y={ty + fSize + pad * 0.6}
-              fontSize={fSize}
-              fill="white"
-              fontFamily="system-ui, sans-serif"
-            >
-              {label}
+        {/* Search highlight — pulsing ring */}
+        {highlightJsonId && visiblePoints
+          .filter(p => POINT_JSON_ID[p.id] === highlightJsonId)
+          .map(({ cx, cy }) => (
+            <g key={`hl-${cx}-${cy}`} pointerEvents="none">
+              <circle cx={cx} cy={cy} r={11} fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.9" />
+              <circle cx={cx} cy={cy} r={11} fill="none" stroke="#ffffff" strokeWidth="2">
+                <animate attributeName="r"       values="11;22;11" dur="1.6s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
+              </circle>
+            </g>
+          ))
+        }
+
+        {/* Hover tooltip */}
+        {hoveredId && (() => {
+          const pt     = visiblePoints.find(p => p.id === hoveredId)
+          if (!pt) return null
+          const jsonId = POINT_JSON_ID[hoveredId]
+          const data   = allPoints.find(p => p.id === jsonId)
+          const label  = data?.name ?? hoveredId
+          const pad    = 6
+          const fSize  = 11
+          const w      = label.length * 6.2 + pad * 2
+          const h      = fSize + pad * 2
+          const tx = pt.cx + 12 + w > 556 ? pt.cx - w - 8 : pt.cx + 12
+          const ty = pt.cy - h - 4
+          return (
+            <g pointerEvents="none">
+              <rect x={tx} y={ty} width={w} height={h} rx={4} fill="rgba(0,0,0,0.72)" />
+              <text x={tx + pad} y={ty + fSize + pad * 0.6} fontSize={fSize} fill="white" fontFamily="system-ui, sans-serif">
+                {label}
+              </text>
+            </g>
+          )
+        })()}
+
+        {/* Coordinate picker crosshair (dev only) */}
+        {pickerMode && pickerPos && (
+          <g>
+            <line x1={pickerPos.x - 10} y1={pickerPos.y} x2={pickerPos.x + 10} y2={pickerPos.y} stroke="#f59e0b" strokeWidth="1.5" />
+            <line x1={pickerPos.x} y1={pickerPos.y - 10} x2={pickerPos.x} y2={pickerPos.y + 10} stroke="#f59e0b" strokeWidth="1.5" />
+            <text x={pickerPos.x + 12} y={pickerPos.y - 6} fontSize="10" fill="#f59e0b" fontFamily="monospace">
+              {pickerPos.x},{pickerPos.y}
             </text>
           </g>
-        )
-      })()}
-
-      {/* Coordinate picker crosshair (dev only) */}
-      {pickerMode && pickerPos && (
-        <g>
-          <line x1={pickerPos.x - 10} y1={pickerPos.y} x2={pickerPos.x + 10} y2={pickerPos.y} stroke="#f59e0b" strokeWidth="1.5" />
-          <line x1={pickerPos.x} y1={pickerPos.y - 10} x2={pickerPos.x} y2={pickerPos.y + 10} stroke="#f59e0b" strokeWidth="1.5" />
-          <text x={pickerPos.x + 12} y={pickerPos.y - 6} fontSize="10" fill="#f59e0b" fontFamily="monospace">
-            {pickerPos.x},{pickerPos.y}
-          </text>
-        </g>
-      )}
-    </svg>
+        )}
+      </svg>
+    </div>
   )
 }

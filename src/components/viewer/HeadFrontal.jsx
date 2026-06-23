@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { allPoints } from '../../data/points'
-import headFrontSvg from '../../assets/diagrams/head_front.svg'
+import HeadFrontSvg from '../../assets/diagrams/head_front.svg?react'
 
 const ORANGE = '#CB6608'
 const GREEN  = '#34B904'
@@ -35,7 +35,6 @@ const POINT_JSON_ID = {
 }
 
 // Coordinates from head_front.svg (viewBox 0 0 485 640)
-// Matrix-transform circles: center = (tx − 4, ty + 4)
 const POINTS = [
   // ── A zone yin ───────────────────────────────────────────
   { id: 'A8-yin',          cx: 225.749, cy: 108,    color: ORANGE },
@@ -78,11 +77,26 @@ const POINTS = [
   { id: 'Basal-ganglia',   cx: 248.749, cy:  88,    color: LIME,  rx: 4, ry: 13 },
 ]
 
-export default function HeadFrontal({ pickerMode = false, onPointSelect, highlightJsonId = null }) {
+// SVG group IDs to hide per subgroup — head_front.svg uses named groups
+const SVG_HIDE = {
+  'ynsa-basic':   ['[id="sensory points"]', '[id="brain-points"]'],
+  'ynsa-sensory': ['[id="basic-yin-points"]', '[id="extra-lumbar-points"]', '[id="brain-points"]'],
+  'ynsa-brain':   ['[id="basic-yin-points"]', '[id="extra-lumbar-points"]', '[id="sensory points"]'],
+}
+
+function buildHideStyle(activeSubgroup) {
+  const selectors = SVG_HIDE[activeSubgroup]
+  if (!selectors) return ''
+  return selectors.map(s => `.svg-frontal ${s}`).join(',\n') + ' { display: none; }'
+}
+
+export default function HeadFrontal({ pickerMode = false, onPointSelect, highlightJsonId = null, pointFilter = null, activeSubgroup = null }) {
   const [pickerPos, setPickerPos]   = useState(null)
   const [selectedId, setSelectedId] = useState(null)
   const [hoveredId,  setHoveredId]  = useState(null)
   const svgRef = useRef(null)
+  const visiblePoints = pointFilter ? POINTS.filter(p => pointFilter.has(POINT_JSON_ID[p.id])) : POINTS
+  const hideStyle = buildHideStyle(activeSubgroup)
 
   function selectPoint(id, e) {
     e?.stopPropagation()
@@ -107,84 +121,93 @@ export default function HeadFrontal({ pickerMode = false, onPointSelect, highlig
   }
 
   return (
-    <svg
-      ref={svgRef}
-      viewBox="0 0 485 640"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      style={{ width: '100%', height: '100%', maxHeight: '100%', cursor: pickerMode ? 'crosshair' : 'default' }}
-      onClick={handleSvgClick}
-    >
-      <image href={headFrontSvg} x="0" y="0" width="485" height="640" />
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      {hideStyle && <style>{hideStyle}</style>}
 
-      {POINTS.map(({ id, cx, cy, color, rx, ry }) => {
-        const isEllipse = rx !== undefined
-        return (
-          <g
-            key={id}
-            onClick={(e) => selectPoint(id, e)}
-            onMouseEnter={() => setHoveredId(id)}
-            onMouseLeave={() => setHoveredId(null)}
-            style={{ cursor: 'pointer' }}
-          >
-            {selectedId === id && (
-              isEllipse
-                ? <ellipse cx={cx} cy={cy} rx={rx + 5} ry={ry + 5} fill="none" stroke={color} strokeWidth="2" opacity="0.85" />
-                : <circle  cx={cx} cy={cy} r={9}        fill="none" stroke={color} strokeWidth="2" opacity="0.85" />
-            )}
-            {isEllipse
-              ? <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="transparent" />
-              : <circle  cx={cx} cy={cy} r={7}            fill="transparent" />
-            }
-          </g>
-        )
-      })}
+      {/* Inline SVG — groups are CSS-targetable by the style above */}
+      <HeadFrontSvg
+        className="svg-frontal"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+      />
 
-      {/* Search highlight — pulsing ring */}
-      {highlightJsonId && POINTS
-        .filter(p => POINT_JSON_ID[p.id] === highlightJsonId)
-        .map(({ cx, cy, rx, ry }) => (
-          <g key={`hl-${cx}-${cy}`} pointerEvents="none">
-            <circle cx={cx} cy={cy} r={11} fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.9" />
-            <circle cx={cx} cy={cy} r={11} fill="none" stroke="#ffffff" strokeWidth="2">
-              <animate attributeName="r"       values="11;22;11" dur="1.6s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
-            </circle>
-          </g>
-        ))
-      }
+      {/* Interactive overlay — same viewBox as the base SVG */}
+      <svg
+        ref={svgRef}
+        viewBox="0 0 485 640"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', cursor: pickerMode ? 'crosshair' : 'default' }}
+        onClick={handleSvgClick}
+      >
+        {visiblePoints.map(({ id, cx, cy, color, rx, ry }) => {
+          const isEllipse = rx !== undefined
+          return (
+            <g
+              key={id}
+              onClick={(e) => selectPoint(id, e)}
+              onMouseEnter={() => setHoveredId(id)}
+              onMouseLeave={() => setHoveredId(null)}
+              style={{ cursor: 'pointer' }}
+            >
+              {selectedId === id && (
+                isEllipse
+                  ? <ellipse cx={cx} cy={cy} rx={rx + 5} ry={ry + 5} fill="none" stroke={color} strokeWidth="2" opacity="0.85" />
+                  : <circle  cx={cx} cy={cy} r={9}        fill="none" stroke={color} strokeWidth="2" opacity="0.85" />
+              )}
+              {isEllipse
+                ? <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="transparent" />
+                : <circle  cx={cx} cy={cy} r={7}            fill="transparent" />
+              }
+            </g>
+          )
+        })}
 
-      {hoveredId && (() => {
-        const pt     = POINTS.find(p => p.id === hoveredId)
-        if (!pt) return null
-        const jsonId = POINT_JSON_ID[hoveredId]
-        const data   = allPoints.find(p => p.id === jsonId)
-        const label  = data?.name ?? hoveredId
-        const pad    = 6
-        const fSize  = 11
-        const w      = label.length * 6.2 + pad * 2
-        const h      = fSize + pad * 2
-        const tx = pt.cx + 12 + w > 485 ? pt.cx - w - 8 : pt.cx + 12
-        const ty = pt.cy - h - 4
-        return (
-          <g pointerEvents="none">
-            <rect x={tx} y={ty} width={w} height={h} rx={4} fill="rgba(0,0,0,0.72)" />
-            <text x={tx + pad} y={ty + fSize + pad * 0.6} fontSize={fSize} fill="white" fontFamily="system-ui, sans-serif">
-              {label}
+        {/* Search highlight — pulsing ring */}
+        {highlightJsonId && visiblePoints
+          .filter(p => POINT_JSON_ID[p.id] === highlightJsonId)
+          .map(({ cx, cy }) => (
+            <g key={`hl-${cx}-${cy}`} pointerEvents="none">
+              <circle cx={cx} cy={cy} r={11} fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.9" />
+              <circle cx={cx} cy={cy} r={11} fill="none" stroke="#ffffff" strokeWidth="2">
+                <animate attributeName="r"       values="11;22;11" dur="1.6s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
+              </circle>
+            </g>
+          ))
+        }
+
+        {hoveredId && (() => {
+          const pt     = visiblePoints.find(p => p.id === hoveredId)
+          if (!pt) return null
+          const jsonId = POINT_JSON_ID[hoveredId]
+          const data   = allPoints.find(p => p.id === jsonId)
+          const label  = data?.name ?? hoveredId
+          const pad    = 6
+          const fSize  = 11
+          const w      = label.length * 6.2 + pad * 2
+          const h      = fSize + pad * 2
+          const tx = pt.cx + 12 + w > 485 ? pt.cx - w - 8 : pt.cx + 12
+          const ty = pt.cy - h - 4
+          return (
+            <g pointerEvents="none">
+              <rect x={tx} y={ty} width={w} height={h} rx={4} fill="rgba(0,0,0,0.72)" />
+              <text x={tx + pad} y={ty + fSize + pad * 0.6} fontSize={fSize} fill="white" fontFamily="system-ui, sans-serif">
+                {label}
+              </text>
+            </g>
+          )
+        })()}
+
+        {pickerMode && pickerPos && (
+          <g>
+            <line x1={pickerPos.x - 10} y1={pickerPos.y} x2={pickerPos.x + 10} y2={pickerPos.y} stroke="#f59e0b" strokeWidth="1.5" />
+            <line x1={pickerPos.x} y1={pickerPos.y - 10} x2={pickerPos.x} y2={pickerPos.y + 10} stroke="#f59e0b" strokeWidth="1.5" />
+            <text x={pickerPos.x + 12} y={pickerPos.y - 6} fontSize="10" fill="#f59e0b" fontFamily="monospace">
+              {pickerPos.x},{pickerPos.y}
             </text>
           </g>
-        )
-      })()}
-
-      {pickerMode && pickerPos && (
-        <g>
-          <line x1={pickerPos.x - 10} y1={pickerPos.y} x2={pickerPos.x + 10} y2={pickerPos.y} stroke="#f59e0b" strokeWidth="1.5" />
-          <line x1={pickerPos.x} y1={pickerPos.y - 10} x2={pickerPos.x} y2={pickerPos.y + 10} stroke="#f59e0b" strokeWidth="1.5" />
-          <text x={pickerPos.x + 12} y={pickerPos.y - 6} fontSize="10" fill="#f59e0b" fontFamily="monospace">
-            {pickerPos.x},{pickerPos.y}
-          </text>
-        </g>
-      )}
-    </svg>
+        )}
+      </svg>
+    </div>
   )
 }
