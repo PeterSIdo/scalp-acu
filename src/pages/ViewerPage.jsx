@@ -6,6 +6,7 @@ import { useTheme } from '../providers/ThemeProvider'
 import HeadLateral   from '../components/viewer/HeadLateral'
 import HeadFrontal   from '../components/viewer/HeadFrontal'
 import HeadPosterior from '../components/viewer/HeadPosterior'
+import HeadYPoints   from '../components/viewer/HeadYPoints'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
 import SearchPanel from '../components/ui/SearchPanel'
@@ -20,6 +21,7 @@ const SYSTEMS = [
       { id: 'ynsa-basic',   label: 'Basic Points',      views: ['Lateral', 'Frontal', 'Posterior'], available: true  },
       { id: 'ynsa-sensory', label: 'Sensory Points',    views: ['Lateral', 'Frontal', 'Posterior'], available: true  },
       { id: 'ynsa-brain',   label: 'Brain Points',      views: ['Frontal', 'Posterior'],            available: true  },
+      { id: 'ynsa-y',       label: 'Y-Points',          views: ['Side'],                            available: true  },
       { id: 'ynsa-neck',    label: 'Neck Diagnosis',    views: ['Neck'],                            available: false },
       { id: 'ynsa-abdomen', label: 'Abdomen Diagnosis', views: ['Abdomen'],                         available: false },
     ],
@@ -54,6 +56,20 @@ const SUBGROUP_POINT_IDS = {
     'YNSA-Brain-Cerebrum-yin',    'YNSA-Brain-Cerebrum-yang',
     'YNSA-Brain-Cerebellum-yin',  'YNSA-Brain-Cerebellum-yang',
     'YNSA-Brain-BasalGanglia-yin','YNSA-Brain-BasalGanglia-yang',
+  ]),
+  'ynsa-y': new Set([
+    'YNSA-Y-LU-yin',   'YNSA-Y-LU-yang',   'YNSA-Y-LU-yin-2',   'YNSA-Y-LU-yang-2',
+    'YNSA-Y-HT-yin',   'YNSA-Y-HT-yang',   'YNSA-Y-HT-yin-2',   'YNSA-Y-HT-yang-2',
+    'YNSA-Y-PE-yin',   'YNSA-Y-PE-yang',   'YNSA-Y-PE-yin-2',   'YNSA-Y-PE-yang-2',
+    'YNSA-Y-SI-yin',   'YNSA-Y-SI-yang',   'YNSA-Y-SI-yin-2',   'YNSA-Y-SI-yang-2',
+    'YNSA-Y-ST-yin',   'YNSA-Y-ST-yang',   'YNSA-Y-ST-yin-2',   'YNSA-Y-ST-yang-2',
+    'YNSA-Y-LV-yin',   'YNSA-Y-LV-yang',   'YNSA-Y-LV-yin-2',   'YNSA-Y-LV-yang-2',
+    'YNSA-Y-SP-PANC-yin','YNSA-Y-SP-PANC-yang','YNSA-Y-SP-PANC-yin-2','YNSA-Y-SP-PANC-yang-2',
+    'YNSA-Y-GB-yin',   'YNSA-Y-GB-yang',   'YNSA-Y-GB-yin-2',   'YNSA-Y-GB-yang-2',
+    'YNSA-Y-SJ-yin',   'YNSA-Y-SJ-yang',   'YNSA-Y-SJ-yin-2',   'YNSA-Y-SJ-yang-2',
+    'YNSA-Y-KI-yin',   'YNSA-Y-KI-yang',   'YNSA-Y-KI-yin-2',   'YNSA-Y-KI-yang-2',
+    'YNSA-Y-LI-yin',   'YNSA-Y-LI-yang',   'YNSA-Y-LI-yin-2',   'YNSA-Y-LI-yang-2',
+    'YNSA-Y-BL-yin',   'YNSA-Y-BL-yang',   'YNSA-Y-BL-yin-2',   'YNSA-Y-BL-yang-2',
   ]),
 }
 
@@ -285,6 +301,7 @@ export default function ViewerPage() {
               {activeView === 'Lateral'   && <HeadLateral   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
               {activeView === 'Frontal'   && <HeadFrontal   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
               {activeView === 'Posterior' && <HeadPosterior onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
+              {activeView === 'Side'      && <HeadYPoints   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} />}
             </ZoomableView>
           ) : (
             <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
