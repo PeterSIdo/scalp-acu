@@ -21,30 +21,41 @@ const LABEL_TO_MERIDIAN = {
   'Bladder':         'BL',      'BL':      'BL',
 }
 
-// One entry per meridian row: y = bottom edge of the label text in SVG units
-// (read from the short-code path M759 <y> starting coordinates, which are reliable)
-// Left hit rect covers full-name labels (x 0–230); right covers short codes (x 740–846)
-const LABEL_ROWS = [
-  { meridian: 'HT',      y:  43 },
-  { meridian: 'PE',      y:  89 },
-  { meridian: 'LU',      y: 135 },
-  { meridian: 'LV',      y: 181 },
-  { meridian: 'ST',      y: 227 },
-  { meridian: 'SI',      y: 273 },
-  { meridian: 'GB',      y: 319 },
-  { meridian: 'SP-PANC', y: 364 },
-  { meridian: 'SJ',      y: 411 },
-  { meridian: 'KI',      y: 457 },
-  { meridian: 'LI',      y: 503 },
-  { meridian: 'BL',      y: 549 },
+// One entry per SVG label element (id matches LABEL_TO_MERIDIAN keys above).
+// Bounding boxes read directly from each label path's `d` attribute (viewBox 0 0 754 811).
+// Re-extracted 2026-07-04 after user repositioned the labels and resized the canvas:
+// short codes moved from the right edge to a vertical column on the left; full names
+// moved from that left column into two horizontal rows near the bottom.
+// x/y/w/h below already include padding (short codes: ±8/±6, full names: ±6/±3 —
+// the two bottom rows sit only ~7.5 units apart so full-name padding must stay small).
+const LABEL_HITAREAS = [
+  // ── Short codes (left column) ──────────────────────────
+  { id: 'HT', x:  34.4, y: 110.5, w:  41.9, h:  26.5 },
+  { id: 'PE', x:  34.4, y: 156.5, w:  38.4, h:  26.5 },
+  { id: 'LU', x:  34.4, y: 202.5, w:  39.2, h:  26.7 },
+  { id: 'LV', x:  34.4, y: 248.5, w:  38.4, h:  26.5 },
+  { id: 'ST', x:  33.9, y: 294.3, w:  40.5, h:  26.9 },
+  { id: 'SI', x:  33.9, y: 340.3, w:  32.2, h:  26.9 },
+  { id: 'GB', x:  34.1, y: 386.3, w:  42.3, h:  26.9 },
+  { id: 'BL', x:  34.4, y: 432.5, w:  38.2, h:  26.5 },
+  { id: 'SJ', x:  33.9, y: 478.3, w:  29.9, h:  26.9 },
+  { id: 'KD', x:  34.4, y: 524.5, w:  41.6, h:  26.5 },
+  { id: 'LI', x:  34.4, y: 570.5, w:  30.0, h:  26.5 },
+  { id: 'SP/PANC', x: 33.9, y: 615.8, w: 103.0, h: 29.4 },
+  // ── Full names (two rows near bottom) ──────────────────
+  { id: 'Heart',           x:  35.9, y: 739.5, w:  61.7, h:  20.7 },
+  { id: 'Pericardium',     x: 104.9, y: 739.4, w: 118.9, h:  20.8 },
+  { id: 'Lung',            x: 235.9, y: 739.5, w:  54.8, h:  24.8 },
+  { id: 'Liver',           x: 298.9, y: 739.4, w:  54.8, h:  20.8 },
+  { id: 'Stomach',         x: 360.3, y: 739.2, w:  91.6, h:  20.9 },
+  { id: 'Small intestine', x: 460.3, y: 739.2, w: 145.4, h:  20.9 },
+  { id: 'Gallblader',      x: 617.3, y: 739.3, w: 104.4, h:  20.9 },
+  { id: 'Bladder',         x:  35.9, y: 766.5, w:  81.6, h:  20.7 },
+  { id: 'Tripple heater',  x: 121.1, y: 766.4, w: 139.7, h:  24.7 },
+  { id: 'Kidney',          x: 268.9, y: 766.4, w:  73.5, h:  24.7 },
+  { id: 'Large intestine', x: 347.9, y: 766.4, w: 147.6, h:  24.9 },
+  { id: 'Spleen/Pancreas', x: 503.3, y: 765.8, w: 166.7, h:  25.3 },
 ]
-// Hit rect geometry: text is ~15 SVG units tall, add ±10 padding
-const HIT_PAD   = 10
-const HIT_H     = 15 + HIT_PAD * 2   // 35
-const LEFT_X    = 0
-const LEFT_W    = 230   // covers all full-name labels
-const RIGHT_X   = 740
-const RIGHT_W   = 106   // to SVG right edge (846)
 
 // SVG point id → ynsa.json id (filled as JSON data is authored)
 const POINT_JSON_ID = {
@@ -100,60 +111,62 @@ const POINT_JSON_ID = {
   'BL-yang_2':        'YNSA-Y-BL-yang-2',
 }
 
-// Coordinates from YNSA-Y-Side.svg (viewBox 0 0 846 708)
-// Re-extracted 2026-07-03 after user repositioned/renamed points in the SVG.
+// Coordinates from YNSA-Y-Side.svg (viewBox 0 0 754 811)
+// Re-extracted 2026-07-04 after user resized the canvas and repositioned labels
+// (point positions unchanged relative to the head silhouette, but the whole SVG
+// shifted by a constant dx=-93.565, dy=+20 when the artboard was resized).
 // Circle-element coords read directly; path-drawn circles use their bounding-box center.
 const POINTS = [
   // ── Strong Y-Points ────────────────────────────────────
-  { id: 'LU-yin',         cx: 433.781, cy: 209.216, color: RED  },
-  { id: 'LU-yang',        cx: 555.781, cy: 232.216, color: RED  },
-  { id: 'HT-yin',         cx: 483.781, cy: 220.216, color: RED  },
-  { id: 'HT-yang',        cx: 508.781, cy: 224.216, color: RED  },
-  { id: 'PE-yin',         cx: 457.781, cy: 214.216, color: RED  },
-  { id: 'PE-yang',        cx: 532.781, cy: 229.216, color: RED  },
-  { id: 'SI-yin',         cx: 432.781, cy: 239.216, color: RED  },
-  { id: 'SI-yang',        cx: 554.781, cy: 257.216, color: RED  },
-  { id: 'ST-yin',         cx: 458.781, cy: 238.216, color: RED  },
-  { id: 'ST-yang',        cx: 531.781, cy: 252.216, color: RED  },
-  { id: 'LV-yin',         cx: 482.781, cy: 242.216, color: RED  },
-  { id: 'LV-yang',        cx: 508.781, cy: 247.216, color: RED  },
-  { id: 'SP-PANC-yin',    cx: 456.065, cy: 260.623, color: RED  },
-  { id: 'SP-PANC-yang',   cx: 539.781, cy: 272.216, color: RED  },
-  { id: 'GB-yin',         cx: 476.781, cy: 262.216, color: RED  },
-  { id: 'GB-yang',        cx: 509.781, cy: 267.216, color: RED  },
-  { id: 'SJ-yin',         cx: 429.781, cy: 276.216, color: RED  },
-  { id: 'SJ-yang',        cx: 567.782, cy: 308.216, color: RED  },
-  { id: 'KI-yin',         cx: 450.595, cy: 284.716, color: RED  },
-  { id: 'KI-yang',        cx: 567.781, cy: 386.216, color: RED  },
-  { id: 'LI-yin',         cx: 427.782, cy: 308.216, color: RED  },
-  { id: 'LI-yang',        cx: 569.781, cy: 335.216, color: RED  },
-  { id: 'BL-yin',         cx: 449.411, cy: 309.216, color: RED  },
-  { id: 'BL-yang',        cx: 548.781, cy: 411.216, color: RED  },
+  { id: 'LU-yin',         cx: 340.216, cy: 229.216, color: RED  },
+  { id: 'LU-yang',        cx: 462.216, cy: 252.216, color: RED  },
+  { id: 'HT-yin',         cx: 390.216, cy: 240.216, color: RED  },
+  { id: 'HT-yang',        cx: 415.216, cy: 244.216, color: RED  },
+  { id: 'PE-yin',         cx: 364.216, cy: 234.216, color: RED  },
+  { id: 'PE-yang',        cx: 439.216, cy: 249.216, color: RED  },
+  { id: 'SI-yin',         cx: 339.216, cy: 259.216, color: RED  },
+  { id: 'SI-yang',        cx: 461.216, cy: 277.216, color: RED  },
+  { id: 'ST-yin',         cx: 365.216, cy: 258.216, color: RED  },
+  { id: 'ST-yang',        cx: 438.216, cy: 272.216, color: RED  },
+  { id: 'LV-yin',         cx: 389.216, cy: 262.216, color: RED  },
+  { id: 'LV-yang',        cx: 415.216, cy: 267.216, color: RED  },
+  { id: 'SP-PANC-yin',    cx: 362.5,   cy: 280.623, color: RED  },
+  { id: 'SP-PANC-yang',   cx: 446.216, cy: 292.216, color: RED  },
+  { id: 'GB-yin',         cx: 383.216, cy: 282.216, color: RED  },
+  { id: 'GB-yang',        cx: 416.216, cy: 287.216, color: RED  },
+  { id: 'SJ-yin',         cx: 336.216, cy: 296.216, color: RED  },
+  { id: 'SJ-yang',        cx: 474.216, cy: 328.216, color: RED  },
+  { id: 'KI-yin',         cx: 357.029, cy: 304.716, color: RED  },
+  { id: 'KI-yang',        cx: 474.216, cy: 406.216, color: RED  },
+  { id: 'LI-yin',         cx: 334.216, cy: 328.216, color: RED  },
+  { id: 'LI-yang',        cx: 476.216, cy: 355.216, color: RED  },
+  { id: 'BL-yin',         cx: 355.845, cy: 329.216, color: RED  },
+  { id: 'BL-yang',        cx: 455.216, cy: 431.216, color: RED  },
   // ── Weak Y-Points ──────────────────────────────────────
-  { id: 'LU-yin_2',         cx: 433.781, cy: 181.216, color: BLUE },
-  { id: 'LU-yang_2',        cx: 552.781, cy: 205.216, color: BLUE },
-  { id: 'HT-yin_2',         cx: 483.781, cy: 191.216, color: BLUE },
-  { id: 'HT-yang_2',        cx: 506.781, cy: 197.216, color: BLUE },
-  { id: 'PE-yin_2',         cx: 457.781, cy: 186.216, color: BLUE },
-  { id: 'PE-yang_2',        cx: 529.781, cy: 199.216, color: BLUE },
-  { id: 'SI-yin_2',         cx: 434.327, cy: 157,     color: BLUE },
-  { id: 'SI-yang_2',        cx: 559.781, cy: 176.216, color: BLUE },
-  { id: 'ST-yin_2',         cx: 457.781, cy: 163.216, color: BLUE },
-  { id: 'ST-yang_2',        cx: 529.781, cy: 178.216, color: BLUE },
-  { id: 'LV-yin_2',         cx: 481.781, cy: 169.216, color: BLUE },
-  { id: 'LV-yang_2',        cx: 507.781, cy: 171.216, color: BLUE },
-  { id: 'SP-PANC-yin_2',    cx: 454.782, cy: 140.216, color: BLUE },
-  { id: 'SP-PANC-yang_2',   cx: 536.781, cy: 154.216, color: BLUE },
-  { id: 'GB-yin_2',         cx: 477.565, cy: 142.216, color: BLUE },
-  { id: 'GB-yang_2',        cx: 507.781, cy: 149.216, color: BLUE },
-  { id: 'SJ-yin_2',         cx: 430.781, cy: 123.216, color: BLUE },
-  { id: 'SJ-yang_2',        cx: 561.781, cy: 144.216, color: BLUE },
-  { id: 'KI-yin_2',         cx: 454.565, cy: 114.146, color: BLUE },
-  { id: 'KI-yang_2',        cx: 536.781, cy: 130.216, color: BLUE },
-  { id: 'LI-yin_2',         cx: 423.781, cy:  86.216, color: BLUE },
-  { id: 'LI-yang_2',        cx: 561.781, cy: 114.216, color: BLUE },
-  { id: 'BL-yin_2',         cx: 453.065, cy:  92.724, color: BLUE },
-  { id: 'BL-yang_2',        cx: 536.781, cy: 109.216, color: BLUE },
+  { id: 'LU-yin_2',         cx: 340.216, cy: 201.216, color: BLUE },
+  { id: 'LU-yang_2',        cx: 459.216, cy: 225.216, color: BLUE },
+  { id: 'HT-yin_2',         cx: 390.216, cy: 211.216, color: BLUE },
+  { id: 'HT-yang_2',        cx: 413.216, cy: 217.216, color: BLUE },
+  { id: 'PE-yin_2',         cx: 364.216, cy: 206.216, color: BLUE },
+  { id: 'PE-yang_2',        cx: 436.216, cy: 219.216, color: BLUE },
+  { id: 'SI-yin_2',         cx: 340.762, cy: 177,     color: BLUE },
+  { id: 'SI-yang_2',        cx: 466.216, cy: 196.216, color: BLUE },
+  { id: 'ST-yin_2',         cx: 364.216, cy: 183.216, color: BLUE },
+  { id: 'ST-yang_2',        cx: 436.216, cy: 198.216, color: BLUE },
+  { id: 'LV-yin_2',         cx: 388.216, cy: 189.216, color: BLUE },
+  { id: 'LV-yang_2',        cx: 414.216, cy: 191.216, color: BLUE },
+  { id: 'SP-PANC-yin_2',    cx: 361.216, cy: 160.216, color: BLUE },
+  { id: 'SP-PANC-yang_2',   cx: 443.216, cy: 174.216, color: BLUE },
+  { id: 'GB-yin_2',         cx: 384,     cy: 162.216, color: BLUE },
+  { id: 'GB-yang_2',        cx: 414.216, cy: 169.216, color: BLUE },
+  { id: 'SJ-yin_2',         cx: 337.216, cy: 143.216, color: BLUE },
+  { id: 'SJ-yang_2',        cx: 468.216, cy: 164.216, color: BLUE },
+  { id: 'KI-yin_2',         cx: 361,     cy: 134.145, color: BLUE },
+  { id: 'KI-yang_2',        cx: 443.216, cy: 150.216, color: BLUE },
+  { id: 'LI-yin_2',         cx: 330.216, cy: 106.216, color: BLUE },
+  { id: 'LI-yang_2',        cx: 468.216, cy: 134.216, color: BLUE },
+  { id: 'BL-yin_2',         cx: 359.5,   cy: 112.724, color: BLUE },
+  { id: 'BL-yang_2',        cx: 443.216, cy: 129.216, color: BLUE },
 ]
 
 // Build scoped CSS:
@@ -258,23 +271,22 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
       {/* Overlay SVG — pointer-events:none at root so label clicks in the background SVG
           pass through. Individual <g> elements re-enable pointer-events for points. */}
       <svg
-        viewBox="0 0 846 708"
+        viewBox="0 0 754 811"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
       >
-        {/* Invisible hit rects that make label rows easy to click */}
-        {LABEL_ROWS.map(({ meridian, y }) => {
-          const ry = y - 15 - HIT_PAD  // top of hit rect
+        {/* Invisible hit rects that make each label easy to click */}
+        {LABEL_HITAREAS.map(({ id, x, y, w, h }) => {
+          const meridian = LABEL_TO_MERIDIAN[id]
           const isActive = activeMeridian === meridian
           return (
             <g
-              key={meridian}
+              key={id}
               onClick={() => handleMeridianSelect(meridian)}
               style={{ cursor: 'pointer', pointerEvents: 'auto' }}
             >
-              <rect x={LEFT_X}  y={ry} width={LEFT_W}  height={HIT_H} fill={isActive ? 'rgba(52,185,4,0.12)' : 'transparent'} rx={4} />
-              <rect x={RIGHT_X} y={ry} width={RIGHT_W} height={HIT_H} fill={isActive ? 'rgba(52,185,4,0.12)' : 'transparent'} rx={4} />
+              <rect x={x} y={y} width={w} height={h} fill={isActive ? 'rgba(52,185,4,0.12)' : 'transparent'} rx={4} />
             </g>
           )
         })}
