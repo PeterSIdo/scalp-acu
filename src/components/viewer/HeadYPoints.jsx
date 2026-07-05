@@ -5,57 +5,32 @@ import YNSAYSideSvg from '../../assets/diagrams/YNSA-Y-Side.svg?react'
 const RED  = '#FF0808'
 const BLUE = '#5392F6'
 
-// SVG label id → meridian key (prefix used in point ids)
-const LABEL_TO_MERIDIAN = {
-  'Heart':           'HT',      'HT':      'HT',
-  'Lung':            'LU',      'LU':      'LU',
-  'Pericardium':     'PE',      'PE':      'PE',
-  'Small intestine': 'SI',      'SI':      'SI',
-  'Stomach':         'ST',      'ST':      'ST',
-  'Liver':           'LV',      'LV':      'LV',
-  'Tripple heater':  'SJ',      'SJ':      'SJ',
-  'Spleen/Pancreas': 'SP-PANC', 'SP/PANC': 'SP-PANC',
-  'Gallblader':      'GB',      'GB':      'GB',
-  'Kidney':          'KI',      'KD':      'KI',
-  'Large intestine': 'LI',      'LI':      'LI',
-  'Bladder':         'BL',      'BL':      'BL',
-}
-
-// One entry per SVG label element (id matches LABEL_TO_MERIDIAN keys above).
-// Bounding boxes read directly from each label path's `d` attribute (viewBox 0 0 754 811).
-// Re-extracted 2026-07-04 after user repositioned the labels and resized the canvas:
-// short codes moved from the right edge to a vertical column on the left; full names
-// moved from that left column into two horizontal rows near the bottom.
-// x/y/w/h below already include padding (short codes: ±8/±6, full names: ±6/±3 —
-// the two bottom rows sit only ~7.5 units apart so full-name padding must stay small).
-const LABEL_HITAREAS = [
-  // ── Short codes (left column) ──────────────────────────
-  { id: 'HT', x:  34.4, y: 110.5, w:  41.9, h:  26.5 },
-  { id: 'PE', x:  34.4, y: 156.5, w:  38.4, h:  26.5 },
-  { id: 'LU', x:  34.4, y: 202.5, w:  39.2, h:  26.7 },
-  { id: 'LV', x:  34.4, y: 248.5, w:  38.4, h:  26.5 },
-  { id: 'ST', x:  33.9, y: 294.3, w:  40.5, h:  26.9 },
-  { id: 'SI', x:  33.9, y: 340.3, w:  32.2, h:  26.9 },
-  { id: 'GB', x:  34.1, y: 386.3, w:  42.3, h:  26.9 },
-  { id: 'BL', x:  34.4, y: 432.5, w:  38.2, h:  26.5 },
-  { id: 'SJ', x:  33.9, y: 478.3, w:  29.9, h:  26.9 },
-  { id: 'KD', x:  34.4, y: 524.5, w:  41.6, h:  26.5 },
-  { id: 'LI', x:  34.4, y: 570.5, w:  30.0, h:  26.5 },
-  { id: 'SP/PANC', x: 33.9, y: 615.8, w: 103.0, h: 29.4 },
-  // ── Full names (two rows near bottom) ──────────────────
-  { id: 'Heart',           x:  35.9, y: 739.5, w:  61.7, h:  20.7 },
-  { id: 'Pericardium',     x: 104.9, y: 739.4, w: 118.9, h:  20.8 },
-  { id: 'Lung',            x: 235.9, y: 739.5, w:  54.8, h:  24.8 },
-  { id: 'Liver',           x: 298.9, y: 739.4, w:  54.8, h:  20.8 },
-  { id: 'Stomach',         x: 360.3, y: 739.2, w:  91.6, h:  20.9 },
-  { id: 'Small intestine', x: 460.3, y: 739.2, w: 145.4, h:  20.9 },
-  { id: 'Gallblader',      x: 617.3, y: 739.3, w: 104.4, h:  20.9 },
-  { id: 'Bladder',         x:  35.9, y: 766.5, w:  81.6, h:  20.7 },
-  { id: 'Tripple heater',  x: 121.1, y: 766.4, w: 139.7, h:  24.7 },
-  { id: 'Kidney',          x: 268.9, y: 766.4, w:  73.5, h:  24.7 },
-  { id: 'Large intestine', x: 347.9, y: 766.4, w: 147.6, h:  24.9 },
-  { id: 'Spleen/Pancreas', x: 503.3, y: 765.8, w: 166.7, h:  25.3 },
+// Meridian menu items, in the order the rects are stacked in the SVG (top → bottom).
+// rectId/textId are the SVG element ids (Figma layer names) for the colored box and its
+// baked-in label glyph. `y` is the rect's own y attribute, used to compute the translateY
+// delta that "parks" a selected item directly under the Meridian button when the menu closes.
+const MENU_ITEMS = [
+  { rectId: 'Heart',           textId: 'Heart_2',           code: 'HT',      y: 170.555 },
+  { rectId: 'Pericardium',     textId: 'Pericardium_2',     code: 'PE',      y: 272.11 },
+  { rectId: 'Lung',            textId: 'Lung_2',            code: 'LU',      y: 373.665 },
+  { rectId: 'Liver',           textId: 'Liver_2',           code: 'LV',      y: 475.219 },
+  { rectId: 'Stomach',         textId: 'Stomach_2',         code: 'ST',      y: 576.774 },
+  { rectId: 'Small intestine', textId: 'Small intestine_2', code: 'SI',      y: 678.329 },
+  { rectId: 'Gallblader',      textId: 'Gallblader_2',      code: 'GB',      y: 779.884 },
+  { rectId: 'Bladder',         textId: 'Bladder_2',         code: 'BL',      y: 881.439 },
+  { rectId: 'Tripple heater',  textId: 'Tripple heater_2',  code: 'SJ',      y: 982.994 },
+  { rectId: 'Kidney',          textId: 'Kidney_2',          code: 'KI',      y: 1084.55 },
+  { rectId: 'Large intestine', textId: 'Large intestine_2', code: 'LI',      y: 1186.1 },
+  { rectId: 'Spleen pancreas', textId: 'Spleen/Pancreas',   code: 'SP-PANC', y: 1287.66 },
 ]
+const SLOT1_Y = MENU_ITEMS[0].y
+
+// Element id (rect or its label glyph) → meridian code, for click delegation.
+const CODE_BY_ELEMENT_ID = {}
+for (const { rectId, textId, code } of MENU_ITEMS) {
+  CODE_BY_ELEMENT_ID[rectId] = code
+  CODE_BY_ELEMENT_ID[textId] = code
+}
 
 // SVG point id → ynsa.json id (filled as JSON data is authored)
 const POINT_JSON_ID = {
@@ -111,108 +86,117 @@ const POINT_JSON_ID = {
   'BL-yang_2':        'YNSA-Y-BL-yang-2',
 }
 
-// Coordinates from YNSA-Y-Side.svg (viewBox 0 0 754 811)
-// Re-extracted 2026-07-04 after user resized the canvas and repositioned labels
-// (point positions unchanged relative to the head silhouette, but the whole SVG
-// shifted by a constant dx=-93.565, dy=+20 when the artboard was resized).
-// Circle-element coords read directly; path-drawn circles use their bounding-box center.
+// Coordinates re-extracted 2026-07-05 from the rebuilt YNSA-Y-Side.svg (viewBox 47 54 1022 1331,
+// after the user pulled the Meridian button closer to the head to shrink the canvas / dead space).
+// Yin points are <ellipse> elements (cx/cy read directly); yang points are stroke-only
+// <path> outlines (center computed from the path's bounding box).
 const POINTS = [
   // ── Strong Y-Points ────────────────────────────────────
-  { id: 'LU-yin',         cx: 340.216, cy: 229.216, color: RED  },
-  { id: 'LU-yang',        cx: 462.216, cy: 252.216, color: RED  },
-  { id: 'HT-yin',         cx: 390.216, cy: 240.216, color: RED  },
-  { id: 'HT-yang',        cx: 415.216, cy: 244.216, color: RED  },
-  { id: 'PE-yin',         cx: 364.216, cy: 234.216, color: RED  },
-  { id: 'PE-yang',        cx: 439.216, cy: 249.216, color: RED  },
-  { id: 'SI-yin',         cx: 339.216, cy: 259.216, color: RED  },
-  { id: 'SI-yang',        cx: 461.216, cy: 277.216, color: RED  },
-  { id: 'ST-yin',         cx: 365.216, cy: 258.216, color: RED  },
-  { id: 'ST-yang',        cx: 438.216, cy: 272.216, color: RED  },
-  { id: 'LV-yin',         cx: 389.216, cy: 262.216, color: RED  },
-  { id: 'LV-yang',        cx: 415.216, cy: 267.216, color: RED  },
-  { id: 'SP-PANC-yin',    cx: 362.5,   cy: 280.623, color: RED  },
-  { id: 'SP-PANC-yang',   cx: 446.216, cy: 292.216, color: RED  },
-  { id: 'GB-yin',         cx: 383.216, cy: 282.216, color: RED  },
-  { id: 'GB-yang',        cx: 416.216, cy: 287.216, color: RED  },
-  { id: 'SJ-yin',         cx: 336.216, cy: 296.216, color: RED  },
-  { id: 'SJ-yang',        cx: 474.216, cy: 328.216, color: RED  },
-  { id: 'KI-yin',         cx: 357.029, cy: 304.716, color: RED  },
-  { id: 'KI-yang',        cx: 474.216, cy: 406.216, color: RED  },
-  { id: 'LI-yin',         cx: 334.216, cy: 328.216, color: RED  },
-  { id: 'LI-yang',        cx: 476.216, cy: 355.216, color: RED  },
-  { id: 'BL-yin',         cx: 355.845, cy: 329.216, color: RED  },
-  { id: 'BL-yang',        cx: 455.216, cy: 431.216, color: RED  },
+  { id: 'LU-yin',         cx: 542.074, cy: 540.828,  color: RED },
+  { id: 'LU-yang',        cx: 742.902, cy: 578.725,  color: RED },
+  { id: 'HT-yin',         cx: 624.381, cy: 558.952,  color: RED },
+  { id: 'HT-yang',        cx: 665.534, cy: 565.543,  color: RED },
+  { id: 'PE-yin',         cx: 581.581, cy: 549.067,  color: RED },
+  { id: 'PE-yang',        cx: 705.042, cy: 573.782,  color: RED },
+  { id: 'SI-yin',         cx: 540.428, cy: 590.258,  color: RED },
+  { id: 'SI-yang',        cx: 741.256, cy: 619.915,  color: RED },
+  { id: 'ST-yin',         cx: 583.228, cy: 588.61,   color: RED },
+  { id: 'ST-yang',        cx: 703.396, cy: 611.678,  color: RED },
+  { id: 'LV-yin',         cx: 622.735, cy: 595.201,  color: RED },
+  { id: 'LV-yang',        cx: 665.534, cy: 603.439,  color: RED },
+  { id: 'SP-PANC-yin',    cx: 578.756, cy: 625.529,  color: RED },
+  { id: 'SP-PANC-yang',   cx: 716.564, cy: 644.63,   color: RED },
+  { id: 'GB-yin',         cx: 612.858, cy: 628.153,  color: RED },
+  { id: 'GB-yang',        cx: 667.18,  cy: 636.391,  color: RED },
+  { id: 'SJ-yin',         cx: 535.49,  cy: 651.22,   color: RED },
+  { id: 'SJ-yang',        cx: 762.657, cy: 703.946,  color: RED },
+  { id: 'KI-yin',         cx: 569.75,  cy: 665.226,  color: RED },
+  { id: 'KI-yang',        cx: 762.657, cy: 832.462,  color: RED },
+  { id: 'LI-yin',         cx: 532.197, cy: 703.946,  color: RED },
+  { id: 'LI-yang',        cx: 765.948, cy: 748.432,  color: RED },
+  { id: 'BL-yin',         cx: 567.803, cy: 705.592,  color: RED },
+  { id: 'BL-yang',        cx: 731.38,  cy: 873.653,  color: RED },
   // ── Weak Y-Points ──────────────────────────────────────
-  { id: 'LU-yin_2',         cx: 340.216, cy: 201.216, color: BLUE },
-  { id: 'LU-yang_2',        cx: 459.216, cy: 225.216, color: BLUE },
-  { id: 'HT-yin_2',         cx: 390.216, cy: 211.216, color: BLUE },
-  { id: 'HT-yang_2',        cx: 413.216, cy: 217.216, color: BLUE },
-  { id: 'PE-yin_2',         cx: 364.216, cy: 206.216, color: BLUE },
-  { id: 'PE-yang_2',        cx: 436.216, cy: 219.216, color: BLUE },
-  { id: 'SI-yin_2',         cx: 340.762, cy: 177,     color: BLUE },
-  { id: 'SI-yang_2',        cx: 466.216, cy: 196.216, color: BLUE },
-  { id: 'ST-yin_2',         cx: 364.216, cy: 183.216, color: BLUE },
-  { id: 'ST-yang_2',        cx: 436.216, cy: 198.216, color: BLUE },
-  { id: 'LV-yin_2',         cx: 388.216, cy: 189.216, color: BLUE },
-  { id: 'LV-yang_2',        cx: 414.216, cy: 191.216, color: BLUE },
-  { id: 'SP-PANC-yin_2',    cx: 361.216, cy: 160.216, color: BLUE },
-  { id: 'SP-PANC-yang_2',   cx: 443.216, cy: 174.216, color: BLUE },
-  { id: 'GB-yin_2',         cx: 384,     cy: 162.216, color: BLUE },
-  { id: 'GB-yang_2',        cx: 414.216, cy: 169.216, color: BLUE },
-  { id: 'SJ-yin_2',         cx: 337.216, cy: 143.216, color: BLUE },
-  { id: 'SJ-yang_2',        cx: 468.216, cy: 164.216, color: BLUE },
-  { id: 'KI-yin_2',         cx: 361,     cy: 134.145, color: BLUE },
-  { id: 'KI-yang_2',        cx: 443.216, cy: 150.216, color: BLUE },
-  { id: 'LI-yin_2',         cx: 330.216, cy: 106.216, color: BLUE },
-  { id: 'LI-yang_2',        cx: 468.216, cy: 134.216, color: BLUE },
-  { id: 'BL-yin_2',         cx: 359.5,   cy: 112.724, color: BLUE },
-  { id: 'BL-yang_2',        cx: 443.216, cy: 129.216, color: BLUE },
+  { id: 'LU-yin_2',         cx: 542.074, cy: 494.694,  color: BLUE },
+  { id: 'LU-yang_2',        cx: 737.965, cy: 534.237,  color: BLUE },
+  { id: 'HT-yin_2',         cx: 624.381, cy: 511.171,  color: BLUE },
+  { id: 'HT-yang_2',        cx: 662.242, cy: 521.057,  color: BLUE },
+  { id: 'PE-yin_2',         cx: 581.581, cy: 502.932,  color: BLUE },
+  { id: 'PE-yang_2',        cx: 700.103, cy: 524.352,  color: BLUE },
+  { id: 'SI-yin_2',         cx: 542.973, cy: 454.794,  color: BLUE },
+  { id: 'SI-yang_2',        cx: 749.487, cy: 486.456,  color: BLUE },
+  { id: 'ST-yin_2',         cx: 581.581, cy: 465.036,  color: BLUE },
+  { id: 'ST-yang_2',        cx: 700.103, cy: 489.752,  color: BLUE },
+  { id: 'LV-yin_2',         cx: 621.089, cy: 474.922,  color: BLUE },
+  { id: 'LV-yang_2',        cx: 663.888, cy: 478.217,  color: BLUE },
+  { id: 'SP-PANC-yin_2',    cx: 576.644, cy: 427.14,   color: BLUE },
+  { id: 'SP-PANC-yang_2',   cx: 711.626, cy: 450.208,  color: BLUE },
+  { id: 'GB-yin_2',         cx: 614.149, cy: 430.435,  color: BLUE },
+  { id: 'GB-yang_2',        cx: 663.888, cy: 441.969,  color: BLUE },
+  { id: 'SJ-yin_2',         cx: 537.136, cy: 399.13,   color: BLUE },
+  { id: 'SJ-yang_2',        cx: 752.779, cy: 433.731,  color: BLUE },
+  { id: 'KI-yin_2',         cx: 576.288, cy: 384.185,  color: BLUE },
+  { id: 'KI-yang_2',        cx: 711.626, cy: 410.664,  color: BLUE },
+  { id: 'LI-yin_2',         cx: 525.613, cy: 338.168,  color: BLUE },
+  { id: 'LI-yang_2',        cx: 752.779, cy: 384.301,  color: BLUE },
+  { id: 'BL-yin_2',         cx: 573.819, cy: 348.89,   color: BLUE },
+  { id: 'BL-yang_2',        cx: 711.626, cy: 376.063,  color: BLUE },
 ]
 
 // Build scoped CSS:
-//   cursor:pointer on all clickable labels
-//   when activeMeridian is set: dim non-active points + non-active labels
-function buildStyle(activeMeridian) {
-  const allLabelIds = Object.keys(LABEL_TO_MERIDIAN)
-  const cursorRules = allLabelIds.map(id => `.svg-y-points [id="${id}"]`).join(',\n')
-
-  const base = `${cursorRules} { cursor: pointer; }`
-  if (!activeMeridian) return base
+//   cursor:pointer on all clickable points
+//   when activeMeridian is set: dim non-active points
+function buildPointStyle(activeMeridian) {
+  if (!activeMeridian) return ''
 
   const prefix = activeMeridian + '-'
 
-  // Dim all points (circle or path-drawn) in both groups regardless of id suffix.
-  // Uses [id="..."] (attribute selector) rather than #id so specificity matches
-  // restorePoints below — cascade order (this rule first, restore second) decides.
+  // Dim all points (ellipse or path-drawn) in both groups regardless of id suffix.
   const dimPoints = `
-.svg-y-points [id="y-points-strong"] circle,
+.svg-y-points [id="y-points-strong"] ellipse,
 .svg-y-points [id="y-points-strong"] path,
-.svg-y-points [id="y-points-weak"] circle,
+.svg-y-points [id="y-points-weak"] ellipse,
 .svg-y-points [id="y-points-weak"] path { opacity: 0.15; }`
 
   // Restore active meridian points (same specificity, later in string → wins)
   const restorePoints = `
-.svg-y-points circle[id^="${prefix}"],
+.svg-y-points ellipse[id^="${prefix}"],
 .svg-y-points path[id^="${prefix}"] { opacity: 1; }`
 
-  // Dim inactive labels
-  const inactiveSelectors = allLabelIds
-    .filter(id => LABEL_TO_MERIDIAN[id] !== activeMeridian)
-    .map(id => `.svg-y-points [id="${id}"]`)
-    .join(',\n')
-  const dimLabels = inactiveSelectors
-    ? `${inactiveSelectors} { opacity: 0.3; }`
-    : ''
+  return `${dimPoints}\n${restorePoints}`
+}
 
-  return `${base}\n${dimPoints}\n${restorePoints}\n${dimLabels}`
+// Build scoped CSS for the Meridian button + dropdown menu.
+// Closed + nothing selected: only the button shows.
+// Closed + a meridian selected: that item's rect/label animate up to sit under the button
+//   (translateY delta relative to slot 1, the position of the first item), everything else hidden.
+// Open: every item sits at its native stacked position, fully visible.
+function buildMenuStyle(activeMeridian, menuOpen) {
+  const buttonCursor = `.svg-y-points [id="Meridian"], .svg-y-points [id="Meridian_2"] { cursor: pointer; }`
+
+  const itemRules = MENU_ITEMS.map(({ rectId, textId, code, y }) => {
+    const sel = `.svg-y-points [id="${rectId}"], .svg-y-points [id="${textId}"]`
+    const transition = 'transition: transform 280ms ease, opacity 200ms ease;'
+    if (menuOpen) {
+      return `${sel} { cursor: pointer; transform: translateY(0px); opacity: 1; pointer-events: auto; ${transition} }`
+    }
+    if (activeMeridian === code) {
+      const dy = SLOT1_Y - y
+      return `${sel} { cursor: pointer; transform: translateY(${dy}px); opacity: 1; pointer-events: auto; ${transition} }`
+    }
+    return `${sel} { opacity: 0; pointer-events: none; ${transition} }`
+  }).join('\n')
+
+  return `${buttonCursor}\n${itemRules}`
 }
 
 export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
   const [selectedId,     setSelectedId]     = useState(null)
   const [hoveredId,      setHoveredId]      = useState(null)
   const [activeMeridian, setActiveMeridian] = useState(null)
+  const [menuOpen,       setMenuOpen]       = useState(false)
 
-  const style = buildStyle(activeMeridian)
+  const style = `${buildPointStyle(activeMeridian)}\n${buildMenuStyle(activeMeridian, menuOpen)}`
 
   function selectPoint(id, e) {
     e?.stopPropagation()
@@ -224,26 +208,34 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
     onPointSelect?.(data)
   }
 
-  function handleMeridianSelect(meridian) {
-    setActiveMeridian(prev => prev === meridian ? null : meridian)
+  function handleMeridianSelect(code) {
+    setActiveMeridian(code)
+    setMenuOpen(false)
     setSelectedId(null)
     onPointSelect?.(null)
   }
 
   function handleReset() {
     setActiveMeridian(null)
+    setMenuOpen(false)
     setSelectedId(null)
     setHoveredId(null)
     onPointSelect?.(null)
   }
 
-  // Fallback: catches exact-pixel clicks on the SVG path glyphs themselves
+  // Handles clicks on the Meridian button and the 12 dropdown items
+  // (event delegation, since these live in the imported background SVG).
   function handleLabelClick(e) {
     let el = e.target
     while (el && el !== e.currentTarget) {
-      const meridian = LABEL_TO_MERIDIAN[el.id]
-      if (meridian) {
-        handleMeridianSelect(meridian)
+      if (el.id === 'Meridian' || el.id === 'Meridian_2') {
+        setMenuOpen(open => !open)
+        return
+      }
+      const code = CODE_BY_ELEMENT_ID[el.id]
+      if (code) {
+        if (menuOpen) handleMeridianSelect(code)
+        else setMenuOpen(true)
         return
       }
       el = el.parentElement
@@ -258,39 +250,24 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
         onMouseDown={e => e.stopPropagation()}
         onClick={handleReset}
         title="Reset meridian selection"
-        className="absolute top-3 right-3 z-10 w-8 h-8 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded flex items-center justify-center text-sm border border-gray-600"
-      >↺</button>
+        className="absolute top-3 right-3 z-10 px-3 h-8 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded flex items-center justify-center text-sm border border-gray-600"
+      >Refresh</button>
 
-      {/* Background SVG — handles label clicks via event delegation */}
+      {/* Background SVG — handles Meridian menu + label clicks via event delegation */}
       <YNSAYSideSvg
         className="svg-y-points"
         onClick={handleLabelClick}
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
       />
 
-      {/* Overlay SVG — pointer-events:none at root so label clicks in the background SVG
+      {/* Overlay SVG — pointer-events:none at root so menu/label clicks in the background SVG
           pass through. Individual <g> elements re-enable pointer-events for points. */}
       <svg
-        viewBox="0 0 754 811"
+        viewBox="47 54 1022 1331"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
       >
-        {/* Invisible hit rects that make each label easy to click */}
-        {LABEL_HITAREAS.map(({ id, x, y, w, h }) => {
-          const meridian = LABEL_TO_MERIDIAN[id]
-          const isActive = activeMeridian === meridian
-          return (
-            <g
-              key={id}
-              onClick={() => handleMeridianSelect(meridian)}
-              style={{ cursor: 'pointer', pointerEvents: 'auto' }}
-            >
-              <rect x={x} y={y} width={w} height={h} fill={isActive ? 'rgba(52,185,4,0.12)' : 'transparent'} rx={4} />
-            </g>
-          )
-        })}
-
         {POINTS.map(({ id, cx, cy, color }) => {
           const jsonId    = POINT_JSON_ID[id]
           const isSelected = selectedId === id || (highlightJsonId && jsonId === highlightJsonId)
@@ -304,12 +281,12 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
               style={{ cursor: 'pointer', pointerEvents: 'auto' }}
             >
               {isSelected && (
-                <circle cx={cx} cy={cy} r={11} fill="none" stroke={color} strokeWidth="2" opacity="0.9" />
+                <circle cx={cx} cy={cy} r={14} fill="none" stroke={color} strokeWidth="3" opacity="0.9" />
               )}
               {isHovered && !isSelected && (
-                <circle cx={cx} cy={cy} r={11} fill={color} opacity="0.25" />
+                <circle cx={cx} cy={cy} r={14} fill={color} opacity="0.25" />
               )}
-              <circle cx={cx} cy={cy} r={9} fill="transparent" />
+              <circle cx={cx} cy={cy} r={12} fill="transparent" />
             </g>
           )
         })}
