@@ -10,18 +10,18 @@ const BLUE = '#5392F6'
 // baked-in label glyph. `y` is the rect's own y attribute, used to compute the translateY
 // delta that "parks" a selected item directly under the Meridian button when the menu closes.
 const MENU_ITEMS = [
-  { rectId: 'Heart',           textId: 'Heart_2',           code: 'HT',      y: 170.555 },
-  { rectId: 'Pericardium',     textId: 'Pericardium_2',     code: 'PE',      y: 272.11 },
-  { rectId: 'Lung',            textId: 'Lung_2',            code: 'LU',      y: 373.665 },
-  { rectId: 'Liver',           textId: 'Liver_2',           code: 'LV',      y: 475.219 },
-  { rectId: 'Stomach',         textId: 'Stomach_2',         code: 'ST',      y: 576.774 },
-  { rectId: 'Small intestine', textId: 'Small intestine_2', code: 'SI',      y: 678.329 },
-  { rectId: 'Gallblader',      textId: 'Gallblader_2',      code: 'GB',      y: 779.884 },
-  { rectId: 'Bladder',         textId: 'Bladder_2',         code: 'BL',      y: 881.439 },
-  { rectId: 'Tripple heater',  textId: 'Tripple heater_2',  code: 'SJ',      y: 982.994 },
-  { rectId: 'Kidney',          textId: 'Kidney_2',          code: 'KI',      y: 1084.55 },
-  { rectId: 'Large intestine', textId: 'Large intestine_2', code: 'LI',      y: 1186.1 },
-  { rectId: 'Spleen pancreas', textId: 'Spleen/Pancreas',   code: 'SP-PANC', y: 1287.66 },
+  { rectId: 'Heart',           textId: 'Heart_2',           code: 'HT',      y: 139.555 },
+  { rectId: 'Pericardium',     textId: 'Pericardium_2',     code: 'PE',      y: 241.11 },
+  { rectId: 'Lung',            textId: 'Lung_2',            code: 'LU',      y: 342.665 },
+  { rectId: 'Liver',           textId: 'Liver_2',           code: 'LV',      y: 444.219 },
+  { rectId: 'Stomach',         textId: 'Stomach_2',         code: 'ST',      y: 545.774 },
+  { rectId: 'Small intestine', textId: 'Small intestine_2', code: 'SI',      y: 647.329 },
+  { rectId: 'Gallblader',      textId: 'Gallblader_2',      code: 'GB',      y: 748.884 },
+  { rectId: 'Bladder',         textId: 'Bladder_2',         code: 'BL',      y: 850.439 },
+  { rectId: 'Tripple heater',  textId: 'Tripple heater_2',  code: 'SJ',      y: 951.994 },
+  { rectId: 'Kidney',          textId: 'Kidney_2',          code: 'KI',      y: 1053.55 },
+  { rectId: 'Large intestine', textId: 'Large intestine_2', code: 'LI',      y: 1155.1 },
+  { rectId: 'Spleen pancreas', textId: 'Spleen/Pancreas',   code: 'SP-PANC', y: 1256.66 },
 ]
 const SLOT1_Y = MENU_ITEMS[0].y
 
@@ -86,62 +86,75 @@ const POINT_JSON_ID = {
   'BL-yang_2':        'YNSA-Y-BL-yang-2',
 }
 
-// Coordinates re-extracted 2026-07-05 from the rebuilt YNSA-Y-Side.svg (viewBox 47 54 1022 1331,
-// after the user pulled the Meridian button closer to the head to shrink the canvas / dead space).
+// Coordinates re-extracted 2026-07-05 from the rebuilt YNSA-Y-Side.svg (viewBox 27 23 947 1331,
+// after the user shifted the whole menu column further left and added the Refresh button).
 // Yin points are <ellipse> elements (cx/cy read directly); yang points are stroke-only
 // <path> outlines (center computed from the path's bounding box).
 const POINTS = [
   // ── Strong Y-Points ────────────────────────────────────
-  { id: 'LU-yin',         cx: 542.074, cy: 540.828,  color: RED },
-  { id: 'LU-yang',        cx: 742.902, cy: 578.725,  color: RED },
-  { id: 'HT-yin',         cx: 624.381, cy: 558.952,  color: RED },
-  { id: 'HT-yang',        cx: 665.534, cy: 565.543,  color: RED },
-  { id: 'PE-yin',         cx: 581.581, cy: 549.067,  color: RED },
-  { id: 'PE-yang',        cx: 705.042, cy: 573.782,  color: RED },
-  { id: 'SI-yin',         cx: 540.428, cy: 590.258,  color: RED },
-  { id: 'SI-yang',        cx: 741.256, cy: 619.915,  color: RED },
-  { id: 'ST-yin',         cx: 583.228, cy: 588.61,   color: RED },
-  { id: 'ST-yang',        cx: 703.396, cy: 611.678,  color: RED },
-  { id: 'LV-yin',         cx: 622.735, cy: 595.201,  color: RED },
-  { id: 'LV-yang',        cx: 665.534, cy: 603.439,  color: RED },
-  { id: 'SP-PANC-yin',    cx: 578.756, cy: 625.529,  color: RED },
-  { id: 'SP-PANC-yang',   cx: 716.564, cy: 644.63,   color: RED },
-  { id: 'GB-yin',         cx: 612.858, cy: 628.153,  color: RED },
-  { id: 'GB-yang',        cx: 667.18,  cy: 636.391,  color: RED },
-  { id: 'SJ-yin',         cx: 535.49,  cy: 651.22,   color: RED },
-  { id: 'SJ-yang',        cx: 762.657, cy: 703.946,  color: RED },
-  { id: 'KI-yin',         cx: 569.75,  cy: 665.226,  color: RED },
-  { id: 'KI-yang',        cx: 762.657, cy: 832.462,  color: RED },
-  { id: 'LI-yin',         cx: 532.197, cy: 703.946,  color: RED },
-  { id: 'LI-yang',        cx: 765.948, cy: 748.432,  color: RED },
-  { id: 'BL-yin',         cx: 567.803, cy: 705.592,  color: RED },
-  { id: 'BL-yang',        cx: 731.38,  cy: 873.653,  color: RED },
+  { id: 'LU-yin',         cx: 447.074, cy: 490.828,  color: RED },
+  { id: 'LU-yang',        cx: 647.902, cy: 528.725,  color: RED },
+  { id: 'HT-yin',         cx: 529.381, cy: 508.952,  color: RED },
+  { id: 'HT-yang',        cx: 570.534, cy: 515.543,  color: RED },
+  { id: 'PE-yin',         cx: 486.581, cy: 499.066,  color: RED },
+  { id: 'PE-yang',        cx: 610.042, cy: 523.782,  color: RED },
+  { id: 'SI-yin',         cx: 445.428, cy: 540.258,  color: RED },
+  { id: 'SI-yang',        cx: 646.256, cy: 569.915,  color: RED },
+  { id: 'ST-yin',         cx: 488.228, cy: 538.61,   color: RED },
+  { id: 'ST-yang',        cx: 608.396, cy: 561.678,  color: RED },
+  { id: 'LV-yin',         cx: 527.735, cy: 545.201,  color: RED },
+  { id: 'LV-yang',        cx: 570.534, cy: 553.439,  color: RED },
+  { id: 'SP-PANC-yin',    cx: 483.756, cy: 575.529,  color: RED },
+  { id: 'SP-PANC-yang',   cx: 621.564, cy: 594.63,   color: RED },
+  { id: 'GB-yin',         cx: 517.858, cy: 578.153,  color: RED },
+  { id: 'GB-yang',        cx: 572.18,  cy: 586.391,  color: RED },
+  { id: 'SJ-yin',         cx: 440.49,  cy: 601.22,   color: RED },
+  { id: 'SJ-yang',        cx: 667.657, cy: 653.946,  color: RED },
+  { id: 'KI-yin',         cx: 474.75,  cy: 615.226,  color: RED },
+  { id: 'KI-yang',        cx: 667.657, cy: 782.462,  color: RED },
+  { id: 'LI-yin',         cx: 437.197, cy: 653.946,  color: RED },
+  { id: 'LI-yang',        cx: 670.948, cy: 698.432,  color: RED },
+  { id: 'BL-yin',         cx: 472.803, cy: 655.592,  color: RED },
+  { id: 'BL-yang',        cx: 636.38,  cy: 823.653,  color: RED },
   // ── Weak Y-Points ──────────────────────────────────────
-  { id: 'LU-yin_2',         cx: 542.074, cy: 494.694,  color: BLUE },
-  { id: 'LU-yang_2',        cx: 737.965, cy: 534.237,  color: BLUE },
-  { id: 'HT-yin_2',         cx: 624.381, cy: 511.171,  color: BLUE },
-  { id: 'HT-yang_2',        cx: 662.242, cy: 521.057,  color: BLUE },
-  { id: 'PE-yin_2',         cx: 581.581, cy: 502.932,  color: BLUE },
-  { id: 'PE-yang_2',        cx: 700.103, cy: 524.352,  color: BLUE },
-  { id: 'SI-yin_2',         cx: 542.973, cy: 454.794,  color: BLUE },
-  { id: 'SI-yang_2',        cx: 749.487, cy: 486.456,  color: BLUE },
-  { id: 'ST-yin_2',         cx: 581.581, cy: 465.036,  color: BLUE },
-  { id: 'ST-yang_2',        cx: 700.103, cy: 489.752,  color: BLUE },
-  { id: 'LV-yin_2',         cx: 621.089, cy: 474.922,  color: BLUE },
-  { id: 'LV-yang_2',        cx: 663.888, cy: 478.217,  color: BLUE },
-  { id: 'SP-PANC-yin_2',    cx: 576.644, cy: 427.14,   color: BLUE },
-  { id: 'SP-PANC-yang_2',   cx: 711.626, cy: 450.208,  color: BLUE },
-  { id: 'GB-yin_2',         cx: 614.149, cy: 430.435,  color: BLUE },
-  { id: 'GB-yang_2',        cx: 663.888, cy: 441.969,  color: BLUE },
-  { id: 'SJ-yin_2',         cx: 537.136, cy: 399.13,   color: BLUE },
-  { id: 'SJ-yang_2',        cx: 752.779, cy: 433.731,  color: BLUE },
-  { id: 'KI-yin_2',         cx: 576.288, cy: 384.185,  color: BLUE },
-  { id: 'KI-yang_2',        cx: 711.626, cy: 410.664,  color: BLUE },
-  { id: 'LI-yin_2',         cx: 525.613, cy: 338.168,  color: BLUE },
-  { id: 'LI-yang_2',        cx: 752.779, cy: 384.301,  color: BLUE },
-  { id: 'BL-yin_2',         cx: 573.819, cy: 348.89,   color: BLUE },
-  { id: 'BL-yang_2',        cx: 711.626, cy: 376.063,  color: BLUE },
+  { id: 'LU-yin_2',         cx: 447.074, cy: 444.694,  color: BLUE },
+  { id: 'LU-yang_2',        cx: 642.965, cy: 484.238,  color: BLUE },
+  { id: 'HT-yin_2',         cx: 529.381, cy: 461.171,  color: BLUE },
+  { id: 'HT-yang_2',        cx: 567.242, cy: 471.057,  color: BLUE },
+  { id: 'PE-yin_2',         cx: 486.581, cy: 452.932,  color: BLUE },
+  { id: 'PE-yang_2',        cx: 605.103, cy: 474.352,  color: BLUE },
+  { id: 'SI-yin_2',         cx: 447.972, cy: 404.794,  color: BLUE },
+  { id: 'SI-yang_2',        cx: 654.487, cy: 436.456,  color: BLUE },
+  { id: 'ST-yin_2',         cx: 486.581, cy: 415.036,  color: BLUE },
+  { id: 'ST-yang_2',        cx: 605.103, cy: 439.752,  color: BLUE },
+  { id: 'LV-yin_2',         cx: 526.089, cy: 424.922,  color: BLUE },
+  { id: 'LV-yang_2',        cx: 568.888, cy: 428.217,  color: BLUE },
+  { id: 'SP-PANC-yin_2',    cx: 481.644, cy: 377.14,   color: BLUE },
+  { id: 'SP-PANC-yang_2',   cx: 616.626, cy: 400.208,  color: BLUE },
+  { id: 'GB-yin_2',         cx: 519.149, cy: 380.435,  color: BLUE },
+  { id: 'GB-yang_2',        cx: 568.888, cy: 391.969,  color: BLUE },
+  { id: 'SJ-yin_2',         cx: 442.136, cy: 349.13,   color: BLUE },
+  { id: 'SJ-yang_2',        cx: 657.779, cy: 383.731,  color: BLUE },
+  { id: 'KI-yin_2',         cx: 481.288, cy: 334.185,  color: BLUE },
+  { id: 'KI-yang_2',        cx: 616.626, cy: 360.664,  color: BLUE },
+  { id: 'LI-yin_2',         cx: 430.613, cy: 288.168,  color: BLUE },
+  { id: 'LI-yang_2',        cx: 657.779, cy: 334.301,  color: BLUE },
+  { id: 'BL-yin_2',         cx: 478.818, cy: 298.89,   color: BLUE },
+  { id: 'BL-yang_2',        cx: 616.626, cy: 326.063,  color: BLUE },
 ]
+
+// The four corner labels (Weak Yin / Weak Yang / Strong Yin / Strong Yang) are informational,
+// not clickable — just scaled up 30% in place. `transform-box: fill-box` + `transform-origin:
+// center` scales each glyph path around its own bounding-box center instead of the SVG origin.
+const STRONG_WEAK_LABEL_STYLE = `
+.svg-y-points [id="Weak Yin"],
+.svg-y-points [id="WeakYang"],
+.svg-y-points [id="Strong Yin"],
+.svg-y-points [id="Strong Yang"] {
+  transform: scale(1.3);
+  transform-box: fill-box;
+  transform-origin: center;
+}`
 
 // Build scoped CSS:
 //   cursor:pointer on all clickable points
@@ -173,6 +186,8 @@ function buildPointStyle(activeMeridian) {
 // Open: every item sits at its native stacked position, fully visible.
 function buildMenuStyle(activeMeridian, menuOpen) {
   const buttonCursor = `.svg-y-points [id="Meridian"], .svg-y-points [id="Meridian_2"] { cursor: pointer; }`
+  // The SVG's own baked-in Refresh rect is unused — Refresh is a plain HTML button instead.
+  const hideRefreshRect = `.svg-y-points [id="Refresh"] { opacity: 0; pointer-events: none; }`
 
   const itemRules = MENU_ITEMS.map(({ rectId, textId, code, y }) => {
     const sel = `.svg-y-points [id="${rectId}"], .svg-y-points [id="${textId}"]`
@@ -187,7 +202,7 @@ function buildMenuStyle(activeMeridian, menuOpen) {
     return `${sel} { opacity: 0; pointer-events: none; ${transition} }`
   }).join('\n')
 
-  return `${buttonCursor}\n${itemRules}`
+  return `${buttonCursor}\n${hideRefreshRect}\n${itemRules}`
 }
 
 export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
@@ -196,7 +211,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
   const [activeMeridian, setActiveMeridian] = useState(null)
   const [menuOpen,       setMenuOpen]       = useState(false)
 
-  const style = `${buildPointStyle(activeMeridian)}\n${buildMenuStyle(activeMeridian, menuOpen)}`
+  const style = `${STRONG_WEAK_LABEL_STYLE}\n${buildPointStyle(activeMeridian)}\n${buildMenuStyle(activeMeridian, menuOpen)}`
 
   function selectPoint(id, e) {
     e?.stopPropagation()
@@ -250,7 +265,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
         onMouseDown={e => e.stopPropagation()}
         onClick={handleReset}
         title="Reset meridian selection"
-        className="absolute top-3 right-3 z-10 px-3 h-8 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded flex items-center justify-center text-sm border border-gray-600"
+        className="absolute top-3 right-3 z-10 px-3 h-8 bg-transparent hover:bg-white/10 text-gray-300 rounded flex items-center justify-center text-sm border border-gray-400"
       >Refresh</button>
 
       {/* Background SVG — handles Meridian menu + label clicks via event delegation */}
@@ -263,7 +278,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
       {/* Overlay SVG — pointer-events:none at root so menu/label clicks in the background SVG
           pass through. Individual <g> elements re-enable pointer-events for points. */}
       <svg
-        viewBox="47 54 1022 1331"
+        viewBox="27 23 947 1331"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
