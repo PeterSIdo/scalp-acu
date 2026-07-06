@@ -113,23 +113,23 @@ export default function ZoomableView({ children }) {
       </div>
 
       {/* Zoom controls */}
-      <div className="absolute bottom-3 right-3 flex flex-col items-center gap-1 select-none">
-        <button
-          onMouseDown={e => e.stopPropagation()}
-          onClick={() => dispatch({ type: 'ZOOM_IN' })}
-          className="w-8 h-8 bg-gray-800 hover:bg-gray-700 text-white rounded flex items-center justify-center text-xl font-bold border border-gray-600 leading-none"
-        >+</button>
-        <span className="text-xs text-gray-400 font-mono">{Math.round(scale * 100)}%</span>
+      <div className="absolute bottom-3 right-3 flex flex-row items-center gap-1 select-none bg-gray-900/70 rounded px-1.5 py-1">
         <button
           onMouseDown={e => e.stopPropagation()}
           onClick={() => dispatch({ type: 'ZOOM_OUT' })}
           className="w-8 h-8 bg-gray-800 hover:bg-gray-700 text-white rounded flex items-center justify-center text-xl font-bold border border-gray-600 leading-none"
         >−</button>
+        <span className="text-xs text-gray-400 font-mono w-10 text-center">{Math.round(scale * 100)}%</span>
+        <button
+          onMouseDown={e => e.stopPropagation()}
+          onClick={() => dispatch({ type: 'ZOOM_IN' })}
+          className="w-8 h-8 bg-gray-800 hover:bg-gray-700 text-white rounded flex items-center justify-center text-xl font-bold border border-gray-600 leading-none"
+        >+</button>
         {isZoomed && (
           <button
             onMouseDown={e => e.stopPropagation()}
             onClick={() => dispatch({ type: 'RESET' })}
-            className="w-8 h-8 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded flex items-center justify-center text-sm border border-gray-600 mt-1"
+            className="w-8 h-8 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded flex items-center justify-center text-sm border border-gray-600 ml-1"
             title="Reset zoom"
           >↺</button>
         )}

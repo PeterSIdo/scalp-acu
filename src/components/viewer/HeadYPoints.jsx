@@ -185,9 +185,14 @@ function buildPointStyle(activeMeridian) {
 //   (translateY delta relative to slot 1, the position of the first item), everything else hidden.
 // Open: every item sits at its native stacked position, fully visible.
 function buildMenuStyle(activeMeridian, menuOpen) {
-  const buttonCursor = `.svg-y-points [id="Meridian"], .svg-y-points [id="Meridian_2"] { cursor: pointer; }`
-  // The SVG's own baked-in Refresh rect is unused — Refresh is a plain HTML button instead.
-  const hideRefreshRect = `.svg-y-points [id="Refresh"] { opacity: 0; pointer-events: none; }`
+  const buttonCursor = `.svg-y-points [id="Meridian"], .svg-y-points [id="Meridian_2"], .svg-y-points [id="Refresh"], .svg-y-points [id="Refresh_2"] { cursor: pointer; }`
+  // Refresh shares the Meridian rect's coordinate space (not a separately-positioned HTML
+  // button) so the two stay pixel-aligned at every screen size/aspect ratio — restyled here
+  // as an outline button instead of the artwork's baked-in solid orange fill.
+  const refreshStyle = `
+.svg-y-points [id="Refresh"] { fill: transparent; stroke: #9CA3AF; stroke-width: 3; rx: 12px; transition: fill 150ms ease; }
+.svg-y-points [id="Refresh"]:hover { fill: rgba(255,255,255,0.1); }
+.svg-y-points [id="Refresh_2"] { fill: #D1D5DB; }`
 
   const itemRules = MENU_ITEMS.map(({ rectId, textId, code, y }) => {
     const sel = `.svg-y-points [id="${rectId}"], .svg-y-points [id="${textId}"]`
@@ -202,7 +207,7 @@ function buildMenuStyle(activeMeridian, menuOpen) {
     return `${sel} { opacity: 0; pointer-events: none; ${transition} }`
   }).join('\n')
 
-  return `${buttonCursor}\n${hideRefreshRect}\n${itemRules}`
+  return `${buttonCursor}\n${refreshStyle}\n${itemRules}`
 }
 
 export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
@@ -247,6 +252,10 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
         setMenuOpen(open => !open)
         return
       }
+      if (el.id === 'Refresh' || el.id === 'Refresh_2') {
+        handleReset()
+        return
+      }
       const code = CODE_BY_ELEMENT_ID[el.id]
       if (code) {
         if (menuOpen) handleMeridianSelect(code)
@@ -261,14 +270,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <style>{style}</style>
 
-      <button
-        onMouseDown={e => e.stopPropagation()}
-        onClick={handleReset}
-        title="Reset meridian selection"
-        className="absolute top-3 right-3 z-10 px-3 h-8 bg-transparent hover:bg-white/10 text-gray-300 rounded flex items-center justify-center text-sm border border-gray-400"
-      >Refresh</button>
-
-      {/* Background SVG — handles Meridian menu + label clicks via event delegation */}
+      {/* Background SVG — handles Meridian menu + Refresh + label clicks via event delegation */}
       <YNSAYSideSvg
         className="svg-y-points"
         onClick={handleLabelClick}
