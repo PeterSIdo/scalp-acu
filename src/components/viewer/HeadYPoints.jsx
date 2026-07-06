@@ -272,6 +272,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
       <YNSAYSideSvg
         className="svg-y-points"
         onClick={handleLabelClick}
+        preserveAspectRatio="xMidYMin meet"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
       />
 
@@ -279,6 +280,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
           pass through. Individual <g> elements re-enable pointer-events for points. */}
       <svg
         viewBox="27 23 947 1331"
+        preserveAspectRatio="xMidYMin meet"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
