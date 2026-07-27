@@ -10,7 +10,6 @@ import HeadYPoints   from '../components/viewer/HeadYPoints'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
 import SearchPanel from '../components/ui/SearchPanel'
-import SubscriptionBanner from '../components/ui/SubscriptionGate'
 
 const SYSTEMS = [
   {
@@ -121,7 +120,7 @@ function SearchIcon() {
 
 export default function ViewerPage() {
   const { logout } = useAuth()
-  const { isActive, status } = useSubscription()
+  const { isActive } = useSubscription()
   const { dark, toggle: toggleTheme } = useTheme()
   const [selectedPoint, setSelectedPoint] = useState(null)
   const [highlightJsonId, setHighlightJsonId] = useState(null)
@@ -279,8 +278,6 @@ export default function ViewerPage() {
           <button onClick={logout} className="text-gray-600 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">Sign out</button>
         </div>
       </header>
-
-      <SubscriptionBanner status={status} />
 
       {/* System tabs — always visible */}
       <SystemTabs className="flex-shrink-0 bg-white dark:bg-gray-950" />

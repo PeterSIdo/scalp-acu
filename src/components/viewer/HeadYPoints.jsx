@@ -5,32 +5,22 @@ import YNSAYSideSvg from '../../assets/diagrams/YNSA-Y-Side.svg?react'
 const RED  = '#FF0808'
 const BLUE = '#5392F6'
 
-// Meridian menu items, in the order the rects are stacked in the SVG (top → bottom).
-// rectId/textId are the SVG element ids (Figma layer names) for the colored box and its
-// baked-in label glyph. `y` is the rect's own y attribute, used to compute the translateY
-// delta that "parks" a selected item directly under the Meridian button when the menu closes.
-const MENU_ITEMS = [
-  { rectId: 'Heart',           textId: 'Heart_2',           code: 'HT',      y: 139.555 },
-  { rectId: 'Pericardium',     textId: 'Pericardium_2',     code: 'PE',      y: 241.11 },
-  { rectId: 'Lung',            textId: 'Lung_2',            code: 'LU',      y: 342.665 },
-  { rectId: 'Liver',           textId: 'Liver_2',           code: 'LV',      y: 444.219 },
-  { rectId: 'Stomach',         textId: 'Stomach_2',         code: 'ST',      y: 545.774 },
-  { rectId: 'Small intestine', textId: 'Small intestine_2', code: 'SI',      y: 647.329 },
-  { rectId: 'Gallblader',      textId: 'Gallblader_2',      code: 'GB',      y: 748.884 },
-  { rectId: 'Bladder',         textId: 'Bladder_2',         code: 'BL',      y: 850.439 },
-  { rectId: 'Tripple heater',  textId: 'Tripple heater_2',  code: 'SJ',      y: 951.994 },
-  { rectId: 'Kidney',          textId: 'Kidney_2',          code: 'KI',      y: 1053.55 },
-  { rectId: 'Large intestine', textId: 'Large intestine_2', code: 'LI',      y: 1155.1 },
-  { rectId: 'Spleen pancreas', textId: 'Spleen/Pancreas',   code: 'SP-PANC', y: 1256.66 },
+// Meridian dropdown items, alphabetical by full name (top → bottom).
+// The SVG no longer bakes in a Meridian menu — this renders as a plain HTML dropdown instead.
+const MERIDIANS = [
+  { code: 'BL',      name: 'Bladder' },
+  { code: 'GB',      name: 'Gallbladder' },
+  { code: 'HT',      name: 'Heart' },
+  { code: 'KI',      name: 'Kidney' },
+  { code: 'LI',      name: 'Large Intestine' },
+  { code: 'LV',      name: 'Liver' },
+  { code: 'LU',      name: 'Lung' },
+  { code: 'PE',      name: 'Pericardium' },
+  { code: 'SI',      name: 'Small Intestine' },
+  { code: 'SP-PANC', name: 'Spleen/Pancreas' },
+  { code: 'ST',      name: 'Stomach' },
+  { code: 'SJ',      name: 'Triple Heater' },
 ]
-const SLOT1_Y = MENU_ITEMS[0].y
-
-// Element id (rect or its label glyph) → meridian code, for click delegation.
-const CODE_BY_ELEMENT_ID = {}
-for (const { rectId, textId, code } of MENU_ITEMS) {
-  CODE_BY_ELEMENT_ID[rectId] = code
-  CODE_BY_ELEMENT_ID[textId] = code
-}
 
 // SVG point id → ynsa.json id (filled as JSON data is authored)
 const POINT_JSON_ID = {
@@ -164,50 +154,76 @@ function buildPointStyle(activeMeridian) {
 
   const prefix = activeMeridian + '-'
 
-  // Dim all points (ellipse or path-drawn) in both groups regardless of id suffix.
+  // Dim all points (circle, ellipse, or path-drawn) in both groups regardless of id suffix.
   const dimPoints = `
+.svg-y-points [id="y-points-strong"] circle,
 .svg-y-points [id="y-points-strong"] ellipse,
 .svg-y-points [id="y-points-strong"] path,
+.svg-y-points [id="y-points-weak"] circle,
 .svg-y-points [id="y-points-weak"] ellipse,
 .svg-y-points [id="y-points-weak"] path { opacity: 0.15; }`
 
   // Restore active meridian points (same specificity, later in string → wins)
   const restorePoints = `
+.svg-y-points circle[id^="${prefix}"],
 .svg-y-points ellipse[id^="${prefix}"],
 .svg-y-points path[id^="${prefix}"] { opacity: 1; }`
 
   return `${dimPoints}\n${restorePoints}`
 }
 
-// Build scoped CSS for the Meridian button + dropdown menu.
-// Closed + nothing selected: only the button shows.
-// Closed + a meridian selected: that item's rect/label animate up to sit under the button
-//   (translateY delta relative to slot 1, the position of the first item), everything else hidden.
-// Open: every item sits at its native stacked position, fully visible.
-function buildMenuStyle(activeMeridian, menuOpen) {
-  const buttonCursor = `.svg-y-points [id="Meridian"], .svg-y-points [id="Meridian_2"], .svg-y-points [id="Refresh"], .svg-y-points [id="Refresh_2"] { cursor: pointer; }`
-  // Refresh shares the Meridian rect's coordinate space (not a separately-positioned HTML
-  // button) so the two stay pixel-aligned at every screen size/aspect ratio — restyled here
-  // as an outline button instead of the artwork's baked-in solid orange fill.
-  const refreshStyle = `
-.svg-y-points [id="Refresh"] { fill: transparent; stroke: #9CA3AF; stroke-width: 3; rx: 12px; transition: fill 150ms ease; }
-.svg-y-points [id="Refresh"]:hover { fill: rgba(255,255,255,0.1); }
-.svg-y-points [id="Refresh_2"] { fill: #D1D5DB; }`
+// The Meridian control is a plain HTML dropdown (matches the SubgroupTabs font/weight),
+// styled as text rather than a filled button, since the SVG no longer bakes in a menu.
+function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset }) {
+  const activeName = MERIDIANS.find(m => m.code === activeMeridian)?.name
 
-  const itemRules = MENU_ITEMS.map(({ rectId, textId, code, y }) => {
-    const sel = `.svg-y-points [id="${rectId}"], .svg-y-points [id="${textId}"]`
-    const transition = 'transition: transform 280ms ease, opacity 200ms ease;'
-    if (menuOpen) {
-      return `${sel} { cursor: pointer; transform: translateY(0px); opacity: 1; pointer-events: auto; ${transition} }`
-    }
-    if (activeMeridian === code) {
-      const dy = SLOT1_Y - y
-      return `${sel} { cursor: pointer; transform: translateY(${dy}px); opacity: 1; pointer-events: auto; ${transition} }`
-    }
-    return `${sel} { opacity: 0; pointer-events: none; ${transition} }`
-  }).join('\n')
+  return (
+    <div className="absolute top-3 left-3 z-10" onClick={e => e.stopPropagation()}>
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={onToggle}
+          className={`text-xs font-semibold transition-colors ${
+            activeMeridian || menuOpen
+              ? 'text-amber-500 dark:text-amber-400'
+              : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
+          }`}
+        >
+          {activeName ?? 'Meridian'}
+          <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
+        </button>
+        {activeMeridian && (
+          <button
+            type="button"
+            onClick={onReset}
+            aria-label="Clear meridian filter"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 text-sm leading-none"
+          >
+            ×
+          </button>
+        )}
+      </div>
 
-  return `${buttonCursor}\n${refreshStyle}\n${itemRules}`
+      {menuOpen && (
+        <div className="mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[9.5rem]">
+          {MERIDIANS.map(({ code, name }) => (
+            <button
+              key={code}
+              type="button"
+              onClick={() => onSelect(code)}
+              className={`block w-full text-left px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${
+                activeMeridian === code
+                  ? 'text-amber-500 dark:text-amber-400'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
+              }`}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
@@ -216,10 +232,9 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
   const [activeMeridian, setActiveMeridian] = useState(null)
   const [menuOpen,       setMenuOpen]       = useState(false)
 
-  const style = `${STRONG_WEAK_LABEL_STYLE}\n${buildPointStyle(activeMeridian)}\n${buildMenuStyle(activeMeridian, menuOpen)}`
+  const style = `${STRONG_WEAK_LABEL_STYLE}\n${buildPointStyle(activeMeridian)}`
 
-  function selectPoint(id, e) {
-    e?.stopPropagation()
+  function selectPoint(id) {
     const jsonId = POINT_JSON_ID[id]
     if (!jsonId) return
     const data = allPoints.find(p => p.id === jsonId)
@@ -243,43 +258,30 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
     onPointSelect?.(null)
   }
 
-  // Handles clicks on the Meridian button and the 12 dropdown items
-  // (event delegation, since these live in the imported background SVG).
-  function handleLabelClick(e) {
-    let el = e.target
-    while (el && el !== e.currentTarget) {
-      if (el.id === 'Meridian' || el.id === 'Meridian_2') {
-        setMenuOpen(open => !open)
-        return
-      }
-      if (el.id === 'Refresh' || el.id === 'Refresh_2') {
-        handleReset()
-        return
-      }
-      const code = CODE_BY_ELEMENT_ID[el.id]
-      if (code) {
-        if (menuOpen) handleMeridianSelect(code)
-        else setMenuOpen(true)
-        return
-      }
-      el = el.parentElement
-    }
-  }
-
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div
+      style={{ position: 'relative', width: '100%', height: '100%' }}
+      onClick={() => menuOpen && setMenuOpen(false)}
+    >
       <style>{style}</style>
 
-      {/* Background SVG — handles Meridian menu + Refresh + label clicks via event delegation */}
+      <MeridianMenu
+        activeMeridian={activeMeridian}
+        menuOpen={menuOpen}
+        onToggle={() => setMenuOpen(open => !open)}
+        onSelect={handleMeridianSelect}
+        onReset={handleReset}
+      />
+
+      {/* Background SVG — the head diagram and point artwork */}
       <YNSAYSideSvg
         className="svg-y-points"
-        onClick={handleLabelClick}
         preserveAspectRatio="xMidYMin meet"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
       />
 
-      {/* Overlay SVG — pointer-events:none at root so menu/label clicks in the background SVG
-          pass through. Individual <g> elements re-enable pointer-events for points. */}
+      {/* Overlay SVG — pointer-events:none at root so clicks pass through to the wrapper
+          (closing the menu); individual <g> elements re-enable pointer-events for points. */}
       <svg
         viewBox="27 23 947 1331"
         preserveAspectRatio="xMidYMin meet"
@@ -294,7 +296,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
           return (
             <g
               key={id}
-              onClick={(e) => selectPoint(id, e)}
+              onClick={() => selectPoint(id)}
               onMouseEnter={() => setHoveredId(id)}
               onMouseLeave={() => setHoveredId(null)}
               style={{ cursor: 'pointer', pointerEvents: 'auto' }}
