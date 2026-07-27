@@ -1,26 +1,10 @@
 import { useState } from 'react'
 import { allPoints } from '../../data/points'
+import { MERIDIANS } from '../../data/meridians'
 import YNSAYSideSvg from '../../assets/diagrams/YNSA-Y-Side.svg?react'
 
 const RED  = '#FF0808'
 const BLUE = '#5392F6'
-
-// Meridian dropdown items, alphabetical by full name (top → bottom).
-// The SVG no longer bakes in a Meridian menu — this renders as a plain HTML dropdown instead.
-const MERIDIANS = [
-  { code: 'BL',      name: 'Bladder' },
-  { code: 'GB',      name: 'Gallbladder' },
-  { code: 'HT',      name: 'Heart' },
-  { code: 'KI',      name: 'Kidney' },
-  { code: 'LI',      name: 'Large Intestine' },
-  { code: 'LV',      name: 'Liver' },
-  { code: 'LU',      name: 'Lung' },
-  { code: 'PE',      name: 'Pericardium' },
-  { code: 'SI',      name: 'Small Intestine' },
-  { code: 'SP-PANC', name: 'Spleen/Pancreas' },
-  { code: 'ST',      name: 'Stomach' },
-  { code: 'SJ',      name: 'Triple Heater' },
-]
 
 // SVG point id → ynsa.json id (filled as JSON data is authored)
 const POINT_JSON_ID = {
@@ -76,61 +60,63 @@ const POINT_JSON_ID = {
   'BL-yang_2':        'YNSA-Y-BL-yang-2',
 }
 
-// Coordinates re-extracted 2026-07-05 from the rebuilt YNSA-Y-Side.svg (viewBox 27 23 947 1331,
-// after the user shifted the whole menu column further left and added the Refresh button).
-// Yin points are <ellipse> elements (cx/cy read directly); yang points are stroke-only
-// <path> outlines (center computed from the path's bounding box).
+// Coordinates re-extracted 2026-07-28 from the current YNSA-Y-Side.svg (viewBox 0 0 760 949).
+// The previous table (dated 2026-07-05, viewBox 27 23 947 1331) was for an older rebuild of
+// the SVG — the file has since been rebuilt again with an entirely different viewBox/layout,
+// which silently desynced every overlay position (clicks, hover, and the meridian flash all
+// landed on the wrong spot). Circle points use cx/cy directly; path-drawn (yang) points use
+// their bounding-box center.
 const POINTS = [
   // ── Strong Y-Points ────────────────────────────────────
-  { id: 'LU-yin',         cx: 447.074, cy: 490.828,  color: RED },
-  { id: 'LU-yang',        cx: 647.902, cy: 528.725,  color: RED },
-  { id: 'HT-yin',         cx: 529.381, cy: 508.952,  color: RED },
-  { id: 'HT-yang',        cx: 570.534, cy: 515.543,  color: RED },
-  { id: 'PE-yin',         cx: 486.581, cy: 499.066,  color: RED },
-  { id: 'PE-yang',        cx: 610.042, cy: 523.782,  color: RED },
-  { id: 'SI-yin',         cx: 445.428, cy: 540.258,  color: RED },
-  { id: 'SI-yang',        cx: 646.256, cy: 569.915,  color: RED },
-  { id: 'ST-yin',         cx: 488.228, cy: 538.61,   color: RED },
-  { id: 'ST-yang',        cx: 608.396, cy: 561.678,  color: RED },
-  { id: 'LV-yin',         cx: 527.735, cy: 545.201,  color: RED },
-  { id: 'LV-yang',        cx: 570.534, cy: 553.439,  color: RED },
-  { id: 'SP-PANC-yin',    cx: 483.756, cy: 575.529,  color: RED },
-  { id: 'SP-PANC-yang',   cx: 621.564, cy: 594.63,   color: RED },
-  { id: 'GB-yin',         cx: 517.858, cy: 578.153,  color: RED },
-  { id: 'GB-yang',        cx: 572.18,  cy: 586.391,  color: RED },
-  { id: 'SJ-yin',         cx: 440.49,  cy: 601.22,   color: RED },
-  { id: 'SJ-yang',        cx: 667.657, cy: 653.946,  color: RED },
-  { id: 'KI-yin',         cx: 474.75,  cy: 615.226,  color: RED },
-  { id: 'KI-yang',        cx: 667.657, cy: 782.462,  color: RED },
-  { id: 'LI-yin',         cx: 437.197, cy: 653.946,  color: RED },
-  { id: 'LI-yang',        cx: 670.948, cy: 698.432,  color: RED },
-  { id: 'BL-yin',         cx: 472.803, cy: 655.592,  color: RED },
-  { id: 'BL-yang',        cx: 636.38,  cy: 823.653,  color: RED },
+  { id: 'LU-yin',         cx: 319.216,  cy: 354.216,  color: RED },
+  { id: 'LU-yang',        cx: 443.216,  cy: 380.216,  color: RED },
+  { id: 'HT-yin',         cx: 373.216,  cy: 365.216,  color: RED },
+  { id: 'HT-yang',        cx: 398.216,  cy: 369.216,  color: RED },
+  { id: 'PE-yin',         cx: 347.216,  cy: 359.216,  color: RED },
+  { id: 'PE-yang',        cx: 419.216,  cy: 376.216,  color: RED },
+  { id: 'SI-yin',         cx: 317.216,  cy: 386.216,  color: RED },
+  { id: 'SI-yang',        cx: 439.216,  cy: 404.216,  color: RED },
+  { id: 'ST-yin',         cx: 348.216,  cy: 383.216,  color: RED },
+  { id: 'ST-yang',        cx: 419.216,  cy: 397.216,  color: RED },
+  { id: 'LV-yin',         cx: 372.216,  cy: 387.216,  color: RED },
+  { id: 'LV-yang',        cx: 398.216,  cy: 392.216,  color: RED },
+  { id: 'SP-PANC-yin',    cx: 345.5,    cy: 405.623,  color: RED },
+  { id: 'SP-PANC-yang',   cx: 429.216,  cy: 423.216,  color: RED },
+  { id: 'GB-yin',         cx: 368.216,  cy: 411.216,  color: RED },
+  { id: 'GB-yang',        cx: 398.216,  cy: 418.216,  color: RED },
+  { id: 'SJ-yin',         cx: 317.216,  cy: 421.216,  color: RED },
+  { id: 'SJ-yang',        cx: 454.432,  cy: 458.216,  color: RED },
+  { id: 'KI-yin',         cx: 340.029,  cy: 429.716,  color: RED },
+  { id: 'KI-yang',        cx: 456.216,  cy: 548.216,  color: RED },
+  { id: 'LI-yin',         cx: 317.216,  cy: 453.216,  color: RED },
+  { id: 'LI-yang',        cx: 457.932,  cy: 480.216,  color: RED },
+  { id: 'BL-yin',         cx: 338.845,  cy: 454.216,  color: RED },
+  { id: 'BL-yang',        cx: 433.216,  cy: 567.216,  color: RED },
   // ── Weak Y-Points ──────────────────────────────────────
-  { id: 'LU-yin_2',         cx: 447.074, cy: 444.694,  color: BLUE },
-  { id: 'LU-yang_2',        cx: 642.965, cy: 484.238,  color: BLUE },
-  { id: 'HT-yin_2',         cx: 529.381, cy: 461.171,  color: BLUE },
-  { id: 'HT-yang_2',        cx: 567.242, cy: 471.057,  color: BLUE },
-  { id: 'PE-yin_2',         cx: 486.581, cy: 452.932,  color: BLUE },
-  { id: 'PE-yang_2',        cx: 605.103, cy: 474.352,  color: BLUE },
-  { id: 'SI-yin_2',         cx: 447.972, cy: 404.794,  color: BLUE },
-  { id: 'SI-yang_2',        cx: 654.487, cy: 436.456,  color: BLUE },
-  { id: 'ST-yin_2',         cx: 486.581, cy: 415.036,  color: BLUE },
-  { id: 'ST-yang_2',        cx: 605.103, cy: 439.752,  color: BLUE },
-  { id: 'LV-yin_2',         cx: 526.089, cy: 424.922,  color: BLUE },
-  { id: 'LV-yang_2',        cx: 568.888, cy: 428.217,  color: BLUE },
-  { id: 'SP-PANC-yin_2',    cx: 481.644, cy: 377.14,   color: BLUE },
-  { id: 'SP-PANC-yang_2',   cx: 616.626, cy: 400.208,  color: BLUE },
-  { id: 'GB-yin_2',         cx: 519.149, cy: 380.435,  color: BLUE },
-  { id: 'GB-yang_2',        cx: 568.888, cy: 391.969,  color: BLUE },
-  { id: 'SJ-yin_2',         cx: 442.136, cy: 349.13,   color: BLUE },
-  { id: 'SJ-yang_2',        cx: 657.779, cy: 383.731,  color: BLUE },
-  { id: 'KI-yin_2',         cx: 481.288, cy: 334.185,  color: BLUE },
-  { id: 'KI-yang_2',        cx: 616.626, cy: 360.664,  color: BLUE },
-  { id: 'LI-yin_2',         cx: 430.613, cy: 288.168,  color: BLUE },
-  { id: 'LI-yang_2',        cx: 657.779, cy: 334.301,  color: BLUE },
-  { id: 'BL-yin_2',         cx: 478.818, cy: 298.89,   color: BLUE },
-  { id: 'BL-yang_2',        cx: 616.626, cy: 326.063,  color: BLUE },
+  { id: 'LU-yin_2',         cx: 320.216,  cy: 330.216,  color: BLUE },
+  { id: 'LU-yang_2',        cx: 439.216,  cy: 356.216,  color: BLUE },
+  { id: 'HT-yin_2',         cx: 373.216,  cy: 341.216,  color: BLUE },
+  { id: 'HT-yang_2',        cx: 396.216,  cy: 347.216,  color: BLUE },
+  { id: 'PE-yin_2',         cx: 347.216,  cy: 336.216,  color: BLUE },
+  { id: 'PE-yang_2',        cx: 418.634,  cy: 351.058,  color: BLUE },
+  { id: 'SI-yin_2',         cx: 320.761,  cy: 305,      color: BLUE },
+  { id: 'SI-yang_2',        cx: 443.216,  cy: 331.216,  color: BLUE },
+  { id: 'ST-yin_2',         cx: 347.216,  cy: 313.216,  color: BLUE },
+  { id: 'ST-yang_2',        cx: 419.216,  cy: 323.716,  color: BLUE },
+  { id: 'LV-yin_2',         cx: 371.216,  cy: 319.216,  color: BLUE },
+  { id: 'LV-yang_2',        cx: 397.216,  cy: 321.216,  color: BLUE },
+  { id: 'SP-PANC-yin_2',    cx: 343.216,  cy: 290.216,  color: BLUE },
+  { id: 'SP-PANC-yang_2',   cx: 426.216,  cy: 304.216,  color: BLUE },
+  { id: 'GB-yin_2',         cx: 367,      cy: 292.216,  color: BLUE },
+  { id: 'GB-yang_2',        cx: 397.216,  cy: 299.216,  color: BLUE },
+  { id: 'SJ-yin_2',         cx: 318.216,  cy: 273.216,  color: BLUE },
+  { id: 'SJ-yang_2',        cx: 447.216,  cy: 300.216,  color: BLUE },
+  { id: 'KI-yin_2',         cx: 344.216,  cy: 268.216,  color: BLUE },
+  { id: 'KI-yang_2',        cx: 426.216,  cy: 280.216,  color: BLUE },
+  { id: 'LI-yin_2',         cx: 315.216,  cy: 245.678,  color: BLUE },
+  { id: 'LI-yang_2',        cx: 454.216,  cy: 270.073,  color: BLUE },
+  { id: 'BL-yin_2',         cx: 343.5,    cy: 247.716,  color: BLUE },
+  { id: 'BL-yang_2',        cx: 426.216,  cy: 259.216,  color: BLUE },
 ]
 
 // The four corner labels (Weak Yin / Weak Yang / Strong Yin / Strong Yang) are informational,
@@ -144,6 +130,18 @@ const STRONG_WEAK_LABEL_STYLE = `
   transform: scale(1.3);
   transform-box: fill-box;
   transform-origin: center;
+}`
+
+// Corner labels sit near the very top/bottom edges of the viewBox, so once the
+// diagram is scaled up to fill a short tile (see diagramScale) they're the
+// first thing to get clipped. Hiding them is presentation-only — the labels
+// stay intact in the source SVG and still show on the full-size Y-Points tab.
+const HIDE_CORNER_LABELS_STYLE = `
+.svg-y-points [id="Weak Yin"],
+.svg-y-points [id="WeakYang"],
+.svg-y-points [id="Strong Yin"],
+.svg-y-points [id="Strong Yang"] {
+  display: none;
 }`
 
 // Build scoped CSS:
@@ -272,39 +270,55 @@ function MeridianSearch({ open, query, onToggle, onQueryChange, onSelect }) {
   )
 }
 
-export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
-  const [selectedId,     setSelectedId]     = useState(null)
-  const [hoveredId,      setHoveredId]      = useState(null)
-  const [activeMeridian, setActiveMeridian] = useState(null)
-  const [openPanel,      setOpenPanel]      = useState(null) // null | 'meridian' | 'search'
-  const [searchQuery,    setSearchQuery]    = useState('')
+// activeMeridian/onMeridianChange are optional — pass both to make the Meridian
+// selection controlled from a parent (e.g. so a tap on another tile's diagram
+// can select a meridian here too); omit both for standalone/uncontrolled use.
+// diagramScale enlarges the diagram (background + point overlay) only —
+// the Meridian menu stays at its natural position/size regardless.
+// hideCornerLabels drops the Weak/Strong Yin/Yang corner labels, which get
+// clipped once diagramScale pushes them past a short tile's edges.
+// showCornerLabels renders those same four labels back in as a plain HTML
+// overlay, pinned to the tile's actual corners rather than the (possibly
+// scaled/clipped) SVG's own coordinate system — meant to pair with
+// hideCornerLabels once there's room again (e.g. the tile is expanded).
+export default function HeadYPoints({ onPointSelect, highlightJsonId = null, activeMeridian: controlledMeridian, onMeridianChange, diagramScale = 1, hideCornerLabels = false, showCornerLabels = false }) {
+  const [selectedId,       setSelectedId]       = useState(null)
+  const [hoveredId,        setHoveredId]        = useState(null)
+  const [internalMeridian, setInternalMeridian] = useState(null)
+  const [openPanel,        setOpenPanel]        = useState(null) // null | 'meridian' | 'search'
+  const [searchQuery,      setSearchQuery]      = useState('')
 
-  const style = `${STRONG_WEAK_LABEL_STYLE}\n${buildPointStyle(activeMeridian)}`
+  const activeMeridian = controlledMeridian !== undefined ? controlledMeridian : internalMeridian
 
+  const style = `${hideCornerLabels ? HIDE_CORNER_LABELS_STYLE : STRONG_WEAK_LABEL_STYLE}\n${buildPointStyle(activeMeridian)}`
+
+  // Always mark the tapped point selected (the ring is the touch feedback),
+  // even though the Y-Points JSON content isn't authored yet — this used to
+  // bail out silently before setting anything, so points looked unclickable.
   function selectPoint(id) {
-    const jsonId = POINT_JSON_ID[id]
-    if (!jsonId) return
-    const data = allPoints.find(p => p.id === jsonId)
-    if (!data) return
     setSelectedId(id)
-    onPointSelect?.(data)
+    const jsonId = POINT_JSON_ID[id]
+    const data = jsonId ? allPoints.find(p => p.id === jsonId) : null
+    onPointSelect?.(data ?? null)
   }
 
   function handleMeridianSelect(code) {
-    setActiveMeridian(code)
+    setInternalMeridian(code)
     setOpenPanel(null)
     setSearchQuery('')
     setSelectedId(null)
     onPointSelect?.(null)
+    onMeridianChange?.(code)
   }
 
   function handleReset() {
-    setActiveMeridian(null)
+    setInternalMeridian(null)
     setOpenPanel(null)
     setSearchQuery('')
     setSelectedId(null)
     setHoveredId(null)
     onPointSelect?.(null)
+    onMeridianChange?.(null)
   }
 
   return (
@@ -314,7 +328,23 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
     >
       <style>{style}</style>
 
-      <div className="absolute top-3 left-3 z-10 flex items-start gap-4" onClick={e => e.stopPropagation()}>
+      {/* Corner labels rank above the menu when both are shown — they sit in the
+          actual top corners, and the menu drops below them (see top-9 below).
+          "Weak Yang" is pulled in from the very edge so it doesn't sit under
+          the modal's close button (top-right, outside this component). */}
+      {showCornerLabels && (
+        <div className="absolute inset-0 z-10 pointer-events-none" aria-hidden="true">
+          <span className="absolute top-2 left-2 text-xs font-semibold text-amber-500 dark:text-amber-400">Weak Yin</span>
+          <span className="absolute top-2 right-12 text-xs font-semibold text-amber-500 dark:text-amber-400">Weak Yang</span>
+          <span className="absolute bottom-2 left-2 text-xs font-semibold text-amber-500 dark:text-amber-400">Strong Yin</span>
+          <span className="absolute bottom-2 right-2 text-xs font-semibold text-amber-500 dark:text-amber-400">Strong Yang</span>
+        </div>
+      )}
+
+      <div
+        className={`absolute left-3 z-10 flex items-baseline gap-4 ${showCornerLabels ? 'top-9' : 'top-3'}`}
+        onClick={e => e.stopPropagation()}
+      >
         <MeridianMenu
           activeMeridian={activeMeridian}
           menuOpen={openPanel === 'meridian'}
@@ -331,45 +361,58 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
         />
       </div>
 
-      {/* Background SVG — the head diagram and point artwork */}
-      <YNSAYSideSvg
-        className="svg-y-points"
-        preserveAspectRatio="xMidYMin meet"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
-      />
+      {/* Diagram layer — scaled independently of the Meridian menu above. */}
+      <div style={{ position: 'absolute', inset: 0, transform: `scale(${diagramScale})`, transformOrigin: 'center' }}>
+        {/* Background SVG — the head diagram and point artwork */}
+        <YNSAYSideSvg
+          className="svg-y-points"
+          preserveAspectRatio="xMidYMin meet"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+        />
 
-      {/* Overlay SVG — pointer-events:none at root so clicks pass through to the wrapper
-          (closing the menu); individual <g> elements re-enable pointer-events for points. */}
-      <svg
-        viewBox="27 23 947 1331"
-        preserveAspectRatio="xMidYMin meet"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
-      >
-        {POINTS.map(({ id, cx, cy, color }) => {
-          const jsonId    = POINT_JSON_ID[id]
-          const isSelected = selectedId === id || (highlightJsonId && jsonId === highlightJsonId)
-          const isHovered  = hoveredId === id
-          return (
-            <g
-              key={id}
-              onClick={() => selectPoint(id)}
-              onMouseEnter={() => setHoveredId(id)}
-              onMouseLeave={() => setHoveredId(null)}
-              style={{ cursor: 'pointer', pointerEvents: 'auto' }}
-            >
-              {isSelected && (
-                <circle cx={cx} cy={cy} r={14} fill="none" stroke={color} strokeWidth="3" opacity="0.9" />
-              )}
-              {isHovered && !isSelected && (
-                <circle cx={cx} cy={cy} r={14} fill={color} opacity="0.25" />
-              )}
-              <circle cx={cx} cy={cy} r={12} fill="transparent" />
-            </g>
-          )
-        })}
-      </svg>
+        {/* Overlay SVG — pointer-events:none at root so clicks pass through to the wrapper
+            (closing the menu); individual <g> elements re-enable pointer-events for points. */}
+        <svg
+          viewBox="0 0 760 949"
+          preserveAspectRatio="xMidYMin meet"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
+        >
+          {POINTS.map(({ id, cx, cy, color }) => {
+            const jsonId     = POINT_JSON_ID[id]
+            const isSelected = selectedId === id || (highlightJsonId && jsonId === highlightJsonId)
+            const isHovered  = hoveredId === id
+            const isActiveMeridian = !!activeMeridian && id.startsWith(`${activeMeridian}-`)
+            return (
+              <g
+                key={id}
+                onClick={() => selectPoint(id)}
+                onMouseEnter={() => setHoveredId(id)}
+                onMouseLeave={() => setHoveredId(null)}
+                style={{ cursor: 'pointer', pointerEvents: 'auto' }}
+              >
+                {/* Meridian highlight — pulsing ring on every point belonging to the
+                    active meridian, same flash as the Basic Points / Neck Diagnosis
+                    search-style highlight. */}
+                {isActiveMeridian && (
+                  <circle cx={cx} cy={cy} r={14} fill="none" stroke={color} strokeWidth="2" opacity="0.85">
+                    <animate attributeName="r"       values="14;26;14"    dur="1.6s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.85;0;0.85" dur="1.6s" repeatCount="indefinite" />
+                  </circle>
+                )}
+                {isSelected && (
+                  <circle cx={cx} cy={cy} r={14} fill="none" stroke={color} strokeWidth="3" opacity="0.9" />
+                )}
+                {isHovered && !isSelected && (
+                  <circle cx={cx} cy={cy} r={14} fill={color} opacity="0.25" />
+                )}
+                <circle cx={cx} cy={cy} r={12} fill="transparent" />
+              </g>
+            )
+          })}
+        </svg>
+      </div>
     </div>
   )
 }
