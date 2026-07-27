@@ -381,7 +381,7 @@ export default function ViewerPage() {
                   </svg>
                   <input
                     type="text"
-                    placeholder="Search by indication…"
+                    placeholder="Search by points, indication, meridian…"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 text-sm pl-8 pr-8 py-1.5 rounded border border-gray-300 dark:border-gray-700 focus:border-amber-500 focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600"
@@ -447,7 +447,7 @@ export default function ViewerPage() {
               </svg>
               <input
                 type="text"
-                placeholder="Search by indication…"
+                placeholder="Search by points, indication, meridian…"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 autoFocus

@@ -172,23 +172,29 @@ function buildPointStyle(activeMeridian) {
   return `${dimPoints}\n${restorePoints}`
 }
 
+// Shared text style for both the Meridian and Search triggers — plain text, no button
+// chrome, matching the SubgroupTabs font/weight elsewhere in the viewer.
+const TRIGGER_CLASS = (active) => `text-xs font-semibold transition-colors ${
+  active
+    ? 'text-amber-500 dark:text-amber-400'
+    : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
+}`
+
+const DROPDOWN_ITEM_CLASS = (active) => `block w-full text-left px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${
+  active
+    ? 'text-amber-500 dark:text-amber-400'
+    : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
+}`
+
 // The Meridian control is a plain HTML dropdown (matches the SubgroupTabs font/weight),
 // styled as text rather than a filled button, since the SVG no longer bakes in a menu.
 function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset }) {
   const activeName = MERIDIANS.find(m => m.code === activeMeridian)?.name
 
   return (
-    <div className="absolute top-3 left-3 z-10" onClick={e => e.stopPropagation()}>
+    <div className="relative">
       <div className="flex items-center gap-1.5">
-        <button
-          type="button"
-          onClick={onToggle}
-          className={`text-xs font-semibold transition-colors ${
-            activeMeridian || menuOpen
-              ? 'text-amber-500 dark:text-amber-400'
-              : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
-          }`}
-        >
+        <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activeMeridian || menuOpen)}>
           {activeName ?? 'Meridian'}
           <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
         </button>
@@ -205,21 +211,61 @@ function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset })
       </div>
 
       {menuOpen && (
-        <div className="mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[9.5rem]">
+        <div className="absolute top-full left-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[9.5rem] z-20">
           {MERIDIANS.map(({ code, name }) => (
-            <button
-              key={code}
-              type="button"
-              onClick={() => onSelect(code)}
-              className={`block w-full text-left px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${
-                activeMeridian === code
-                  ? 'text-amber-500 dark:text-amber-400'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
-              }`}
-            >
+            <button key={code} type="button" onClick={() => onSelect(code)} className={DROPDOWN_ITEM_CLASS(activeMeridian === code)}>
               {name}
             </button>
           ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Quick meridian-name search, next to the Meridian dropdown. Matches meridian names only
+// for now — Y-Points has no authored JSON/indications yet to search against (see
+// project memory); once that content exists, extend the `matches` filter below to also
+// pull in points whose indications/tags match `query`, mapped back to their meridian.
+function MeridianSearch({ open, query, onToggle, onQueryChange, onSelect }) {
+  const q = query.trim().toLowerCase()
+  const matches = q ? MERIDIANS.filter(m => m.name.toLowerCase().includes(q)) : []
+
+  function handleKeyDown(e) {
+    if (e.key === 'Enter' && matches.length > 0) onSelect(matches[0].code)
+    else if (e.key === 'Escape') onToggle(false)
+  }
+
+  return (
+    <div className="relative">
+      <button type="button" onClick={() => onToggle()} className={TRIGGER_CLASS(open)}>
+        Search
+      </button>
+
+      {open && (
+        <div className="absolute top-full left-0 mt-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[10rem] z-20">
+          <input
+            type="text"
+            autoFocus
+            value={query}
+            onChange={e => onQueryChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Meridian…"
+            className="w-full px-3 py-1.5 text-xs font-semibold bg-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none border-b border-gray-200 dark:border-gray-700"
+          />
+          {q && (
+            matches.length > 0 ? (
+              <div className="py-1">
+                {matches.map(({ code, name }) => (
+                  <button key={code} type="button" onClick={() => onSelect(code)} className={DROPDOWN_ITEM_CLASS(false)}>
+                    {name}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="px-3 py-1.5 text-xs text-gray-400 dark:text-gray-600">No meridian found</p>
+            )
+          )}
         </div>
       )}
     </div>
@@ -230,7 +276,8 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
   const [selectedId,     setSelectedId]     = useState(null)
   const [hoveredId,      setHoveredId]      = useState(null)
   const [activeMeridian, setActiveMeridian] = useState(null)
-  const [menuOpen,       setMenuOpen]       = useState(false)
+  const [openPanel,      setOpenPanel]      = useState(null) // null | 'meridian' | 'search'
+  const [searchQuery,    setSearchQuery]    = useState('')
 
   const style = `${STRONG_WEAK_LABEL_STYLE}\n${buildPointStyle(activeMeridian)}`
 
@@ -245,14 +292,16 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
 
   function handleMeridianSelect(code) {
     setActiveMeridian(code)
-    setMenuOpen(false)
+    setOpenPanel(null)
+    setSearchQuery('')
     setSelectedId(null)
     onPointSelect?.(null)
   }
 
   function handleReset() {
     setActiveMeridian(null)
-    setMenuOpen(false)
+    setOpenPanel(null)
+    setSearchQuery('')
     setSelectedId(null)
     setHoveredId(null)
     onPointSelect?.(null)
@@ -261,17 +310,26 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null }) {
   return (
     <div
       style={{ position: 'relative', width: '100%', height: '100%' }}
-      onClick={() => menuOpen && setMenuOpen(false)}
+      onClick={() => openPanel && setOpenPanel(null)}
     >
       <style>{style}</style>
 
-      <MeridianMenu
-        activeMeridian={activeMeridian}
-        menuOpen={menuOpen}
-        onToggle={() => setMenuOpen(open => !open)}
-        onSelect={handleMeridianSelect}
-        onReset={handleReset}
-      />
+      <div className="absolute top-3 left-3 z-10 flex items-start gap-4" onClick={e => e.stopPropagation()}>
+        <MeridianMenu
+          activeMeridian={activeMeridian}
+          menuOpen={openPanel === 'meridian'}
+          onToggle={() => setOpenPanel(p => p === 'meridian' ? null : 'meridian')}
+          onSelect={handleMeridianSelect}
+          onReset={handleReset}
+        />
+        <MeridianSearch
+          open={openPanel === 'search'}
+          query={searchQuery}
+          onToggle={() => setOpenPanel(p => p === 'search' ? null : 'search')}
+          onQueryChange={setSearchQuery}
+          onSelect={handleMeridianSelect}
+        />
+      </div>
 
       {/* Background SVG — the head diagram and point artwork */}
       <YNSAYSideSvg

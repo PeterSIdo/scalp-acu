@@ -6,7 +6,10 @@ export default function SearchPanel({ query, onSelect }) {
     const q = query.trim().toLowerCase()
     if (!q) return []
     return allPoints.filter(p =>
-      p.indications?.some(ind => ind.toLowerCase().includes(q))
+      p.name.toLowerCase().includes(q) ||
+      p.meridian?.toLowerCase().includes(q) ||
+      p.indications?.some(ind => ind.toLowerCase().includes(q)) ||
+      p.tags?.some(tag => tag.toLowerCase().includes(q))
     )
   }, [query])
 
