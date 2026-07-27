@@ -7,6 +7,7 @@ import HeadLateral   from '../components/viewer/HeadLateral'
 import HeadFrontal   from '../components/viewer/HeadFrontal'
 import HeadPosterior from '../components/viewer/HeadPosterior'
 import HeadYPoints   from '../components/viewer/HeadYPoints'
+import NeckDiagnosis from '../components/viewer/NeckDiagnosis'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
 import SearchPanel from '../components/ui/SearchPanel'
@@ -21,7 +22,7 @@ const SYSTEMS = [
       { id: 'ynsa-sensory', label: 'Sensory Points',    views: ['Lateral', 'Frontal', 'Posterior'], available: true  },
       { id: 'ynsa-brain',   label: 'Brain Points',      views: ['Frontal', 'Posterior'],            available: true  },
       { id: 'ynsa-y',       label: 'Y-Points',          views: ['Side'],                            available: true  },
-      { id: 'ynsa-neck',    label: 'Neck Diagnosis',    views: ['Neck'],                            available: false },
+      { id: 'ynsa-neck',    label: 'Neck Diagnosis',    views: ['Neck'],                            available: true  },
       { id: 'ynsa-abdomen', label: 'Abdomen Diagnosis', views: ['Abdomen'],                         available: false },
     ],
   },
@@ -118,6 +119,30 @@ function SearchIcon() {
   )
 }
 
+function ZoomInIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.2-5.2m0 0a7.5 7.5 0 1 0-10.6-10.6 7.5 7.5 0 0 0 10.6 10.6ZM10.5 7.5v6m-3-3h6" />
+    </svg>
+  )
+}
+
+function ZoomOutIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.2-5.2m0 0a7.5 7.5 0 1 0-10.6-10.6 7.5 7.5 0 0 0 10.6 10.6ZM7.5 10.5h6" />
+    </svg>
+  )
+}
+
+function RefreshIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-4.992M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+    </svg>
+  )
+}
+
 export default function ViewerPage() {
   const { logout } = useAuth()
   const { isActive } = useSubscription()
@@ -132,6 +157,7 @@ export default function ViewerPage() {
 
   const swipeStartX = useRef(null)
   const swipeStartY = useRef(null)
+  const neckZoomRef = useRef(null)
 
   function handleTouchStart(e) {
     swipeStartX.current = e.touches[0].clientX
@@ -154,6 +180,7 @@ export default function ViewerPage() {
   const subgroup = system.subgroups?.find(sg => sg.id === activeSubgroup) ?? null
   const currentViews = subgroup?.views ?? []
   const isAvailable = subgroup ? subgroup.available : (system.available ?? false)
+  const isNeck = activeSubgroup === 'ynsa-neck'
 
   function handleSystemChange(systemId) {
     const sys = SYSTEMS.find(s => s.id === systemId)
@@ -230,6 +257,32 @@ export default function ViewerPage() {
     )
   }
 
+  const NeckZoomBar = ({ className = '' }) => (
+    <div className={`flex items-center gap-3 px-3 py-1.5 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 ${className}`}>
+      <button
+        onClick={() => neckZoomRef.current?.zoomIn()}
+        aria-label="Zoom in"
+        className="text-gray-500 dark:text-gray-400 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+      >
+        <ZoomInIcon />
+      </button>
+      <button
+        onClick={() => neckZoomRef.current?.zoomOut()}
+        aria-label="Zoom out"
+        className="text-gray-500 dark:text-gray-400 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+      >
+        <ZoomOutIcon />
+      </button>
+      <button
+        onClick={() => neckZoomRef.current?.reset()}
+        aria-label="Reset view"
+        className="text-gray-500 dark:text-gray-400 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+      >
+        <RefreshIcon />
+      </button>
+    </div>
+  )
+
   const ViewTabs = ({ className = '' }) => {
     if (currentViews.length <= 1) return null
     return (
@@ -285,6 +338,9 @@ export default function ViewerPage() {
       {/* Subgroup tabs — only when the active system has subgroups */}
       <SubgroupTabs className="flex-shrink-0" />
 
+      {/* Neck Diagnosis zoom toolbar — replaces the in-canvas zoom controls for this view */}
+      {isNeck && isAvailable && <NeckZoomBar className="flex-shrink-0" />}
+
       {/* Mobile view tabs — only when subgroup has multiple views */}
       <ViewTabs className="md:hidden flex-shrink-0 bg-white dark:bg-gray-950" />
 
@@ -294,11 +350,12 @@ export default function ViewerPage() {
         {/* Diagram */}
         <div className="flex-1 min-h-0 bg-gray-300 dark:bg-gray-900 overflow-hidden p-4" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
           {isAvailable ? (
-            <ZoomableView>
+            <ZoomableView ref={neckZoomRef} hideControls={isNeck}>
               {activeView === 'Lateral'   && <HeadLateral   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
               {activeView === 'Frontal'   && <HeadFrontal   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
               {activeView === 'Posterior' && <HeadPosterior onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
               {activeView === 'Side'      && <HeadYPoints   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} />}
+              {activeView === 'Neck'      && <NeckDiagnosis />}
             </ZoomableView>
           ) : (
             <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
