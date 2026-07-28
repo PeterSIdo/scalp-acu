@@ -6,7 +6,6 @@ import { useTheme } from '../providers/ThemeProvider'
 import HeadLateral   from '../components/viewer/HeadLateral'
 import HeadFrontal   from '../components/viewer/HeadFrontal'
 import HeadPosterior from '../components/viewer/HeadPosterior'
-import HeadYPoints   from '../components/viewer/HeadYPoints'
 import NeckDiagnosis from '../components/viewer/NeckDiagnosis'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
@@ -21,9 +20,7 @@ const SYSTEMS = [
       { id: 'ynsa-basic',   label: 'Basic Points',      views: ['Lateral', 'Frontal', 'Posterior'], available: true  },
       { id: 'ynsa-sensory', label: 'Sensory Points',    views: ['Lateral', 'Frontal', 'Posterior'], available: true  },
       { id: 'ynsa-brain',   label: 'Brain Points',      views: ['Frontal', 'Posterior'],            available: true  },
-      { id: 'ynsa-y',       label: 'Y-Points',          views: ['Side'],                            available: true  },
-      { id: 'ynsa-neck',    label: 'Neck Diagnosis',    views: ['Neck'],                            available: true  },
-      { id: 'ynsa-abdomen', label: 'Abdomen Diagnosis', views: ['Abdomen'],                         available: false },
+      { id: 'ynsa-neck',    label: 'Y-Points',          views: ['Neck'],                            available: true  },
     ],
   },
   { id: 'zhus', label: "Zhu's", fullName: "Zhu's Scalp Acupuncture", subgroups: null, available: false },
@@ -57,7 +54,7 @@ const SUBGROUP_POINT_IDS = {
     'YNSA-Brain-Cerebellum-yin',  'YNSA-Brain-Cerebellum-yang',
     'YNSA-Brain-BasalGanglia-yin','YNSA-Brain-BasalGanglia-yang',
   ]),
-  'ynsa-y': new Set([
+  'ynsa-neck': new Set([
     'YNSA-Y-LU-yin',   'YNSA-Y-LU-yang',   'YNSA-Y-LU-yin-2',   'YNSA-Y-LU-yang-2',
     'YNSA-Y-HT-yin',   'YNSA-Y-HT-yang',   'YNSA-Y-HT-yin-2',   'YNSA-Y-HT-yang-2',
     'YNSA-Y-PE-yin',   'YNSA-Y-PE-yang',   'YNSA-Y-PE-yin-2',   'YNSA-Y-PE-yang-2',
@@ -354,7 +351,6 @@ export default function ViewerPage() {
               {activeView === 'Lateral'   && <HeadLateral   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
               {activeView === 'Frontal'   && <HeadFrontal   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
               {activeView === 'Posterior' && <HeadPosterior onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
-              {activeView === 'Side'      && <HeadYPoints   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} />}
               {activeView === 'Neck'      && <NeckDiagnosis />}
             </ZoomableView>
           ) : (

@@ -20,7 +20,7 @@ function svgIdToMeridian(svgId) {
 // Point centers read directly from male-neck-diag.svg (viewBox 0 0 410 292) —
 // circle cx/cy where the point is a <circle>, bounding-box center for KD
 // (a stroke-only path outline). Keyed by svg id (see MERIDIAN_TO_SVG_ID above).
-const POINTS = {
+export const DIAG_POINTS = {
   SI:        { cx: 290.103,  cy: 37.1025 },
   ST:        { cx: 281.851,  cy: 100.635 },
   'SP/PANC': { cx: 258.701,  cy: 108.738 },
@@ -35,14 +35,37 @@ const POINTS = {
   SJ:        { cx: 286.481,  cy: 193.235 },
 }
 
+// Point centers read directly from the baked-in <circle id="..."> elements
+// in male-neck-real.svg (also viewBox 0 0 410 292) — a different anatomical
+// model than male-neck-diag.svg, so these are wired up separately rather
+// than reusing DIAG_POINTS.
+export const REAL_POINTS = {
+  SI:        { cx: 240, cy: 52 },
+  ST:        { cx: 250, cy: 127 },
+  'SP/PANC': { cx: 233, cy: 149 },
+  HT:        { cx: 191, cy: 153 },
+  LV:        { cx: 198, cy: 178 },
+  PC:        { cx: 174, cy: 178 },
+  LU:        { cx: 147, cy: 178 },
+  GB:        { cx: 162, cy: 203 },
+  KD:        { cx: 229, cy: 223 },
+  UB:        { cx: 229, cy: 240 },
+  LI:        { cx: 294, cy: 171 },
+  SJ:        { cx: 277, cy: 189 },
+}
+
 // Tapping/clicking a point selects its meridian (shared with the Meridian
 // menu in the YNSA Y-Side tile), which flashes the same pulsing-ring
 // highlight as the Basic Points search hit and shows its name label.
-export default function NeckMeridianMap({ activeMeridian, onMeridianChange }) {
+// Background/points default to the diagrammatic map; the "real"
+// reference-photo tile passes NeckRealSvg + REAL_POINTS instead — the two
+// backgrounds share a viewBox but not point placement, since they're
+// different anatomical models.
+export default function NeckMeridianMap({ activeMeridian, onMeridianChange, Background = NeckDiagSvg, points = DIAG_POINTS }) {
   const [hoveredSvgId, setHoveredSvgId] = useState(null)
 
   const svgId = activeMeridian ? (MERIDIAN_TO_SVG_ID[activeMeridian] ?? activeMeridian) : null
-  const point = svgId ? POINTS[svgId] : null
+  const point = svgId ? points[svgId] : null
   const label = activeMeridian ? MERIDIANS.find(m => m.code === activeMeridian)?.name : null
 
   // Label box — flip to the point's left when it would otherwise overflow
@@ -56,7 +79,7 @@ export default function NeckMeridianMap({ activeMeridian, onMeridianChange }) {
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <NeckDiagSvg
+      <Background
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
         preserveAspectRatio="xMidYMid meet"
       />
@@ -69,14 +92,14 @@ export default function NeckMeridianMap({ activeMeridian, onMeridianChange }) {
         {/* Touch/click targets — generously sized (r=14) over each dot baked
             into the underlying diagram, since those dots have no hit area of
             their own. */}
-        {Object.entries(POINTS).map(([id, p]) => {
+        {Object.entries(points).map(([id, p]) => {
           const code       = svgIdToMeridian(id)
           const isHovered  = hoveredSvgId === id
           const isSelected = svgId === id
           return (
             <g
               key={id}
-              onClick={() => onMeridianChange?.(code)}
+              onClick={e => { e.stopPropagation(); onMeridianChange?.(code) }}
               onMouseEnter={() => setHoveredSvgId(id)}
               onMouseLeave={() => setHoveredSvgId(null)}
               style={{ cursor: 'pointer', pointerEvents: 'auto' }}

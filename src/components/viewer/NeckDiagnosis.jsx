@@ -2,12 +2,7 @@ import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 import NeckRealSvg from '../../assets/diagrams/male-neck-real.svg?react'
 import HeadYPoints from './HeadYPoints'
-import NeckMeridianMap from './NeckMeridianMap'
-
-// Plain-diagram tiles just need their Svg blown up to fill the tile.
-function SvgTile({ Svg }) {
-  return <Svg width="100%" height="100%" style={{ maxWidth: '100%', maxHeight: '100%' }} preserveAspectRatio="xMidYMid meet" />
-}
+import NeckMeridianMap, { REAL_POINTS } from './NeckMeridianMap'
 
 // 3x2 grid of neck references, in row-major order. Ids with no case in
 // renderTileContent below render as "Coming soon" placeholders — drop in
@@ -49,7 +44,7 @@ function renderTileContent(id, { activeMeridian, onMeridianChange, isExpanded })
         />
       )
     case 'diag':         return <NeckMeridianMap activeMeridian={activeMeridian} onMeridianChange={onMeridianChange} />
-    case 'real':         return <SvgTile Svg={NeckRealSvg} />
+    case 'real':         return <NeckMeridianMap activeMeridian={activeMeridian} onMeridianChange={onMeridianChange} Background={NeckRealSvg} points={REAL_POINTS} />
     default:             return null
   }
 }

@@ -201,7 +201,7 @@ function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset })
             type="button"
             onClick={onReset}
             aria-label="Clear meridian filter"
-            className="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 text-sm leading-none"
+            className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs leading-none font-bold shadow-sm transition-colors"
           >
             ×
           </button>
@@ -292,14 +292,18 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
 
   const style = `${hideCornerLabels ? HIDE_CORNER_LABELS_STYLE : STRONG_WEAK_LABEL_STYLE}\n${buildPointStyle(activeMeridian)}`
 
-  // Always mark the tapped point selected (the ring is the touch feedback),
-  // even though the Y-Points JSON content isn't authored yet — this used to
-  // bail out silently before setting anything, so points looked unclickable.
+  // Tapping a point selects its meridian too — same pulsing-ring flash and
+  // activated Meridian menu as picking it from the dropdown, or tapping the
+  // matching point on the "diag" (NeckMeridianMap) tile.
   function selectPoint(id) {
     setSelectedId(id)
     const jsonId = POINT_JSON_ID[id]
     const data = jsonId ? allPoints.find(p => p.id === jsonId) : null
     onPointSelect?.(data ?? null)
+
+    const code = id.replace(/-(yin|yang)(_2)?$/, '')
+    setInternalMeridian(code)
+    onMeridianChange?.(code)
   }
 
   function handleMeridianSelect(code) {
@@ -387,7 +391,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
             return (
               <g
                 key={id}
-                onClick={() => selectPoint(id)}
+                onClick={e => { e.stopPropagation(); selectPoint(id) }}
                 onMouseEnter={() => setHoveredId(id)}
                 onMouseLeave={() => setHoveredId(null)}
                 style={{ cursor: 'pointer', pointerEvents: 'auto' }}
