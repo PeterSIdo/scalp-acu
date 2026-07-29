@@ -1,6 +1,10 @@
 <svg width="410" height="292" viewBox="0 0 410 292" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="male-neck-diag">
 <g clip-path="url(#clip0_1_22)">
+<!-- White backing behind the pattern below: the source PNG has a genuinely transparent
+     top-right corner, which otherwise reveals whatever sits behind this SVG in the host
+     page (dark app tile, modal, etc.). See adbominal-diag-1.svg for the same fix. -->
+<rect width="410" height="292" fill="white"/>
 <rect id="male-neck-diag-1 1" width="410" height="292" fill="url(#pattern0_1_22)"/>
 <g id="neck-diag-points">
 <g id="spine/brain">
