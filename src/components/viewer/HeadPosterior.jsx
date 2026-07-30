@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { allPoints } from '../../data/points'
-import HeadBackSvg from '../../assets/diagrams/head_back.svg?react'
+import BasicBackSvg from '../../assets/diagrams/basic-back.svg?react'
 
 const RED   = '#FF0808'
 const GREEN = '#34B904'
@@ -42,34 +42,37 @@ const POINT_JSON_ID = {
   'Basal-ganglia':   'YNSA-Brain-BasalGanglia-yang',
 }
 
-// Coordinates from head_back.svg (viewBox 0 0 447 626)
+// Coordinates read from basic-back.svg (viewBox 0 0 447 626). Circles use cx/cy
+// directly; matrix-transformed points (G-zone, Eye-yang group) and path-drawn
+// points (H-yang_2, I-yang, I-yang_2, C-yang, C-yang_2, B-yang_2, A-yang_2) use
+// their resolved/bounding-box center.
 const POINTS = [
   // ── A zone yang ──────────────────────────────────────────
   { id: 'A-yang',          cx: 254.436, cy: 174.45,  color: RED   },
-  { id: 'A-yang_2',        cx: 254.436, cy: 156.45,  color: RED   },
-  { id: 'A-yang_3',        cx: 220.436, cy: 173.45,  color: RED   },
-  { id: 'A-yang_4',        cx: 220.436, cy: 156.45,  color: RED   },
+  { id: 'A-yang_2',        cx: 254.436, cy: 157.45,  color: RED   },
+  { id: 'A-yang_3',        cx: 221.436, cy: 174.45,  color: RED   },
+  { id: 'A-yang_4',        cx: 221.436, cy: 157.45,  color: RED   },
   // ── B zone yang ──────────────────────────────────────────
-  { id: 'B-yang',          cx: 193.436, cy: 169.45,  color: RED   },
+  { id: 'B-yang',          cx: 192.436, cy: 169.45,  color: RED   },
   { id: 'B-yang_2',        cx: 275.436, cy: 169.45,  color: RED   },
   // ── C zone yang ──────────────────────────────────────────
-  { id: 'C-yang',          cx: 339.436, cy: 192.45,  color: RED   },
+  { id: 'C-yang',          cx: 337.436, cy: 192.45,  color: RED   },
   { id: 'C-yang_2',        cx: 129.436, cy: 192.45,  color: RED   },
   // ── D zone yang ──────────────────────────────────────────
-  { id: 'D-yang',          cx: 387.436, cy: 270.45,  color: RED   },
-  { id: 'D-yang_2',        cx:  71.436, cy: 274.45,  color: RED   },
+  { id: 'D-yang',          cx: 387.436, cy: 273.45,  color: RED   },
+  { id: 'D-yang_2',        cx:  72.436, cy: 274.45,  color: RED   },
   { id: 'D5-yang',         cx: 412.436, cy: 253.45,  color: RED   },
   { id: 'D5-yang_2',       cx:  33.436, cy: 255.45,  color: RED   },
   { id: 'D6-yang',         cx:  39.436, cy: 261.45,  color: RED   },
   { id: 'D6-yang_2',       cx: 407.436, cy: 261.45,  color: RED   },
   // ── E zone yang ──────────────────────────────────────────
-  { id: 'E1-yang',         cx: 283.436, cy: 274.45,  color: RED   },
-  { id: 'E12-yang',        cx: 254.436, cy: 284.45,  color: RED   },
-  { id: 'E1-yang_2',       cx: 183.436, cy: 274.45,  color: RED   },
-  { id: 'E12-yang_2',      cx: 212.436, cy: 284.45,  color: RED   },
+  { id: 'E1-yang',         cx: 280.436, cy: 274.45,  color: RED   },
+  { id: 'E12-yang',        cx: 253.436, cy: 284.45,  color: RED   },
+  { id: 'E1-yang_2',       cx: 194.436, cy: 274.45,  color: RED   },
+  { id: 'E12-yang_2',      cx: 221.436, cy: 284.45,  color: RED   },
   // ── F zone yang ──────────────────────────────────────────
-  { id: 'F',               cx: 377.436, cy: 362.45,  color: RED   },
-  { id: 'F_2',             cx:  79.436, cy: 362.45,  color: RED   },
+  { id: 'F',               cx: 362.436, cy: 365.45,  color: RED   },
+  { id: 'F_2',              cx: 82.436, cy: 365.45,  color: RED   },
   // ── G zone yang ──────────────────────────────────────────
   { id: 'G1-yang',         cx: 369.436, cy: 388.45,  color: RED   },
   { id: 'G2-yang',         cx: 363.436, cy: 398.45,  color: RED   },
@@ -78,42 +81,32 @@ const POINTS = [
   { id: 'G2-yang_2',       cx:  85.436, cy: 390.45,  color: RED   },
   { id: 'G3-yang_2',       cx:  93.436, cy: 380.45,  color: RED   },
   // ── H, I yang ────────────────────────────────────────────
-  { id: 'H-yang',          cx: 188.436, cy: 156.45,  color: GREEN },
-  { id: 'H-yang_2',        cx: 280.436, cy: 155.95,  color: GREEN },
-  { id: 'I-yang',          cx: 343.436, cy: 178.45,  color: GREEN },
-  { id: 'I-yang_2',        cx: 124.936, cy: 178.159, color: GREEN },
+  { id: 'H-yang',          cx: 192.436, cy: 153.45,  color: GREEN },
+  { id: 'H-yang_2',        cx: 275.436, cy: 153.45,  color: GREEN },
+  { id: 'I-yang',          cx: 346.436, cy: 176.45,  color: GREEN },
+  { id: 'I-yang_2',        cx: 120.436, cy: 176.45,  color: GREEN },
   // ── Sensory yang ─────────────────────────────────────────
-  { id: 'sensory-eye',     cx: 253.436, cy: 189.45,  color: PINK  },
-  { id: 'sensory-eye_2',   cx: 220.436, cy: 189.45,  color: PINK  },
-  { id: 'sensory-nose',    cx: 253.436, cy: 203.45,  color: PINK  },
-  { id: 'sensory-nose_2',  cx: 220.436, cy: 203.45,  color: PINK  },
-  { id: 'sensory-mouth',   cx: 253.436, cy: 217.45,  color: PINK  },
-  { id: 'sensory-mouth_2', cx: 220.436, cy: 217.45,  color: PINK  },
-  { id: 'sensory-ear',     cx: 270.436, cy: 212.45,  color: PINK  },
-  { id: 'sensory-ear_2',   cx: 203.436, cy: 212.45,  color: PINK  },
+  { id: 'sensory-eye',     cx: 254.436, cy: 192.45,  color: PINK  },
+  { id: 'sensory-eye_2',   cx: 220.436, cy: 192.45,  color: PINK  },
+  { id: 'sensory-nose',    cx: 254.436, cy: 208.45,  color: PINK  },
+  { id: 'sensory-nose_2',  cx: 220.436, cy: 208.45,  color: PINK  },
+  { id: 'sensory-mouth',   cx: 254.436, cy: 225.45,  color: PINK  },
+  { id: 'sensory-mouth_2', cx: 220.436, cy: 225.45,  color: PINK  },
+  { id: 'sensory-ear',     cx: 277.436, cy: 210.45,  color: PINK  },
+  { id: 'sensory-ear_2',   cx: 199.436, cy: 210.45,  color: PINK  },
   // ── Brain points yang ────────────────────────────────────
-  { id: 'Cerebrum',        cx: 220.436, cy: 137.45,  color: LIME  },
-  { id: 'Cerebrum_2',      cx: 254.436, cy: 136.45,  color: LIME  },
-  { id: 'Cerebellum',      cx: 220.436, cy: 127.45,  color: LIME  },
-  { id: 'Cerebellum_2',    cx: 254.436, cy: 126.45,  color: LIME  },
-  { id: 'Basal-ganglia',   cx: 238.436, cy: 132.95,  color: LIME, rx: 4, ry: 7.5 },
+  { id: 'Cerebrum',        cx: 255.436, cy: 140.45,  color: LIME  },
+  { id: 'Cerebrum_2',      cx: 220.436, cy: 140.45,  color: LIME  },
+  { id: 'Cerebellum',      cx: 255.436, cy: 125.45,  color: LIME  },
+  { id: 'Cerebellum_2',    cx: 220.436, cy: 125.45,  color: LIME  },
+  { id: 'Basal-ganglia',   cx: 238.936, cy: 132.95,  color: LIME, rx: 6.5, ry: 14.5 },
 ]
 
-// head_back.svg: basic points are in "basic-yang-points"; sensory in Group 15/Group 16;
-// brain points are ungrouped direct children — targeted individually by id.
+// basic-back.svg group IDs to hide per subgroup
 const SVG_HIDE = {
-  'ynsa-basic': [
-    '[id="Group 15"]', '[id="Group 16"]',
-    '#Basal-ganglia', '#Cerebrum', '#Cerebellum', '#Cerebrum_2', '#Cerebellum_2',
-  ],
-  'ynsa-sensory': [
-    '[id="basic-yang-points"]',
-    '#Basal-ganglia', '#Cerebrum', '#Cerebellum', '#Cerebrum_2', '#Cerebellum_2',
-  ],
-  'ynsa-brain': [
-    '[id="basic-yang-points"]',
-    '[id="Group 15"]', '[id="Group 16"]',
-  ],
+  'ynsa-basic':   ['[id="sensory-points"]', '[id="brain-points"]'],
+  'ynsa-sensory': ['[id="basic-yang-points"]', '[id="brain-points"]'],
+  'ynsa-brain':   ['[id="basic-yang-points"]', '[id="sensory-points"]'],
 }
 
 function buildHideStyle(activeSubgroup) {
@@ -129,6 +122,13 @@ export default function HeadPosterior({ pickerMode = false, onPointSelect, highl
   const svgRef = useRef(null)
   const visiblePoints = pointFilter ? POINTS.filter(p => pointFilter.has(POINT_JSON_ID[p.id])) : POINTS
   const hideStyle = buildHideStyle(activeSubgroup)
+
+  // Points to flash — clicking a point activates its own pulsing ring + label
+  // (same mechanism as the Y-Points/meridian selection), and an externally
+  // driven search hit (highlightJsonId) activates the same treatment.
+  const activeIds = new Set(visiblePoints
+    .filter(p => p.id === selectedId || (highlightJsonId && POINT_JSON_ID[p.id] === highlightJsonId))
+    .map(p => p.id))
 
   function selectPoint(id, e) {
     e?.stopPropagation()
@@ -156,7 +156,7 @@ export default function HeadPosterior({ pickerMode = false, onPointSelect, highl
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       {hideStyle && <style>{hideStyle}</style>}
 
-      <HeadBackSvg
+      <BasicBackSvg
         className="svg-posterior"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
       />
@@ -171,6 +171,8 @@ export default function HeadPosterior({ pickerMode = false, onPointSelect, highl
       >
         {visiblePoints.map(({ id, cx, cy, color, rx, ry }) => {
           const isEllipse = rx !== undefined
+          const isActive   = activeIds.has(id)
+          const isHovered  = hoveredId === id
           return (
             <g
               key={id}
@@ -179,10 +181,10 @@ export default function HeadPosterior({ pickerMode = false, onPointSelect, highl
               onMouseLeave={() => setHoveredId(null)}
               style={{ cursor: 'pointer' }}
             >
-              {selectedId === id && (
+              {isHovered && !isActive && (
                 isEllipse
-                  ? <ellipse cx={cx} cy={cy} rx={rx + 5} ry={ry + 5} fill="none" stroke={color} strokeWidth="2" opacity="0.85" />
-                  : <circle  cx={cx} cy={cy} r={9}        fill="none" stroke={color} strokeWidth="2" opacity="0.85" />
+                  ? <ellipse cx={cx} cy={cy} rx={rx + 4} ry={ry + 4} fill={color} opacity="0.25" />
+                  : <circle  cx={cx} cy={cy} r={11}       fill={color} opacity="0.25" />
               )}
               {isEllipse
                 ? <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="transparent" />
@@ -192,41 +194,38 @@ export default function HeadPosterior({ pickerMode = false, onPointSelect, highl
           )
         })}
 
-        {/* Search highlight — pulsing ring */}
-        {highlightJsonId && visiblePoints
-          .filter(p => POINT_JSON_ID[p.id] === highlightJsonId)
-          .map(({ cx, cy }) => (
-            <g key={`hl-${cx}-${cy}`} pointerEvents="none">
-              <circle cx={cx} cy={cy} r={11} fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.9" />
-              <circle cx={cx} cy={cy} r={11} fill="none" stroke="#ffffff" strokeWidth="2">
-                <animate attributeName="r"       values="11;22;11" dur="1.6s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
-              </circle>
-            </g>
-          ))
-        }
-
-        {hoveredId && (() => {
-          const pt     = visiblePoints.find(p => p.id === hoveredId)
+        {/* Active point — pulsing ring + name label, activated by click (or an
+            external search hit via highlightJsonId) */}
+        {[...activeIds].map(id => {
+          const pt = visiblePoints.find(p => p.id === id)
           if (!pt) return null
-          const jsonId = POINT_JSON_ID[hoveredId]
+          const isEllipse = pt.rx !== undefined
+          const ringRx = isEllipse ? pt.rx + 4 : 11
+          const ringRy = isEllipse ? pt.ry + 4 : 11
+          const jsonId = POINT_JSON_ID[id]
           const data   = allPoints.find(p => p.id === jsonId)
-          const label  = data?.name ?? hoveredId
+          const label  = data?.name ?? id
           const pad    = 6
           const fSize  = 11
           const w      = label.length * 6.2 + pad * 2
           const h      = fSize + pad * 2
-          const tx = pt.cx + 12 + w > 447 ? pt.cx - w - 8 : pt.cx + 12
-          const ty = pt.cy - h - 4
+          const tx = pt.cx + ringRx + 5 + w > 447 ? pt.cx - ringRx - 5 - w : pt.cx + ringRx + 5
+          const ty = pt.cy - h / 2
           return (
-            <g pointerEvents="none">
+            <g key={`active-${id}`} pointerEvents="none">
+              <ellipse cx={pt.cx} cy={pt.cy} rx={ringRx} ry={ringRy} fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.9" />
+              <ellipse cx={pt.cx} cy={pt.cy} rx={ringRx} ry={ringRy} fill="none" stroke="#ffffff" strokeWidth="2">
+                <animate attributeName="rx"      values={`${ringRx};${ringRx * 2};${ringRx}`} dur="1.6s" repeatCount="indefinite" />
+                <animate attributeName="ry"      values={`${ringRy};${ringRy * 2};${ringRy}`} dur="1.6s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
+              </ellipse>
               <rect x={tx} y={ty} width={w} height={h} rx={4} fill="rgba(0,0,0,0.72)" />
               <text x={tx + pad} y={ty + fSize + pad * 0.6} fontSize={fSize} fill="white" fontFamily="system-ui, sans-serif">
                 {label}
               </text>
             </g>
           )
-        })()}
+        })}
 
         {pickerMode && pickerPos && (
           <g>

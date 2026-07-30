@@ -156,6 +156,10 @@ export default function ViewerPage() {
   const swipeStartY = useRef(null)
   const neckZoomRef = useRef(null)
 
+  const [sheetDragY, setSheetDragY] = useState(0)
+  const [sheetDragging, setSheetDragging] = useState(false)
+  const sheetDragStartY = useRef(null)
+
   function handleTouchStart(e) {
     swipeStartX.current = e.touches[0].clientX
     swipeStartY.current = e.touches[0].clientY
@@ -171,6 +175,26 @@ export default function ViewerPage() {
     const idx = currentViews.indexOf(activeView)
     if (dx < 0 && idx < currentViews.length - 1) setActiveView(currentViews[idx + 1])
     else if (dx > 0 && idx > 0) setActiveView(currentViews[idx - 1])
+  }
+
+  // Mobile bottom sheet — dragged only from its header (not the scrollable
+  // body), so it doesn't fight with scrolling the point description.
+  function handleSheetTouchStart(e) {
+    sheetDragStartY.current = e.touches[0].clientY
+    setSheetDragging(true)
+  }
+
+  function handleSheetTouchMove(e) {
+    if (sheetDragStartY.current === null) return
+    const dy = e.touches[0].clientY - sheetDragStartY.current
+    if (dy > 0) setSheetDragY(dy)
+  }
+
+  function handleSheetTouchEnd() {
+    if (sheetDragY > 80) setSelectedPoint(null)
+    setSheetDragY(0)
+    setSheetDragging(false)
+    sheetDragStartY.current = null
   }
 
   const system = SYSTEMS.find(s => s.id === activeSystem)
@@ -415,10 +439,18 @@ export default function ViewerPage() {
         </div>
       </div>
 
-      {/* Mobile bottom sheet */}
+      {/* Mobile bottom sheet — swipe the header down to dismiss */}
       {selectedPoint && !mobileSearchOpen && isAvailable && (
-        <div className="md:hidden fixed inset-x-0 bottom-0 z-50 flex flex-col bg-white dark:bg-gray-950 rounded-t-2xl shadow-2xl max-h-[65vh]">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex-shrink-0">
+        <div
+          className={`md:hidden fixed inset-x-0 bottom-0 z-50 flex flex-col bg-white dark:bg-gray-950 rounded-t-2xl shadow-2xl max-h-[34vh] ${sheetDragging ? '' : 'transition-transform duration-200'}`}
+          style={{ transform: `translateY(${sheetDragY}px)` }}
+        >
+          <div
+            className="relative flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex-shrink-0 touch-none"
+            onTouchStart={handleSheetTouchStart}
+            onTouchMove={handleSheetTouchMove}
+            onTouchEnd={handleSheetTouchEnd}
+          >
             <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 top-2" />
             <span className="text-sm font-semibold text-gray-900 dark:text-gray-200">{selectedPoint.name}</span>
             <button
