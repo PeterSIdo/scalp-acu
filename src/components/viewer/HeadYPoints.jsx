@@ -119,6 +119,65 @@ const POINTS = [
   { id: 'BL-yang_2',        cx: 426.216,  cy: 259.216,  color: BLUE },
 ]
 
+// Coordinates read directly from YNSA-Y-real.svg's own <circle>/<path> id="..."
+// elements (same viewBox 0 0 760 949, same 48 point ids as YNSA-Y-Side.svg) —
+// the photo-reference companion diagram. Circle points use cx/cy directly;
+// path-drawn points use their bounding-box center, same approach as POINTS
+// above. Point placement differs from POINTS since it's a different
+// anatomical model, so these are wired up separately rather than reused.
+export const Y_REAL_POINTS = [
+  // ── Strong Y-Points ────────────────────────────────────
+  { id: 'LU-yin',         cx: 367.216,  cy: 341.216,  color: RED },
+  { id: 'LU-yang',        cx: 491.216,  cy: 367.216,  color: RED },
+  { id: 'HT-yin',         cx: 421.216,  cy: 352.216,  color: RED },
+  { id: 'HT-yang',        cx: 446.216,  cy: 356.216,  color: RED },
+  { id: 'PE-yin',         cx: 395.216,  cy: 346.216,  color: RED },
+  { id: 'PE-yang',        cx: 467.216,  cy: 363.216,  color: RED },
+  { id: 'SI-yin',         cx: 365.216,  cy: 373.216,  color: RED },
+  { id: 'SI-yang',        cx: 487.216,  cy: 391.216,  color: RED },
+  { id: 'ST-yin',         cx: 396.216,  cy: 370.216,  color: RED },
+  { id: 'ST-yang',        cx: 467.216,  cy: 384.216,  color: RED },
+  { id: 'LV-yin',         cx: 420.216,  cy: 374.216,  color: RED },
+  { id: 'LV-yang',        cx: 446.216,  cy: 379.216,  color: RED },
+  { id: 'SP-PANC-yin',    cx: 393.5,    cy: 392.623,  color: RED },
+  { id: 'SP-PANC-yang',   cx: 477.216,  cy: 410.216,  color: RED },
+  { id: 'GB-yin',         cx: 416.216,  cy: 398.216,  color: RED },
+  { id: 'GB-yang',        cx: 446.216,  cy: 405.216,  color: RED },
+  { id: 'SJ-yin',         cx: 365.216,  cy: 408.216,  color: RED },
+  { id: 'SJ-yang',        cx: 502.432,  cy: 445.216,  color: RED },
+  { id: 'KI-yin',         cx: 388.029,  cy: 416.716,  color: RED },
+  { id: 'KI-yang',        cx: 492.216,  cy: 531.216,  color: RED },
+  { id: 'LI-yin',         cx: 365.216,  cy: 440.216,  color: RED },
+  { id: 'LI-yang',        cx: 505.932,  cy: 467.216,  color: RED },
+  { id: 'BL-yin',         cx: 386.845,  cy: 441.216,  color: RED },
+  { id: 'BL-yang',        cx: 477.216,  cy: 555.216,  color: RED },
+  // ── Weak Y-Points ──────────────────────────────────────
+  { id: 'LU-yin_2',         cx: 368.216,  cy: 317.216,  color: BLUE },
+  { id: 'LU-yang_2',        cx: 487.216,  cy: 343.216,  color: BLUE },
+  { id: 'HT-yin_2',         cx: 421.216,  cy: 328.216,  color: BLUE },
+  { id: 'HT-yang_2',        cx: 444.216,  cy: 334.216,  color: BLUE },
+  { id: 'PE-yin_2',         cx: 395.216,  cy: 323.216,  color: BLUE },
+  { id: 'PE-yang_2',        cx: 466.634,  cy: 338.058,  color: BLUE },
+  { id: 'SI-yin_2',         cx: 368.761,  cy: 292,      color: BLUE },
+  { id: 'SI-yang_2',        cx: 491.216,  cy: 318.216,  color: BLUE },
+  { id: 'ST-yin_2',         cx: 395.216,  cy: 300.216,  color: BLUE },
+  { id: 'ST-yang_2',        cx: 467.216,  cy: 310.716,  color: BLUE },
+  { id: 'LV-yin_2',         cx: 419.216,  cy: 306.216,  color: BLUE },
+  { id: 'LV-yang_2',        cx: 445.216,  cy: 308.216,  color: BLUE },
+  { id: 'SP-PANC-yin_2',    cx: 391.216,  cy: 277.216,  color: BLUE },
+  { id: 'SP-PANC-yang_2',   cx: 474.216,  cy: 291.216,  color: BLUE },
+  { id: 'GB-yin_2',         cx: 415,      cy: 279.216,  color: BLUE },
+  { id: 'GB-yang_2',        cx: 445.216,  cy: 286.216,  color: BLUE },
+  { id: 'SJ-yin_2',         cx: 366.216,  cy: 260.216,  color: BLUE },
+  { id: 'SJ-yang_2',        cx: 495.216,  cy: 287.216,  color: BLUE },
+  { id: 'KI-yin_2',         cx: 392.216,  cy: 255.216,  color: BLUE },
+  { id: 'KI-yang_2',        cx: 474.216,  cy: 267.216,  color: BLUE },
+  { id: 'LI-yin_2',         cx: 363.216,  cy: 232.678,  color: BLUE },
+  { id: 'LI-yang_2',        cx: 502.216,  cy: 257.073,  color: BLUE },
+  { id: 'BL-yin_2',         cx: 391.5,    cy: 234.716,  color: BLUE },
+  { id: 'BL-yang_2',        cx: 474.216,  cy: 246.216,  color: BLUE },
+]
+
 // The four corner labels (Weak Yin / Weak Yang / Strong Yin / Strong Yang) are informational,
 // not clickable — just scaled up 30% in place. `transform-box: fill-box` + `transform-origin:
 // center` scales each glyph path around its own bounding-box center instead of the SVG origin.
@@ -281,7 +340,14 @@ function MeridianSearch({ open, query, onToggle, onQueryChange, onSelect }) {
 // overlay, pinned to the tile's actual corners rather than the (possibly
 // scaled/clipped) SVG's own coordinate system — meant to pair with
 // hideCornerLabels once there's room again (e.g. the tile is expanded).
-export default function HeadYPoints({ onPointSelect, highlightJsonId = null, activeMeridian: controlledMeridian, onMeridianChange, diagramScale = 1, hideCornerLabels = false, showCornerLabels = false }) {
+// Background/points default to the line-art diagram; the "real" reference-
+// photo tile passes YNSAYRealSvg + Y_REAL_POINTS instead — the two
+// backgrounds share a viewBox but not point placement, since they're
+// different anatomical models (same pattern as NeckMeridianMap's diag/real
+// split). showMenu hides the Meridian/Search dropdown chrome for that
+// second tile — it shares activeMeridian with the primary tile instead of
+// duplicating the controls.
+export default function HeadYPoints({ onPointSelect, highlightJsonId = null, activeMeridian: controlledMeridian, onMeridianChange, diagramScale = 1, hideCornerLabels = false, showCornerLabels = false, Background = YNSAYSideSvg, points = POINTS, showMenu = true }) {
   const [selectedId,       setSelectedId]       = useState(null)
   const [hoveredId,        setHoveredId]        = useState(null)
   const [internalMeridian, setInternalMeridian] = useState(null)
@@ -345,30 +411,32 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
         </div>
       )}
 
-      <div
-        className={`absolute left-3 z-10 flex items-baseline gap-4 ${showCornerLabels ? 'top-9' : 'top-3'}`}
-        onClick={e => e.stopPropagation()}
-      >
-        <MeridianMenu
-          activeMeridian={activeMeridian}
-          menuOpen={openPanel === 'meridian'}
-          onToggle={() => setOpenPanel(p => p === 'meridian' ? null : 'meridian')}
-          onSelect={handleMeridianSelect}
-          onReset={handleReset}
-        />
-        <MeridianSearch
-          open={openPanel === 'search'}
-          query={searchQuery}
-          onToggle={() => setOpenPanel(p => p === 'search' ? null : 'search')}
-          onQueryChange={setSearchQuery}
-          onSelect={handleMeridianSelect}
-        />
-      </div>
+      {showMenu && (
+        <div
+          className={`absolute left-3 z-10 flex items-baseline gap-4 ${showCornerLabels ? 'top-9' : 'top-3'}`}
+          onClick={e => e.stopPropagation()}
+        >
+          <MeridianMenu
+            activeMeridian={activeMeridian}
+            menuOpen={openPanel === 'meridian'}
+            onToggle={() => setOpenPanel(p => p === 'meridian' ? null : 'meridian')}
+            onSelect={handleMeridianSelect}
+            onReset={handleReset}
+          />
+          <MeridianSearch
+            open={openPanel === 'search'}
+            query={searchQuery}
+            onToggle={() => setOpenPanel(p => p === 'search' ? null : 'search')}
+            onQueryChange={setSearchQuery}
+            onSelect={handleMeridianSelect}
+          />
+        </div>
+      )}
 
       {/* Diagram layer — scaled independently of the Meridian menu above. */}
       <div style={{ position: 'absolute', inset: 0, transform: `scale(${diagramScale})`, transformOrigin: 'center' }}>
         {/* Background SVG — the head diagram and point artwork */}
-        <YNSAYSideSvg
+        <Background
           className="svg-y-points"
           preserveAspectRatio="xMidYMin meet"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
@@ -383,7 +451,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
           xmlns="http://www.w3.org/2000/svg"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
         >
-          {POINTS.map(({ id, cx, cy, color }) => {
+          {points.map(({ id, cx, cy, color }) => {
             const jsonId     = POINT_JSON_ID[id]
             const isSelected = selectedId === id || (highlightJsonId && jsonId === highlightJsonId)
             const isHovered  = hoveredId === id

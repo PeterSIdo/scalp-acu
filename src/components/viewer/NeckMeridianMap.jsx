@@ -88,6 +88,30 @@ export const ABDOMEN_POINTS = {
   KD_2:      { cx: 162.934, cy: 454.547 },
 }
 
+// Point centers read directly from abdomial-real.svg's own <ellipse>/<path>
+// id="..." elements (viewBox 0 0 410 540) — the photo-reference companion to
+// adbominal-diag-1.svg, using the same meridian-abbreviation ids and the same
+// bilateral KD/KD_2 pair. Ellipses with a `rotate(...)` transform around their
+// own center (GB, KD) use cx/cy as-is; ones with a `matrix(...)` transform
+// (SP/PANC, KD_2) had their local cx/cy multiplied through the matrix by
+// hand, same approach as ABDOMEN_POINTS above. LU is a stroke-only path — its
+// bounding-box center was used instead.
+export const ABDOMEN_REAL_POINTS = {
+  LI:        { cx: 254.5,  cy: 401 },
+  GB:        { cx: 161.233, cy: 287.078 },
+  UB:        { cx: 214.5,  cy: 474 },
+  HT:        { cx: 212.5,  cy: 237 },
+  SI:        { cx: 160.5,  cy: 401 },
+  LV:        { cx: 254.5,  cy: 339 },
+  LU:        { cx: 160.5,  cy: 339 },
+  ST:        { cx: 212.5,  cy: 326 },
+  SJ:        { cx: 212.5,  cy: 392 },
+  PC:        { cx: 212.5,  cy: 280 },
+  'SP/PANC': { cx: 264.233, cy: 287.077 },
+  KD:        { cx: 274.936, cy: 452.55 },
+  KD_2:      { cx: 159.935, cy: 452.549 },
+}
+
 // Tapping/clicking a point selects its meridian (shared with the Meridian
 // menu in the YNSA Y-Side tile), which flashes the same pulsing-ring
 // highlight as the Basic Points search hit and shows its name label.
