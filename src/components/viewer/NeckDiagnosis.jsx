@@ -41,7 +41,7 @@ function renderTileContent(id, { activeMeridian, onMeridianChange, isExpanded })
         <HeadYPoints
           activeMeridian={activeMeridian}
           onMeridianChange={onMeridianChange}
-          diagramScale={1.6}
+          diagramScale={1.44}
           hideCornerLabels
           showCornerLabels={isExpanded}
         />
@@ -58,7 +58,7 @@ function renderTileContent(id, { activeMeridian, onMeridianChange, isExpanded })
           onMeridianChange={onMeridianChange}
           Background={YNSAYRealSvg}
           points={Y_REAL_POINTS}
-          diagramScale={1.6}
+          diagramScale={1.44}
           showMenu={false}
           hideCornerLabels
         />
