@@ -398,16 +398,6 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
     >
       <style>{style}</style>
 
-      {/* Backdrop band — sits behind the corner labels + Meridian/Search menu and
-          above the diagram, so that header row stays legible over busy artwork.
-          Sized to cover whichever of the two rows above it are actually shown. */}
-      {(showCornerLabels || showMenu) && (
-        <div
-          className={`absolute inset-x-0 top-0 z-[5] bg-white/80 dark:bg-gray-900/80 pointer-events-none ${showCornerLabels ? 'h-20' : 'h-11'}`}
-          aria-hidden="true"
-        />
-      )}
-
       {/* Corner labels rank above the menu when both are shown — they sit in the
           actual top corners, and the menu drops below them (see top-9 below).
           "Weak Yang" is pulled in from the very edge so it doesn't sit under
@@ -423,7 +413,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
 
       {showMenu && (
         <div
-          className={`absolute left-3 z-10 flex items-baseline gap-4 ${showCornerLabels ? 'top-9' : 'top-3'}`}
+          className={`absolute left-3 z-10 flex items-baseline gap-4 rounded-md px-3 py-1.5 bg-white/80 dark:bg-gray-900/80 ${showCornerLabels ? 'top-9' : 'top-3'}`}
           onClick={e => e.stopPropagation()}
         >
           <MeridianMenu
