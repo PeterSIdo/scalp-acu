@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom'
 import { useSubscription } from '../hooks/useSubscription'
 import { useAuth } from '../hooks/useAuth'
 import { useTheme } from '../providers/ThemeProvider'
-import HeadLateral   from '../components/viewer/HeadLateral'
-import HeadFrontal   from '../components/viewer/HeadFrontal'
-import HeadPosterior from '../components/viewer/HeadPosterior'
-import NeckDiagnosis from '../components/viewer/NeckDiagnosis'
+import HeadLateral     from '../components/viewer/HeadLateral'
+import HeadFrontal     from '../components/viewer/HeadFrontal'
+import HeadPosterior   from '../components/viewer/HeadPosterior'
+import HeadBasicPoints from '../components/viewer/HeadBasicPoints'
+import NeckDiagnosis   from '../components/viewer/NeckDiagnosis'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
 import SearchPanel from '../components/ui/SearchPanel'
@@ -17,7 +18,7 @@ const SYSTEMS = [
     label: 'YNSA',
     fullName: 'Yamamoto New Scalp Acupuncture',
     subgroups: [
-      { id: 'ynsa-basic',   label: 'Basic Points',      views: ['Lateral', 'Frontal', 'Posterior'], available: true  },
+      { id: 'ynsa-basic',   label: 'Basic Points',      views: ['Grid'],                            available: true  },
       { id: 'ynsa-sensory', label: 'Sensory Points',    views: ['Lateral', 'Frontal', 'Posterior'], available: true  },
       { id: 'ynsa-brain',   label: 'Brain Points',      views: ['Frontal', 'Posterior'],            available: true  },
       { id: 'ynsa-neck',    label: 'Y-Points',          views: ['Neck'],                            available: true  },
@@ -148,7 +149,7 @@ export default function ViewerPage() {
   const [highlightJsonId, setHighlightJsonId] = useState(null)
   const [activeSystem, setActiveSystem] = useState('ynsa')
   const [activeSubgroup, setActiveSubgroup] = useState('ynsa-basic')
-  const [activeView, setActiveView] = useState('Lateral')
+  const [activeView, setActiveView] = useState('Grid')
   const [searchQuery, setSearchQuery] = useState('')
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
 
@@ -372,6 +373,7 @@ export default function ViewerPage() {
         <div className="flex-1 min-h-0 bg-gray-300 dark:bg-gray-900 overflow-hidden p-4" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
           {isAvailable ? (
             <ZoomableView ref={neckZoomRef} hideControls={isNeck}>
+              {activeView === 'Grid'      && <HeadBasicPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-basic']} />}
               {activeView === 'Lateral'   && <HeadLateral   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
               {activeView === 'Frontal'   && <HeadFrontal   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
               {activeView === 'Posterior' && <HeadPosterior onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
@@ -420,7 +422,7 @@ export default function ViewerPage() {
               {searchQuery.trim() ? (
                 <SearchPanel query={searchQuery} onSelect={handleSearchSelect} />
               ) : (
-                <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 overflow-y-auto scroll-touch">
                   <InfoPanel point={selectedPoint} isSubscribed={isActive} />
                 </div>
               )}
@@ -443,7 +445,7 @@ export default function ViewerPage() {
       {selectedPoint && !mobileSearchOpen && isAvailable && (
         <div
           className={`md:hidden fixed inset-x-0 bottom-0 z-50 flex flex-col bg-white dark:bg-gray-950 rounded-t-2xl shadow-2xl max-h-[34vh] ${sheetDragging ? '' : 'transition-transform duration-200'}`}
-          style={{ transform: `translateY(${sheetDragY}px)` }}
+          style={sheetDragY ? { transform: `translateY(${sheetDragY}px)` } : undefined}
         >
           <div
             className="relative flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex-shrink-0 touch-none"
@@ -459,7 +461,7 @@ export default function ViewerPage() {
               aria-label="Close"
             >×</button>
           </div>
-          <div className="overflow-y-auto flex-1">
+          <div className="overflow-y-auto flex-1 min-h-0 scroll-touch">
             <InfoPanel point={selectedPoint} isSubscribed={isActive} />
           </div>
         </div>

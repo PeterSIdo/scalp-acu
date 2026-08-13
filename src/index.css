@@ -22,3 +22,16 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* Touch-swipe scrolling, no visible scrollbar — same pattern as the Basic
+   Points zone dropdown. Apply to any popup/sheet-style scroll container. */
+.scroll-touch {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+.scroll-touch::-webkit-scrollbar {
+  display: none;
+}

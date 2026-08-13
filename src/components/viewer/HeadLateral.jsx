@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { allPoints } from '../../data/points'
+import { zoneOf } from '../../data/basicZones'
 import BasicSideSvg from '../../assets/diagrams/basic-side.svg?react'
 
 const ORANGE = '#CB6608'
@@ -119,7 +120,7 @@ function buildHideStyle(activeSubgroup) {
   return selectors.map(s => `.svg-lateral ${s}`).join(',\n') + ' { display: none; }'
 }
 
-export default function HeadLateral({ pickerMode = false, onPointSelect, highlightJsonId = null, pointFilter = null, activeSubgroup = null }) {
+export default function HeadLateral({ pickerMode = false, onPointSelect, highlightJsonId = null, pointFilter = null, activeSubgroup = null, activeZone = null, onZoneChange }) {
   const [pickerPos, setPickerPos]   = useState(null)
   const [selectedId, setSelectedId] = useState(null)
   const [hoveredId,  setHoveredId]  = useState(null)
@@ -134,6 +135,15 @@ export default function HeadLateral({ pickerMode = false, onPointSelect, highlig
     .filter(p => p.id === selectedId || (highlightJsonId && POINT_JSON_ID[p.id] === highlightJsonId))
     .map(p => p.id))
 
+  // Same-zone points (e.g. all "A" points) get a bare pulsing ring, same idea
+  // as the Y-Points meridian flash — lets a Basic Point selected on one grid
+  // tile (or via the zone dropdown) flash its counterparts on the other two
+  // Basic Points tiles. Excludes anything already covered by activeIds above
+  // so a point never gets two overlapping rings.
+  const zoneFlashIds = activeZone
+    ? visiblePoints.filter(p => !activeIds.has(p.id) && zoneOf(POINT_JSON_ID[p.id]) === activeZone).map(p => p.id)
+    : []
+
   function selectPoint(id, e) {
     e?.stopPropagation()
     const jsonId = POINT_JSON_ID[id]
@@ -142,6 +152,7 @@ export default function HeadLateral({ pickerMode = false, onPointSelect, highlig
     if (!data) return
     setSelectedId(id)
     onPointSelect?.(data)
+    onZoneChange?.(zoneOf(jsonId))
   }
 
   function handleSvgClick(e) {
@@ -217,6 +228,36 @@ export default function HeadLateral({ pickerMode = false, onPointSelect, highlig
               <text x={tx + pad} y={ty + fSize + pad * 0.6} fontSize={fSize} fill="white" fontFamily="system-ui, sans-serif">
                 {label}
               </text>
+            </g>
+          )
+        })}
+
+        {/* Zone flash — pulsing ring + zone-letter label on every other point
+            sharing the active zone, mirroring Y-Points' meridian flash. */}
+        {zoneFlashIds.map(id => {
+          const pt = visiblePoints.find(p => p.id === id)
+          if (!pt) return null
+          const zone  = zoneOf(POINT_JSON_ID[id])
+          const pad   = 4
+          const fSize = 10
+          const w     = zone ? zone.length * 6.2 + pad * 2 : 0
+          const h     = fSize + pad * 2
+          const tx = pt.cx + 14 + w > 552 ? pt.cx - w - 14 : pt.cx + 14
+          const ty = pt.cy - h / 2
+          return (
+            <g key={`zone-${id}`} pointerEvents="none">
+              <circle cx={pt.cx} cy={pt.cy} r={11} fill="none" stroke="#ffffff" strokeWidth="2" opacity="0.85">
+                <animate attributeName="r"       values="11;20;11"    dur="1.6s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.85;0;0.85" dur="1.6s" repeatCount="indefinite" />
+              </circle>
+              {zone && (
+                <>
+                  <rect x={tx} y={ty} width={w} height={h} rx={3} fill="rgba(0,0,0,0.72)" />
+                  <text x={tx + pad} y={ty + fSize + pad * 0.6} fontSize={fSize} fontWeight="600" fill="white" fontFamily="system-ui, sans-serif">
+                    {zone}
+                  </text>
+                </>
+              )}
             </g>
           )
         })}

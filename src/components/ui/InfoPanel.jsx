@@ -12,7 +12,7 @@ export default function InfoPanel({ point, isSubscribed }) {
   }
 
   return (
-    <div className="p-6 overflow-y-auto h-full">
+    <div className="p-6 overflow-y-auto h-full scroll-touch">
       <div className="flex items-start justify-between mb-1">
         <h2 className="text-xl font-bold text-black dark:text-white leading-tight">{point.name}</h2>
       </div>
