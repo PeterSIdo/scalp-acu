@@ -413,7 +413,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
 
       {showMenu && (
         <div
-          className={`absolute left-3 z-10 flex items-baseline gap-4 ${showCornerLabels ? 'top-9' : 'top-3'}`}
+          className={`absolute left-3 z-10 flex items-baseline gap-4 rounded-md px-3 py-1.5 bg-white/80 dark:bg-gray-900/80 ${showCornerLabels ? 'top-9' : 'top-3'}`}
           onClick={e => e.stopPropagation()}
         >
           <MeridianMenu
