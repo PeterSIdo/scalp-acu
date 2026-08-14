@@ -7,6 +7,7 @@ import HeadLateral     from '../components/viewer/HeadLateral'
 import HeadFrontal     from '../components/viewer/HeadFrontal'
 import HeadPosterior   from '../components/viewer/HeadPosterior'
 import HeadBasicPoints from '../components/viewer/HeadBasicPoints'
+import HeadSensoryPoints from '../components/viewer/HeadSensoryPoints'
 import NeckDiagnosis   from '../components/viewer/NeckDiagnosis'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
@@ -19,7 +20,7 @@ const SYSTEMS = [
     fullName: 'Yamamoto New Scalp Acupuncture',
     subgroups: [
       { id: 'ynsa-basic',   label: 'Basic Points',      views: ['Grid'],                            available: true  },
-      { id: 'ynsa-sensory', label: 'Sensory Points',    views: ['Lateral', 'Frontal', 'Posterior'], available: true  },
+      { id: 'ynsa-sensory', label: 'Sensory Points',    views: ['SensoryGrid'],                     available: true  },
       { id: 'ynsa-brain',   label: 'Brain Points',      views: ['Frontal', 'Posterior'],            available: true  },
       { id: 'ynsa-neck',    label: 'Y-Points',          views: ['Neck'],                            available: true  },
     ],
@@ -78,9 +79,10 @@ for (const [sgId, ids] of Object.entries(SUBGROUP_POINT_IDS)) {
 }
 
 const PREFERRED_VIEW = {
-  'YNSA-Eye':                      'Frontal',
-  'YNSA-Nose':                     'Frontal',
-  'YNSA-Mouth':                    'Frontal',
+  // Eye/Nose/Mouth used to jump straight to the single Frontal diagram —
+  // moot now that Sensory Points is a grid showing Lateral/Frontal/Posterior
+  // together, so no per-point view preference applies (falls back to the
+  // subgroup's own views[0], 'SensoryGrid').
   'YNSA-Brain-Cerebrum-yin':       'Frontal',
   'YNSA-Brain-Cerebellum-yin':     'Frontal',
   'YNSA-Brain-BasalGanglia-yin':   'Frontal',
@@ -320,6 +322,7 @@ export default function ViewerPage() {
           {isAvailable ? (
             <ZoomableView hideControls={isNeck}>
               {activeView === 'Grid'      && <HeadBasicPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-basic']} />}
+              {activeView === 'SensoryGrid' && <HeadSensoryPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-sensory']} />}
               {activeView === 'Lateral'   && <HeadLateral   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
               {activeView === 'Frontal'   && <HeadFrontal   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
               {activeView === 'Posterior' && <HeadPosterior onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
