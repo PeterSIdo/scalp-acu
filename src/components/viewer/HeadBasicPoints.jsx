@@ -65,7 +65,7 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset }) {
   }, [menuOpen])
 
   return (
-    <div className="relative w-full" onClick={e => e.stopPropagation()}>
+    <div className="relative flex-1 min-w-0" onClick={e => e.stopPropagation()}>
       <div className="flex items-center gap-1.5">
         <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activeZone || menuOpen)}>
           {activeZone ?? 'Basic Point'}
@@ -106,19 +106,106 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset }) {
   )
 }
 
+// Search by indication text (e.g. "vertigo", "whiplash") instead of by zone
+// letter — same trigger+dropdown shape as Y-Points' MeridianSearch. Basic
+// Points has authored `indications` arrays (unlike Y-Points, which has none
+// yet), so this searches real data. Sub-points within a zone share identical
+// indications text (verified: YNSA-A1-yin and YNSA-A8-yin are byte-identical
+// arrays), so results are deduped to one entry per matching zone — same
+// "first matching real record" convention BasicPointMenu's own onSelect uses.
+function BasicPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
+  const dropdownRef = useRef(null)
+  const q = query.trim().toLowerCase()
+  const matches = q
+    ? Object.values(
+        allPoints
+          .filter(p => zoneOf(p.id) && p.indications?.some(ind => ind.toLowerCase().includes(q)))
+          .reduce((acc, p) => {
+            const zone = zoneOf(p.id)
+            if (!acc[zone]) acc[zone] = { zone, indication: p.indications.find(ind => ind.toLowerCase().includes(q)) }
+            return acc
+          }, {})
+      )
+    : []
+
+  // Same native-wheel-listener treatment as the zone dropdown above — see
+  // that component's comment for why a React onWheel prop isn't enough.
+  useEffect(() => {
+    const el = dropdownRef.current
+    if (!open || !el) return
+    function onWheel(e) {
+      e.preventDefault()
+      e.stopPropagation()
+      el.scrollTop += e.deltaY
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => el.removeEventListener('wheel', onWheel)
+  }, [open])
+
+  function handleKeyDown(e) {
+    if (e.key === 'Enter' && matches.length > 0) onSelect(matches[0].zone)
+    else if (e.key === 'Escape') onToggle(false)
+  }
+
+  return (
+    <div className="relative">
+      <button type="button" onClick={() => onToggle()} className={TRIGGER_CLASS(open)}>
+        Search
+      </button>
+
+      {open && (
+        // Anchored right-0 (opens leftward), not left-0 — the Search trigger
+        // sits near the tile's right edge, and a left-aligned dropdown would
+        // spill past the tile boundary into the neighbouring grid tile (and
+        // even steal its clicks, since the trapped stacking context from the
+        // tile's hover transform lets the sibling tile paint on top of the
+        // overflow). Same underlying spill concern BasicPointMenu's own
+        // dropdown solves by staying w-full within its own tile bounds.
+        <div className="absolute top-full right-0 mt-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[12rem] max-w-[16rem] z-20">
+          <input
+            type="text"
+            autoFocus
+            value={query}
+            onChange={e => onQueryChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Indications…"
+            className="w-full px-3 py-1.5 text-xs font-semibold bg-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none border-b border-gray-200 dark:border-gray-700"
+          />
+          {q && (
+            matches.length > 0 ? (
+              <div ref={dropdownRef} className="zone-dropdown-scroll py-1 max-h-40 overflow-y-auto">
+                {matches.map(({ zone, indication }) => (
+                  <button key={zone} type="button" onClick={() => onSelect(zone)} className={DROPDOWN_ITEM_CLASS(false)}>
+                    <span className="text-xs font-semibold">{zone}</span>
+                    <span className="block text-[11px] font-normal leading-snug text-gray-500 dark:text-gray-400">
+                      {indication}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="px-3 py-1.5 text-xs text-gray-400 dark:text-gray-600">No indications found</p>
+            )
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // activeZone/onZoneChange are shared across all three diagram tiles — selecting
 // a zone from the menu, or clicking any point on any tile, flashes every point
 // in that zone across the other tiles too (same idea as Y-Points' activeMeridian).
-function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highlightJsonId, pointFilter, menuOpen, onMenuToggle }) {
+function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, searchQuery, onSearchQueryChange }) {
   switch (id) {
     case 'menu':
       return (
         <div className="relative w-full h-full">
-          <div className="absolute left-3 right-3 top-3">
+          <div className="absolute left-3 right-3 top-3 flex items-baseline gap-4" onClick={e => e.stopPropagation()}>
             <BasicPointMenu
               activeZone={activeZone}
-              menuOpen={menuOpen}
-              onToggle={onMenuToggle}
+              menuOpen={openPanel === 'menu'}
+              onToggle={() => onPanelToggle('menu')}
               onSelect={z => {
                 // Picking a zone from the dropdown shows the exact same point
                 // record — same name, badges, reaction area, location, full
@@ -131,6 +218,18 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
                 onPointSelect?.(nextZone ? allPoints.find(p => zoneOf(p.id) === nextZone) ?? null : null)
               }}
               onReset={() => { onZoneChange(null); onPointSelect?.(null) }}
+            />
+            <BasicPointSearch
+              open={openPanel === 'search'}
+              query={searchQuery}
+              onToggle={() => onPanelToggle('search')}
+              onQueryChange={onSearchQueryChange}
+              onSelect={z => {
+                onZoneChange(z)
+                onPointSelect?.(allPoints.find(p => zoneOf(p.id) === z) ?? null)
+                onPanelToggle('search')
+                onSearchQueryChange('')
+              }}
             />
           </div>
         </div>
@@ -147,9 +246,10 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
 }
 
 export default function HeadBasicPoints({ onPointSelect, highlightJsonId = null, pointFilter = null }) {
-  const [expandedId, setExpandedId] = useState(null)
-  const [activeZone, setActiveZone] = useState(null)
-  const [menuOpen,   setMenuOpen]   = useState(false)
+  const [expandedId,  setExpandedId]  = useState(null)
+  const [activeZone,  setActiveZone]  = useState(null)
+  const [openPanel,   setOpenPanel]   = useState(null) // null | 'menu' | 'search'
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     function onKeyDown(e) {
@@ -179,14 +279,16 @@ export default function HeadBasicPoints({ onPointSelect, highlightJsonId = null,
     onPointSelect,
     highlightJsonId,
     pointFilter,
-    menuOpen,
-    onMenuToggle: () => setMenuOpen(o => !o),
+    openPanel,
+    onPanelToggle: panel => setOpenPanel(p => p === panel ? null : panel),
+    searchQuery,
+    onSearchQueryChange: setSearchQuery,
   }
 
   return (
     <div
       style={{ position: 'relative', width: '100%', height: '100%' }}
-      onClick={() => menuOpen && setMenuOpen(false)}
+      onClick={() => openPanel && setOpenPanel(null)}
     >
       <style>{TRANSITION_STYLE}</style>
 
