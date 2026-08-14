@@ -242,12 +242,19 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
           </div>
         </div>
       )
+    // Clicking a point directly on a diagram must also update activePointId
+    // (not just call onPointSelect), or the Menu trigger label and the
+    // cross-tile flash on the *other* two diagrams never learn about it —
+    // unlike Basic Points, where a diagram click's onZoneChange(zoneOf(id))
+    // does this for free, sensory points aren't zone-based (zoneOf() always
+    // returns null for them) so that side channel doesn't apply here and
+    // has to be done explicitly via onPointSelect instead.
     case 'lateral':
-      return <HeadLateral onPointSelect={onPointSelect} highlightJsonId={highlightJsonId} pointFilter={pointFilter} activeSubgroup="ynsa-sensory" />
+      return <HeadLateral onPointSelect={p => { onPointIdChange(p?.id ?? null); onPointSelect?.(p) }} highlightJsonId={highlightJsonId} pointFilter={pointFilter} activeSubgroup="ynsa-sensory" />
     case 'frontal':
-      return <HeadFrontal onPointSelect={onPointSelect} highlightJsonId={highlightJsonId} pointFilter={pointFilter} activeSubgroup="ynsa-sensory" />
+      return <HeadFrontal onPointSelect={p => { onPointIdChange(p?.id ?? null); onPointSelect?.(p) }} highlightJsonId={highlightJsonId} pointFilter={pointFilter} activeSubgroup="ynsa-sensory" />
     case 'posterior':
-      return <HeadPosterior onPointSelect={onPointSelect} highlightJsonId={highlightJsonId} pointFilter={pointFilter} activeSubgroup="ynsa-sensory" />
+      return <HeadPosterior onPointSelect={p => { onPointIdChange(p?.id ?? null); onPointSelect?.(p) }} highlightJsonId={highlightJsonId} pointFilter={pointFilter} activeSubgroup="ynsa-sensory" />
     default:
       return null
   }
