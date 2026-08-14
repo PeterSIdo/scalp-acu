@@ -3,11 +3,9 @@ import { Link } from 'react-router-dom'
 import { useSubscription } from '../hooks/useSubscription'
 import { useAuth } from '../hooks/useAuth'
 import { useTheme } from '../providers/ThemeProvider'
-import HeadLateral     from '../components/viewer/HeadLateral'
-import HeadFrontal     from '../components/viewer/HeadFrontal'
-import HeadPosterior   from '../components/viewer/HeadPosterior'
 import HeadBasicPoints from '../components/viewer/HeadBasicPoints'
 import HeadSensoryPoints from '../components/viewer/HeadSensoryPoints'
+import HeadBrainPoints from '../components/viewer/HeadBrainPoints'
 import NeckDiagnosis   from '../components/viewer/NeckDiagnosis'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
@@ -21,7 +19,7 @@ const SYSTEMS = [
     subgroups: [
       { id: 'ynsa-basic',   label: 'Basic Points',      views: ['Grid'],                            available: true  },
       { id: 'ynsa-sensory', label: 'Sensory Points',    views: ['SensoryGrid'],                     available: true  },
-      { id: 'ynsa-brain',   label: 'Brain Points',      views: ['Frontal', 'Posterior'],            available: true  },
+      { id: 'ynsa-brain',   label: 'Brain Points',      views: ['BrainGrid'],                       available: true  },
       { id: 'ynsa-neck',    label: 'Y-Points',          views: ['Neck'],                            available: true  },
     ],
   },
@@ -76,19 +74,6 @@ const SUBGROUP_POINT_IDS = {
 const POINT_TO_SUBGROUP = {}
 for (const [sgId, ids] of Object.entries(SUBGROUP_POINT_IDS)) {
   for (const id of ids) POINT_TO_SUBGROUP[id] = sgId
-}
-
-const PREFERRED_VIEW = {
-  // Eye/Nose/Mouth used to jump straight to the single Frontal diagram —
-  // moot now that Sensory Points is a grid showing Lateral/Frontal/Posterior
-  // together, so no per-point view preference applies (falls back to the
-  // subgroup's own views[0], 'SensoryGrid').
-  'YNSA-Brain-Cerebrum-yin':       'Frontal',
-  'YNSA-Brain-Cerebellum-yin':     'Frontal',
-  'YNSA-Brain-BasalGanglia-yin':   'Frontal',
-  'YNSA-Brain-Cerebrum-yang':      'Posterior',
-  'YNSA-Brain-Cerebellum-yang':    'Posterior',
-  'YNSA-Brain-BasalGanglia-yang':  'Posterior',
 }
 
 function SunIcon() {
@@ -207,7 +192,7 @@ export default function ViewerPage() {
     setActiveSubgroup(targetSubgroup)
     setSelectedPoint(point)
     setHighlightJsonId(point.id)
-    setActiveView(PREFERRED_VIEW[point.id] ?? sg?.views[0] ?? 'Lateral')
+    setActiveView(sg?.views[0] ?? 'Lateral')
     setSearchQuery('')
     setMobileSearchOpen(false)
   }
@@ -323,9 +308,7 @@ export default function ViewerPage() {
             <ZoomableView hideControls={isNeck}>
               {activeView === 'Grid'      && <HeadBasicPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-basic']} />}
               {activeView === 'SensoryGrid' && <HeadSensoryPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-sensory']} />}
-              {activeView === 'Lateral'   && <HeadLateral   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
-              {activeView === 'Frontal'   && <HeadFrontal   onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
-              {activeView === 'Posterior' && <HeadPosterior onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS[activeSubgroup] ?? null} activeSubgroup={activeSubgroup} />}
+              {activeView === 'BrainGrid' && <HeadBrainPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-brain']} />}
               {activeView === 'Neck'      && <NeckDiagnosis />}
             </ZoomableView>
           ) : (
