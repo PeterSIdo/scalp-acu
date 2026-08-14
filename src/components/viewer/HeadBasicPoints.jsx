@@ -114,7 +114,19 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset }) {
 // arrays), so results are deduped to one entry per matching zone — same
 // "first matching real record" convention BasicPointMenu's own onSelect uses.
 function BasicPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
-  const dropdownRef = useRef(null)
+  // Two refs, not one: containerRef is the outer dropdown (input + results +
+  // empty-state), always present the instant `open` is true; listRef is the
+  // scrollable results list, only present once there's a query with matches.
+  // The wheel listener goes on the CONTAINER, not the list — a listener on
+  // the list alone left the input box and "No indications found" text
+  // uncovered, so a wheel gesture starting there skipped it entirely and
+  // bubbled straight to ZoomableView's zoom handler, making the dropdown
+  // scroll "sometimes work" depending on exact cursor position. Anchoring to
+  // the container also sidesteps the list's conditional-mount timing
+  // (mirrors the earlier matches.length dependency-array bug) since the
+  // container itself never remounts while the dropdown is open.
+  const containerRef = useRef(null)
+  const listRef = useRef(null)
   const q = query.trim().toLowerCase()
   const matches = q
     ? Object.values(
@@ -130,21 +142,17 @@ function BasicPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
 
   // Same native-wheel-listener treatment as the zone dropdown above — see
   // that component's comment for why a React onWheel prop isn't enough.
-  // Depends on matches.length too (not just `open`): the scrollable div is
-  // only rendered once there's a query with results, which happens on a
-  // later render than when the dropdown first opens — without this, the
-  // effect fires once while the ref is still null and never re-attaches.
   useEffect(() => {
-    const el = dropdownRef.current
+    const el = containerRef.current
     if (!open || !el) return
     function onWheel(e) {
       e.preventDefault()
       e.stopPropagation()
-      el.scrollTop += e.deltaY
+      if (listRef.current) listRef.current.scrollTop += e.deltaY
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
-  }, [open, matches.length])
+  }, [open])
 
   function handleKeyDown(e) {
     if (e.key === 'Enter' && matches.length > 0) onSelect(matches[0].zone)
@@ -165,7 +173,7 @@ function BasicPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
         // tile's hover transform lets the sibling tile paint on top of the
         // overflow). Same underlying spill concern BasicPointMenu's own
         // dropdown solves by staying w-full within its own tile bounds.
-        <div className="absolute top-full right-0 mt-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[12rem] max-w-[16rem] z-20">
+        <div ref={containerRef} className="absolute top-full right-0 mt-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[12rem] max-w-[16rem] z-20">
           <input
             type="text"
             autoFocus
@@ -177,7 +185,7 @@ function BasicPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
           />
           {q && (
             matches.length > 0 ? (
-              <div ref={dropdownRef} className="zone-dropdown-scroll py-1 max-h-40 overflow-y-auto">
+              <div ref={listRef} className="zone-dropdown-scroll py-1 max-h-40 overflow-y-auto">
                 {matches.map(({ zone, indication }) => (
                   <button key={zone} type="button" onClick={() => onSelect(zone)} className={DROPDOWN_ITEM_CLASS(false)}>
                     <span className="text-xs font-semibold">{zone}</span>
