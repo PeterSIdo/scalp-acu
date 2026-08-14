@@ -130,6 +130,10 @@ function BasicPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
 
   // Same native-wheel-listener treatment as the zone dropdown above — see
   // that component's comment for why a React onWheel prop isn't enough.
+  // Depends on matches.length too (not just `open`): the scrollable div is
+  // only rendered once there's a query with results, which happens on a
+  // later render than when the dropdown first opens — without this, the
+  // effect fires once while the ref is still null and never re-attaches.
   useEffect(() => {
     const el = dropdownRef.current
     if (!open || !el) return
@@ -140,7 +144,7 @@ function BasicPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
-  }, [open])
+  }, [open, matches.length])
 
   function handleKeyDown(e) {
     if (e.key === 'Enter' && matches.length > 0) onSelect(matches[0].zone)
