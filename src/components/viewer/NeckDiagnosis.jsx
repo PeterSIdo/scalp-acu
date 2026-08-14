@@ -51,6 +51,9 @@ function renderTileContent(id, { activeMeridian, onMeridianChange, isExpanded })
     // YNSA-Y-Side.svg but not point placement (see Y_REAL_POINTS), so it
     // reuses HeadYPoints with Background/points swapped and the Meridian
     // menu hidden (shares activeMeridian with the primary tile instead).
+    // showMeridianLabel replaces the hidden menu's "which meridian is
+    // active" cue with a floating name label instead, same dark-box style
+    // as NeckMeridianMap's per-point label below.
     case 'ynsa-y-real':
       return (
         <HeadYPoints
@@ -60,6 +63,7 @@ function renderTileContent(id, { activeMeridian, onMeridianChange, isExpanded })
           points={Y_REAL_POINTS}
           diagramScale={1.44}
           showMenu={false}
+          showMeridianLabel
           hideCornerLabels
         />
       )

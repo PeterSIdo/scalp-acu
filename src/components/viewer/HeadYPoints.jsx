@@ -370,7 +370,7 @@ function MeridianSearch({ open, query, onToggle, onQueryChange, onSelect }) {
 // split). showMenu hides the Meridian/Search dropdown chrome for that
 // second tile — it shares activeMeridian with the primary tile instead of
 // duplicating the controls.
-export default function HeadYPoints({ onPointSelect, highlightJsonId = null, activeMeridian: controlledMeridian, onMeridianChange, diagramScale = 1, hideCornerLabels = false, showCornerLabels = false, Background = YNSAYSideSvg, points = POINTS, showMenu = true }) {
+export default function HeadYPoints({ onPointSelect, highlightJsonId = null, activeMeridian: controlledMeridian, onMeridianChange, diagramScale = 1, hideCornerLabels = false, showCornerLabels = false, Background = YNSAYSideSvg, points = POINTS, showMenu = true, showMeridianLabel = false }) {
   const [selectedId,       setSelectedId]       = useState(null)
   const [hoveredId,        setHoveredId]        = useState(null)
   const [internalMeridian, setInternalMeridian] = useState(null)
@@ -380,6 +380,19 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
   const activeMeridian = controlledMeridian !== undefined ? controlledMeridian : internalMeridian
 
   const style = `${hideCornerLabels ? HIDE_CORNER_LABELS_STYLE : STRONG_WEAK_LABEL_STYLE}\n${buildPointStyle(activeMeridian)}`
+
+  // Meridian name label — same floating dark-box/white-text style as
+  // NeckMeridianMap's per-point label, used here for tiles that hide the
+  // Meridian dropdown (showMenu=false) and would otherwise have no visible
+  // indication of which meridian is active. Anchored to the clicked point
+  // when there is one (selectedId), or the first point belonging to the
+  // active meridian otherwise — covers selection made via the dropdown/
+  // search on a *different* HeadYPoints instance sharing this activeMeridian
+  // prop, where this instance's own selectedId is never set.
+  const meridianLabelName = activeMeridian ? MERIDIANS.find(m => m.code === activeMeridian)?.name : null
+  const meridianLabelAnchor = meridianLabelName
+    ? points.find(p => p.id === selectedId) ?? points.find(p => p.id.startsWith(`${activeMeridian}-`))
+    : null
 
   // Tapping a point selects its meridian too — same pulsing-ring flash and
   // activated Meridian menu as picking it from the dropdown, or tapping the
@@ -506,6 +519,24 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
               </g>
             )
           })}
+
+          {/* Meridian name label — see meridianLabelAnchor comment above. */}
+          {showMeridianLabel && meridianLabelAnchor && meridianLabelName && (() => {
+            const pad = 6
+            const fSize = 11
+            const w = meridianLabelName.length * 6.2 + pad * 2
+            const h = fSize + pad * 2
+            const tx = meridianLabelAnchor.cx + 20 + w > 760 ? meridianLabelAnchor.cx - w - 20 : meridianLabelAnchor.cx + 20
+            const ty = meridianLabelAnchor.cy - h / 2
+            return (
+              <g pointerEvents="none">
+                <rect x={tx} y={ty} width={w} height={h} rx={4} fill="rgba(0,0,0,0.72)" />
+                <text x={tx + pad} y={ty + fSize + pad * 0.6} fontSize={fSize} fill="white" fontFamily="system-ui, sans-serif">
+                  {meridianLabelName}
+                </text>
+              </g>
+            )
+          })()}
         </svg>
       </div>
     </div>
