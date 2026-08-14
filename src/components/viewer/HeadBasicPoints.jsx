@@ -65,7 +65,13 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset }) {
   }, [menuOpen])
 
   return (
-    <div className="relative flex-1 min-w-0" onClick={e => e.stopPropagation()}>
+    // No position/width classes here on purpose — the trigger sizes to its
+    // own content so it sits tight against the Search trigger next to it
+    // (same close grouping as Y-Points' Meridian/Search pair), and the
+    // dropdown below anchors to the shared row wrapper instead (see its
+    // left-0 right-0 comment) rather than stretching this div to the tile's
+    // full width the way an earlier version did.
+    <div onClick={e => e.stopPropagation()}>
       <div className="flex items-center gap-1.5">
         <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activeZone || menuOpen)}>
           {activeZone ?? 'Basic Point'}
@@ -84,13 +90,16 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset }) {
       </div>
 
       {menuOpen && (
-        // Width tracks the tile itself (via the w-full chain up to the tile's
-        // own left-3/right-3 wrapper) instead of a fixed px value, so on a
-        // narrow mobile tile the dropdown can't spill into the neighbouring
-        // grid pane the way a fixed w-64 did.
+        // left-0 right-0 (not w-full of this now-content-sized trigger div) —
+        // this div lost its own `relative`, so its nearest positioned
+        // ancestor is the shared row wrapper in renderTileContent (itself
+        // `absolute left-3 right-3 top-3`), and the dropdown spans THAT
+        // width instead. Same no-spill guarantee as before (dropdown can't
+        // spill into the neighbouring grid tile), just anchored one level
+        // higher up so the trigger itself can shrink to content width.
         <div
           ref={dropdownRef}
-          className="zone-dropdown-scroll absolute top-full left-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 w-full max-h-40 overflow-y-auto z-20"
+          className="zone-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 max-h-40 overflow-y-auto z-20"
         >
           {ZONES.map(z => (
             <button key={z} type="button" onClick={() => onSelect(z)} className={DROPDOWN_ITEM_CLASS(activeZone === z)}>
@@ -160,20 +169,25 @@ function BasicPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
   }
 
   return (
-    <div className="relative">
+    // No `relative` here — same reasoning as BasicPointMenu just above: the
+    // trigger sizes to its own "Search" text and sits right next to the
+    // Basic Point trigger, and the dropdown anchors to the shared row
+    // wrapper instead so it can span safely regardless of where in the row
+    // this trigger ends up sitting.
+    <div>
       <button type="button" onClick={() => onToggle()} className={TRIGGER_CLASS(open)}>
         Search
       </button>
 
       {open && (
-        // Anchored right-0 (opens leftward), not left-0 — the Search trigger
-        // sits near the tile's right edge, and a left-aligned dropdown would
-        // spill past the tile boundary into the neighbouring grid tile (and
-        // even steal its clicks, since the trapped stacking context from the
-        // tile's hover transform lets the sibling tile paint on top of the
-        // overflow). Same underlying spill concern BasicPointMenu's own
-        // dropdown solves by staying w-full within its own tile bounds.
-        <div ref={containerRef} className="absolute top-full right-0 mt-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[12rem] max-w-[16rem] z-20">
+        // left-0 right-0 against the shared row wrapper (see BasicPointMenu's
+        // dropdown comment) — not min-w/max-w anchored to this trigger's own
+        // position. The trigger now sits close to "Basic Point ▼" rather
+        // than pinned to the tile's right edge, so anchoring width to the
+        // trigger itself risked spilling either direction depending on where
+        // it landed; spanning the row is the same safe pattern the zone
+        // dropdown already uses.
+        <div ref={containerRef} className="absolute top-full left-0 right-0 mt-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 z-20">
           <input
             type="text"
             autoFocus
