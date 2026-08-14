@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { allPoints } from '../../data/points'
 import { MERIDIANS } from '../../data/meridians'
 import YNSAYSideSvg from '../../assets/diagrams/YNSA-Y-Side.svg?react'
@@ -247,6 +247,26 @@ const DROPDOWN_ITEM_CLASS = (active) => `block w-full text-left px-3 py-1.5 text
 // styled as text rather than a filled button, since the SVG no longer bakes in a menu.
 function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset }) {
   const activeName = MERIDIANS.find(m => m.code === activeMeridian)?.name
+  const dropdownRef = useRef(null)
+
+  // Native (non-React) listener, registered directly on the dropdown node —
+  // ZoomableView attaches its own wheel-to-zoom handler straight to a DOM
+  // node too, so it sees wheel events during the real DOM bubble phase
+  // *before* React's root-delegated onWheel would ever fire; stopping it
+  // from a React handler is too late. Stopping it here, at the real
+  // source, is what actually prevents the diagram from zooming while the
+  // list scrolls (same pattern as HeadBasicPoints' zone dropdown).
+  useEffect(() => {
+    const el = dropdownRef.current
+    if (!menuOpen || !el) return
+    function onWheel(e) {
+      e.preventDefault()
+      e.stopPropagation()
+      el.scrollTop += e.deltaY
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => el.removeEventListener('wheel', onWheel)
+  }, [menuOpen])
 
   return (
     <div className="relative">
@@ -268,7 +288,10 @@ function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset })
       </div>
 
       {menuOpen && (
-        <div className="absolute top-full left-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[9.5rem] z-20">
+        <div
+          ref={dropdownRef}
+          className="scroll-touch absolute top-full left-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[9.5rem] max-h-40 overflow-y-auto z-20"
+        >
           {MERIDIANS.map(({ code, name }) => (
             <button key={code} type="button" onClick={() => onSelect(code)} className={DROPDOWN_ITEM_CLASS(activeMeridian === code)}>
               {name}
