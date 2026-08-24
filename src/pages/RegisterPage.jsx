@@ -28,7 +28,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <Link to="/" className="text-amber-500 dark:text-amber-400 text-xl font-bold block text-center mb-8">ScalpAcu</Link>
+        <Link to="/" className="text-amber-500 dark:text-amber-400 text-xl font-bold block text-center mb-8">AcuMap</Link>
         <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-800">
           <h1 className="text-2xl font-bold mb-2 text-center text-gray-900 dark:text-white">Start your free trial</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm text-center mb-6">14 days free, no credit card needed</p>

@@ -36,7 +36,7 @@ export default function AccountPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 px-4 py-12">
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <Link to="/viewer" className="text-amber-500 dark:text-amber-400 font-bold text-xl">ScalpAcu</Link>
+          <Link to="/viewer" className="text-amber-500 dark:text-amber-400 font-bold text-xl">AcuMap</Link>
           <button onClick={handleSignOut} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm transition-colors">
             Sign out
           </button>

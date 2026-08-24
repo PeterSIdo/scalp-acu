@@ -5,7 +5,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       {/* Navbar */}
       <nav className="flex items-center justify-between px-8 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
-        <span className="text-xl font-bold text-amber-500 dark:text-amber-400">ScalpAcu</span>
+        <span className="text-xl font-bold text-amber-500 dark:text-amber-400">AcuMap</span>
         <div className="flex gap-4">
           <Link to="/login" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Log in</Link>
           <Link to="/register" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg transition-colors">
@@ -73,7 +73,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="border-t border-gray-200 dark:border-gray-800 px-8 py-6 text-center text-gray-400 dark:text-gray-600 text-sm space-y-1">
-        <p>© CareTrace 2026 · For educational use only</p>
+        <p>© AcuMap 2026 · For educational use only</p>
       </footer>
     </div>
   )

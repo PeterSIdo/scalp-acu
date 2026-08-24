@@ -1,4 +1,4 @@
-# ScalpAcu — Railway Deployment Guide
+# AcuMap — Railway Deployment Guide
 
 ## Prerequisites
 
