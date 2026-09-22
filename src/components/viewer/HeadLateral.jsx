@@ -219,8 +219,8 @@ export default function HeadLateral({ pickerMode = false, onPointSelect, highlig
           const ty = pt.cy - h / 2
           return (
             <g key={`active-${id}`} pointerEvents="none">
-              <circle cx={pt.cx} cy={pt.cy} r={11} fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.9" />
-              <circle cx={pt.cx} cy={pt.cy} r={11} fill="none" stroke="#ffffff" strokeWidth="2">
+              <circle cx={pt.cx} cy={pt.cy} r={11} fill="none" stroke="#000000" strokeWidth="1.5" opacity="0.9" />
+              <circle cx={pt.cx} cy={pt.cy} r={11} fill="none" stroke="#000000" strokeWidth="2">
                 <animate attributeName="r"       values="11;22;11" dur="1.6s" repeatCount="indefinite" />
                 <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
               </circle>
@@ -246,7 +246,7 @@ export default function HeadLateral({ pickerMode = false, onPointSelect, highlig
           const ty = pt.cy - h / 2
           return (
             <g key={`zone-${id}`} pointerEvents="none">
-              <circle cx={pt.cx} cy={pt.cy} r={11} fill="none" stroke="#ffffff" strokeWidth="2" opacity="0.85">
+              <circle cx={pt.cx} cy={pt.cy} r={11} fill="none" stroke="#000000" strokeWidth="2" opacity="0.85">
                 <animate attributeName="r"       values="11;20;11"    dur="1.6s" repeatCount="indefinite" />
                 <animate attributeName="opacity" values="0.85;0;0.85" dur="1.6s" repeatCount="indefinite" />
               </circle>

@@ -6,6 +6,7 @@ import { useTheme } from '../providers/ThemeProvider'
 import HeadBasicPoints from '../components/viewer/HeadBasicPoints'
 import HeadSensoryPoints from '../components/viewer/HeadSensoryPoints'
 import HeadBrainPoints from '../components/viewer/HeadBrainPoints'
+import HeadTCMScalpAreas from '../components/viewer/HeadTCMScalpAreas'
 import NeckDiagnosis   from '../components/viewer/NeckDiagnosis'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
@@ -24,7 +25,14 @@ const SYSTEMS = [
     ],
   },
   { id: 'zhus', label: "Zhu's", fullName: "Zhu's Scalp Acupuncture", subgroups: null, available: false },
-  { id: 'tcm',  label: 'TCM',   fullName: 'TCM Scalp Points',        subgroups: null, available: false },
+  {
+    id: 'tcm',
+    label: 'TCM',
+    fullName: 'TCM Scalp Points',
+    subgroups: [
+      { id: 'tcm-scalp-areas', label: 'Scalp Areas', views: ['TCMGrid'], available: true },
+    ],
+  },
   { id: 'ear',  label: 'Ear',   fullName: 'Ear Acupuncture',         subgroups: null, available: false },
 ]
 
@@ -211,7 +219,7 @@ export default function ViewerPage() {
           className={`flex-shrink-0 px-4 py-2 text-xs font-bold transition-colors whitespace-nowrap ${
             activeSystem === sys.id
               ? 'text-amber-500 dark:text-amber-400 border-b-2 border-amber-500 dark:border-amber-400'
-              : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200'
+              : 'text-black dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200'
           } ${!sys.subgroups && !sys.available ? 'opacity-60' : ''}`}
         >
           {sys.label}
@@ -231,7 +239,7 @@ export default function ViewerPage() {
             className={`flex-shrink-0 px-3 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
               activeSubgroup === sg.id
                 ? 'text-amber-500 dark:text-amber-400 border-b-2 border-amber-500 dark:border-amber-400'
-                : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200'
+                : 'text-black dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200'
             } ${!sg.available ? 'opacity-50' : ''}`}
           >
             {sg.label}
@@ -252,7 +260,7 @@ export default function ViewerPage() {
             className={`flex-1 py-2 text-xs font-semibold transition-colors ${
               activeView === view
                 ? 'text-amber-500 dark:text-amber-400 border-b-2 border-amber-500 dark:border-amber-400'
-                : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200'
+                : 'text-black dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200'
             }`}
           >
             {view}
@@ -267,7 +275,7 @@ export default function ViewerPage() {
       {/* Top bar */}
       <header className="flex items-center justify-between px-4 py-2 border-b border-gray-300 dark:border-gray-800 bg-gray-400 dark:bg-gray-950 flex-shrink-0">
         <Link to="/" className="text-black dark:text-amber-400 font-bold text-lg">AcuMap</Link>
-        <span className="text-gray-600 dark:text-gray-400 text-sm hidden sm:block">
+        <span className="text-black dark:text-gray-400 text-sm hidden sm:block">
           {system.fullName}
         </span>
         <div className="flex items-center gap-3 text-sm">
@@ -310,6 +318,7 @@ export default function ViewerPage() {
               {activeView === 'SensoryGrid' && <HeadSensoryPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-sensory']} />}
               {activeView === 'BrainGrid' && <HeadBrainPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-brain']} />}
               {activeView === 'Neck'      && <NeckDiagnosis />}
+              {activeView === 'TCMGrid'   && <HeadTCMScalpAreas />}
             </ZoomableView>
           ) : (
             <div className="flex flex-col items-center justify-center h-full gap-2 text-center">

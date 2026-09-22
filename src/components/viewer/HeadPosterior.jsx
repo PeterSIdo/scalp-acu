@@ -221,8 +221,8 @@ export default function HeadPosterior({ pickerMode = false, onPointSelect, highl
           const ty = pt.cy - h / 2
           return (
             <g key={`active-${id}`} pointerEvents="none">
-              <ellipse cx={pt.cx} cy={pt.cy} rx={ringRx} ry={ringRy} fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.9" />
-              <ellipse cx={pt.cx} cy={pt.cy} rx={ringRx} ry={ringRy} fill="none" stroke="#ffffff" strokeWidth="2">
+              <ellipse cx={pt.cx} cy={pt.cy} rx={ringRx} ry={ringRy} fill="none" stroke="#000000" strokeWidth="1.5" opacity="0.9" />
+              <ellipse cx={pt.cx} cy={pt.cy} rx={ringRx} ry={ringRy} fill="none" stroke="#000000" strokeWidth="2">
                 <animate attributeName="rx"      values={`${ringRx};${ringRx * 2};${ringRx}`} dur="1.6s" repeatCount="indefinite" />
                 <animate attributeName="ry"      values={`${ringRy};${ringRy * 2};${ringRy}`} dur="1.6s" repeatCount="indefinite" />
                 <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
@@ -252,7 +252,7 @@ export default function HeadPosterior({ pickerMode = false, onPointSelect, highl
           const ty = pt.cy - h / 2
           return (
             <g key={`zone-${id}`} pointerEvents="none">
-              <ellipse cx={pt.cx} cy={pt.cy} rx={ringRx} ry={ringRy} fill="none" stroke="#ffffff" strokeWidth="2" opacity="0.85">
+              <ellipse cx={pt.cx} cy={pt.cy} rx={ringRx} ry={ringRy} fill="none" stroke="#000000" strokeWidth="2" opacity="0.85">
                 <animate attributeName="rx"      values={`${ringRx};${ringRx * 1.8};${ringRx}`} dur="1.6s" repeatCount="indefinite" />
                 <animate attributeName="ry"      values={`${ringRy};${ringRy * 1.8};${ringRy}`} dur="1.6s" repeatCount="indefinite" />
                 <animate attributeName="opacity" values="0.85;0;0.85" dur="1.6s" repeatCount="indefinite" />

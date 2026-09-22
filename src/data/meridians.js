@@ -3,6 +3,7 @@
 export const MERIDIANS = [
   { code: 'BL',      name: 'Bladder' },
   { code: 'GB',      name: 'Gallbladder' },
+  { code: 'GV',      name: 'Governing Vessel' },
   { code: 'HT',      name: 'Heart' },
   { code: 'KI',      name: 'Kidney' },
   { code: 'LI',      name: 'Large Intestine' },
