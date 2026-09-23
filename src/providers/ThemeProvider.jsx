@@ -4,13 +4,15 @@ const ThemeContext = createContext()
 
 export function ThemeProvider({ children }) {
   const [dark, setDark] = useState(() => {
-    const saved = localStorage.getItem('theme')
+    // Key bumped to v2 so any 'dark' value saved by earlier visits (before
+    // light became the default) doesn't override the new default here.
+    const saved = localStorage.getItem('theme_v2')
     return saved ? saved === 'dark' : false  // default: light
   })
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark)
-    localStorage.setItem('theme', dark ? 'dark' : 'light')
+    localStorage.setItem('theme_v2', dark ? 'dark' : 'light')
   }, [dark])
 
   // Apply on first mount before paint
