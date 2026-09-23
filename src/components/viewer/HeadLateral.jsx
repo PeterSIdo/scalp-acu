@@ -31,10 +31,10 @@ const POINT_JSON_ID = {
   'E1-yang':  'YNSA-E-yang',   'E12-yang': 'YNSA-E-yang',
   // F zone
   'F-yang':   'YNSA-F-yang',
-  // G zone — individual sub-point descriptions (G3-yang keeps its raw "_2" svg id)
+  // G zone — individual sub-point descriptions
   'G1-yin':   'YNSA-G1-yin',   'G1-yang':  'YNSA-G1-yang',
   'G2-yin':   'YNSA-G2-yin',   'G2-yang':  'YNSA-G2-yang',
-  'G3-yin':   'YNSA-G3-yin',   'G3-yang_2':'YNSA-G3-yang',
+  'G3-yin':   'YNSA-G3-yin',   'G3-yang':  'YNSA-G3-yang',
   // H zone — no yin/yang split in JSON
   'H-yin':    'YNSA-H',        'H-yang':   'YNSA-H',
   // I zone — no yin/yang split in JSON
@@ -47,61 +47,61 @@ const POINT_JSON_ID = {
   'extra-ear-yang': 'YNSA-Extra-Ear-Yang',
 }
 
-// Coordinates read from basic-side.svg (viewBox 0 0 552 707). Circle points use
+// Coordinates read from basic-side.svg (viewBox 0 0 558 706). Circle points use
 // cx/cy directly; path-drawn points use their bounding-box center.
 const POINTS = [
   // ── Ear points ───────────────────────────────────────
-  { id: 'ear-yin',        cx: 169, cy: 164, color: BLUE   },
-  { id: 'extra-ear-yin',  cx: 282, cy: 116, color: BLUE   },
-  { id: 'extra-ear-yang', cx: 370, cy: 137, color: BLUE   },
-  { id: 'ear-yang',       cx: 444, cy: 236, color: BLUE   },
+  { id: 'ear-yin',        cx: 164.5, cy: 198, color: BLUE   },
+  { id: 'extra-ear-yin',  cx: 283, cy: 116, color: BLUE   },
+  { id: 'extra-ear-yang', cx: 407.5, cy: 143, color: BLUE   },
+  { id: 'ear-yang',       cx: 456, cy: 245, color: BLUE   },
   // ── H (extra lumbar) ─────────────────────────────────
-  { id: 'H-yin',    cx: 164, cy: 100, color: GREEN  },
-  { id: 'H-yang',   cx: 493, cy: 210, color: GREEN  },
+  { id: 'H-yin',    cx: 191, cy: 124, color: GREEN  },
+  { id: 'H-yang',   cx: 486, cy: 253, color: GREEN  },
   // ── I (extra lumbar) ─────────────────────────────────
-  { id: 'I-yin',    cx: 234, cy: 106, color: GREEN  },
-  { id: 'I-yang',   cx: 461, cy: 221, color: GREEN  },
+  { id: 'I-yin',    cx: 261, cy: 130, color: GREEN  },
+  { id: 'I-yang',   cx: 449, cy: 273, color: GREEN  },
   // ── A zone ───────────────────────────────────────────
-  { id: 'YNSA-A1-yin', cx: 110, cy: 134, color: ORANGE },
-  { id: 'YNSA-A8-yin', cx: 128, cy: 112, color: ORANGE },
-  { id: 'A1-yang',     cx: 526, cy: 225, color: RED    },
-  { id: 'A8-yang',     cx: 512, cy: 205, color: RED    },
+  { id: 'YNSA-A1-yin', cx: 134, cy: 162, color: ORANGE },
+  { id: 'YNSA-A8-yin', cx: 152, cy: 140, color: ORANGE },
+  { id: 'A1-yang',     cx: 521, cy: 264, color: RED    },
+  { id: 'A8-yang',     cx: 507, cy: 244, color: RED    },
   // ── B zone ───────────────────────────────────────────
-  { id: 'B-yin',    cx: 157, cy: 122, color: ORANGE },
-  { id: 'B-yang',   cx: 508, cy: 232, color: RED    },
+  { id: 'B-yin',    cx: 174, cy: 162, color: ORANGE },
+  { id: 'B-yang',   cx: 498, cy: 267, color: RED    },
   // ── C zone ───────────────────────────────────────────
-  { id: 'C-yin',    cx: 217, cy: 122, color: ORANGE },
-  { id: 'C-yang',   cx: 474, cy: 236, color: RED    },
+  { id: 'C-yin',    cx: 222, cy: 150, color: ORANGE },
+  { id: 'C-yang',   cx: 462, cy: 285, color: RED    },
   // ── D zone (single parent point) ─────────────────────
-  { id: 'D-yin',    cx: 227, cy: 298, color: ORANGE },
-  { id: 'D-yang',   cx: 413, cy: 302, color: RED    },
+  { id: 'D-yin',    cx: 253, cy: 362, color: ORANGE },
+  { id: 'D-yang',   cx: 426, cy: 348, color: RED    },
   // ── D zone (individual vertebrae) ────────────────────
-  { id: 'D1-yin',   cx: 272.5, cy: 275.5,   color: ORANGE },
-  { id: 'D2-yin',   cx: 272.5, cy: 283.375, color: ORANGE },
-  { id: 'D3-yin',   cx: 272.5, cy: 291.25,  color: ORANGE },
-  { id: 'D4-yin',   cx: 272.5, cy: 299.125, color: ORANGE },
-  { id: 'D5-yin',   cx: 272.5, cy: 307,     color: ORANGE },
-  { id: 'D6-yin',   cx: 272.5, cy: 314.875, color: ORANGE },
-  { id: 'D1-yang',  cx: 330, cy: 236, color: RED },
-  { id: 'D2-yang',  cx: 339, cy: 237, color: RED },
-  { id: 'D3-yang',  cx: 348, cy: 240, color: RED },
-  { id: 'D4-yang',  cx: 356, cy: 245, color: RED },
-  { id: 'D5-yang',  cx: 363, cy: 251, color: RED },
-  { id: 'D6-yang',  cx: 368, cy: 258, color: RED },
+  { id: 'D1-yin',   cx: 311.5, cy: 345.5, color: ORANGE },
+  { id: 'D2-yin',   cx: 311.5, cy: 353.4, color: ORANGE },
+  { id: 'D3-yin',   cx: 311.5, cy: 361.3, color: ORANGE },
+  { id: 'D4-yin',   cx: 311.5, cy: 369.1, color: ORANGE },
+  { id: 'D5-yin',   cx: 311.5, cy: 377,   color: ORANGE },
+  { id: 'D6-yin',   cx: 311.5, cy: 384.9, color: ORANGE },
+  { id: 'D1-yang',  cx: 363.9, cy: 313.1, color: RED },
+  { id: 'D2-yang',  cx: 372.2, cy: 316.8, color: RED },
+  { id: 'D3-yang',  cx: 379.8, cy: 322.5, color: RED },
+  { id: 'D4-yang',  cx: 385.9, cy: 329.7, color: RED },
+  { id: 'D5-yang',  cx: 390.7, cy: 337.5, color: RED },
+  { id: 'D6-yang',  cx: 393.3, cy: 345.7, color: RED },
   // ── E zone ───────────────────────────────────────────
-  { id: 'E1-yin',   cx: 110, cy: 186, color: ORANGE },
-  { id: 'E12-yin',  cx: 77,  cy: 196, color: ORANGE },
-  { id: 'E1-yang',  cx: 501, cy: 289, color: RED    },
-  { id: 'E12-yang', cx: 519, cy: 299, color: RED    },
+  { id: 'E1-yin',   cx: 134, cy: 214, color: ORANGE },
+  { id: 'E12-yin',  cx: 101, cy: 224, color: ORANGE },
+  { id: 'E1-yang',  cx: 496, cy: 321, color: RED    },
+  { id: 'E12-yang', cx: 514, cy: 331, color: RED    },
   // ── F zone ───────────────────────────────────────────
-  { id: 'F-yang',   cx: 366, cy: 385, color: RED    },
+  { id: 'F-yang',   cx: 367, cy: 452, color: RED    },
   // ── G zone ───────────────────────────────────────────
-  { id: 'G1-yin',   cx: 212, cy: 281, color: ORANGE },
-  { id: 'G2-yin',   cx: 227, cy: 281, color: ORANGE },
-  { id: 'G3-yin',   cx: 242, cy: 281, color: ORANGE },
-  { id: 'G1-yang',  cx: 328, cy: 415, color: RED    },
-  { id: 'G2-yang',  cx: 342, cy: 422, color: RED    },
-  { id: 'G3-yang_2',cx: 355, cy: 413, color: RED    },
+  { id: 'G1-yin',   cx: 238, cy: 345, color: ORANGE },
+  { id: 'G2-yin',   cx: 253, cy: 341, color: ORANGE },
+  { id: 'G3-yin',   cx: 268, cy: 345, color: ORANGE },
+  { id: 'G1-yang',  cx: 352, cy: 473, color: RED    },
+  { id: 'G2-yang',  cx: 366, cy: 480, color: RED    },
+  { id: 'G3-yang',  cx: 379, cy: 471, color: RED    },
 ]
 
 // basic-side.svg groups:
@@ -178,7 +178,7 @@ export default function HeadLateral({ pickerMode = false, onPointSelect, highlig
 
       <svg
         ref={svgRef}
-        viewBox="0 0 552 707"
+        viewBox="0 0 558 706"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', cursor: pickerMode ? 'crosshair' : 'default' }}
@@ -215,7 +215,7 @@ export default function HeadLateral({ pickerMode = false, onPointSelect, highlig
           const fSize  = 11
           const w      = label.length * 6.2 + pad * 2
           const h      = fSize + pad * 2
-          const tx = pt.cx + 16 + w > 552 ? pt.cx - w - 16 : pt.cx + 16
+          const tx = pt.cx + 16 + w > 558 ? pt.cx - w - 16 : pt.cx + 16
           const ty = pt.cy - h / 2
           return (
             <g key={`active-${id}`} pointerEvents="none">
@@ -242,7 +242,7 @@ export default function HeadLateral({ pickerMode = false, onPointSelect, highlig
           const fSize = 10
           const w     = zone ? zone.length * 6.2 + pad * 2 : 0
           const h     = fSize + pad * 2
-          const tx = pt.cx + 14 + w > 552 ? pt.cx - w - 14 : pt.cx + 14
+          const tx = pt.cx + 14 + w > 558 ? pt.cx - w - 14 : pt.cx + 14
           const ty = pt.cy - h / 2
           return (
             <g key={`zone-${id}`} pointerEvents="none">
