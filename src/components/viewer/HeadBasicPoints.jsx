@@ -28,7 +28,7 @@ const TRANSITION_STYLE = `
   display: none;
 }`
 
-const TRIGGER_CLASS = (active) => `text-xs font-semibold transition-colors ${
+const TRIGGER_CLASS = (active) => `text-base font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
   active
     ? 'text-amber-500 dark:text-amber-400'
     : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
@@ -42,7 +42,7 @@ const DROPDOWN_ITEM_CLASS = (active) => `block w-full text-left px-3 py-1.5 tran
 
 // Same trigger+dropdown shape as Y-Points' MeridianMenu, but listing the nine
 // Basic Point zone letters (A–I) instead of meridian names.
-function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset }) {
+function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset, compact }) {
   const dropdownRef = useRef(null)
 
   // Native (non-React) listener, registered directly on the dropdown node —
@@ -99,7 +99,7 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset }) {
         // higher up so the trigger itself can shrink to content width.
         <div
           ref={dropdownRef}
-          className="zone-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 max-h-40 overflow-y-auto z-20"
+          className={`zone-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
         >
           {ZONES.map(z => (
             <button key={z} type="button" onClick={() => onSelect(z)} className={DROPDOWN_ITEM_CLASS(activeZone === z)}>
@@ -122,7 +122,7 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset }) {
 // indications text (verified: YNSA-A1-yin and YNSA-A8-yin are byte-identical
 // arrays), so results are deduped to one entry per matching zone — same
 // "first matching real record" convention BasicPointMenu's own onSelect uses.
-function BasicPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
+function BasicPointSearch({ open, query, onToggle, onQueryChange, onSelect, compact }) {
   // Two refs, not one: containerRef is the outer dropdown (input + results +
   // empty-state), always present the instant `open` is true; listRef is the
   // scrollable results list, only present once there's a query with matches.
@@ -199,7 +199,7 @@ function BasicPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
           />
           {q && (
             matches.length > 0 ? (
-              <div ref={listRef} className="zone-dropdown-scroll py-1 max-h-40 overflow-y-auto">
+              <div ref={listRef} className={`zone-dropdown-scroll py-1 overflow-y-auto ${compact ? 'max-h-40' : 'max-h-96'}`}>
                 {matches.map(({ zone, indication }) => (
                   <button key={zone} type="button" onClick={() => onSelect(zone)} className={DROPDOWN_ITEM_CLASS(false)}>
                     <span className="text-xs font-semibold">{zone}</span>
@@ -222,7 +222,7 @@ function BasicPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
 // activeZone/onZoneChange are shared across all three diagram tiles — selecting
 // a zone from the menu, or clicking any point on any tile, flashes every point
 // in that zone across the other tiles too (same idea as Y-Points' activeMeridian).
-function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, searchQuery, onSearchQueryChange }) {
+function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, searchQuery, onSearchQueryChange }, expanded = false) {
   switch (id) {
     case 'menu':
       return (
@@ -231,6 +231,7 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
             <BasicPointMenu
               activeZone={activeZone}
               menuOpen={openPanel === 'menu'}
+              compact={!expanded}
               onToggle={() => onPanelToggle('menu')}
               onSelect={z => {
                 // Picking a zone from the dropdown shows the exact same point
@@ -248,6 +249,7 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
             <BasicPointSearch
               open={openPanel === 'search'}
               query={searchQuery}
+              compact={!expanded}
               onToggle={() => onPanelToggle('search')}
               onQueryChange={onSearchQueryChange}
               onSelect={z => {
@@ -331,7 +333,7 @@ export default function HeadBasicPoints({ onPointSelect, highlightJsonId = null,
         {TILE_IDS.map(id => {
           const expandable = true
           const isExpanded = expandedId === id
-          const content = renderTileContent(id, tileCtx)
+          const content = renderTileContent(id, tileCtx, false)
           return (
             <div
               key={id}
@@ -350,7 +352,7 @@ export default function HeadBasicPoints({ onPointSelect, highlightJsonId = null,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: id === 'menu' ? 'rgba(148, 163, 184, 0.06)' : '#ffffff',
+                background: '#ffffff',
                 cursor: expandable ? 'pointer' : 'default',
                 overflow: id === 'menu' ? 'visible' : 'hidden',
                 transition: 'transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease',
@@ -373,7 +375,7 @@ export default function HeadBasicPoints({ onPointSelect, highlightJsonId = null,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'rgba(0, 0, 0, 0.6)',
+            background: 'rgba(99, 236, 225, 0.6)',
             cursor: 'zoom-out',
             zIndex: 20,
           }}
@@ -384,7 +386,7 @@ export default function HeadBasicPoints({ onPointSelect, highlightJsonId = null,
               position: 'relative',
               width: '90%',
               height: '90%',
-              background: expandedId === 'menu' ? '#111827' : '#ffffff',
+              background: expandedId === 'menu' ? '#f1f5f9' : '#ffffff',
               borderRadius: 12,
               display: 'flex',
               alignItems: 'center',
@@ -393,7 +395,7 @@ export default function HeadBasicPoints({ onPointSelect, highlightJsonId = null,
               overflow: expandedId === 'menu' ? 'visible' : 'hidden',
             }}
           >
-            {renderTileContent(expandedId, tileCtx)}
+            {renderTileContent(expandedId, tileCtx, true)}
             <button
               onClick={e => { e.stopPropagation(); toggle(expandedId) }}
               aria-label="Close"

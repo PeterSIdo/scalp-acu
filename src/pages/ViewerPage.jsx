@@ -273,7 +273,7 @@ export default function ViewerPage() {
   return (
     <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       {/* Top bar */}
-      <header className="flex items-center justify-between px-4 py-2 border-b border-gray-300 dark:border-gray-800 bg-gray-400 dark:bg-gray-950 flex-shrink-0">
+      <header className="flex items-center justify-between px-4 py-2 border-b border-gray-300 dark:border-gray-800 bg-[#63ECE1] flex-shrink-0">
         <Link to="/" className="text-black dark:text-amber-400 font-bold text-lg">AcuMap</Link>
         <span className="text-black dark:text-gray-400 text-sm hidden sm:block">
           {system.fullName}

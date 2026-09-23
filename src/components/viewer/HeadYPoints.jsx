@@ -231,7 +231,7 @@ function buildPointStyle(activeMeridian) {
 
 // Shared text style for both the Meridian and Search triggers — plain text, no button
 // chrome, matching the SubgroupTabs font/weight elsewhere in the viewer.
-const TRIGGER_CLASS = (active) => `text-xs font-semibold transition-colors ${
+const TRIGGER_CLASS = (active) => `text-base font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
   active
     ? 'text-amber-500 dark:text-amber-400'
     : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
@@ -290,7 +290,7 @@ function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset })
       {menuOpen && (
         <div
           ref={dropdownRef}
-          className="scroll-touch absolute top-full left-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[9.5rem] max-h-40 overflow-y-auto z-20"
+          className="scroll-touch absolute top-full left-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[9.5rem] max-h-96 overflow-y-auto z-20"
         >
           {MERIDIANS.map(({ code, name }) => (
             <button key={code} type="button" onClick={() => onSelect(code)} className={DROPDOWN_ITEM_CLASS(activeMeridian === code)}>

@@ -59,7 +59,7 @@ const TRANSITION_STYLE = `
 // Tile 1 (menu) sits back on the theme-aware dark/translucent tile
 // background (matches YNSA's tile 1/1), so its text switches with dark:
 // again. Tile 2 (areas) keeps its own fixed white backing for the SVG.
-const TRIGGER_CLASS = (active) => `text-xs font-semibold transition-colors ${
+const TRIGGER_CLASS = (active) => `text-base font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
   active
     ? 'text-amber-500 dark:text-amber-400'
     : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
@@ -87,7 +87,7 @@ const TILE_TITLE_CLASS = 'text-xs font-medium text-gray-500 text-center px-2 pt-
 // Same trigger+dropdown shape as Basic/Sensory/Brain Points' menus, but a
 // plain name list — no Search sibling yet since there's no indications data
 // to search against.
-function TCMAreaMenu({ activeArea, menuOpen, onToggle, onSelect, onReset }) {
+function TCMAreaMenu({ activeArea, menuOpen, onToggle, onSelect, onReset, compact }) {
   const dropdownRef = useRef(null)
 
   // Same native (non-React) wheel-stop treatment as the other grids' menus —
@@ -127,7 +127,7 @@ function TCMAreaMenu({ activeArea, menuOpen, onToggle, onSelect, onReset }) {
       {menuOpen && (
         <div
           ref={dropdownRef}
-          className="tcm-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 max-h-40 overflow-y-auto z-20"
+          className={`tcm-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
         >
           {TCM_AREAS.map(area => (
             <button key={area} type="button" onClick={() => onSelect(area)} className={DROPDOWN_ITEM_CLASS(activeArea === area)}>
@@ -140,7 +140,7 @@ function TCMAreaMenu({ activeArea, menuOpen, onToggle, onSelect, onReset }) {
   )
 }
 
-function renderTileContent(id, { activeArea, onAreaChange, menuOpen, onMenuToggle }) {
+function renderTileContent(id, { activeArea, onAreaChange, menuOpen, onMenuToggle }, expanded = false) {
   switch (id) {
     case 'menu':
       return (
@@ -149,6 +149,7 @@ function renderTileContent(id, { activeArea, onAreaChange, menuOpen, onMenuToggl
             <TCMAreaMenu
               activeArea={activeArea}
               menuOpen={menuOpen}
+              compact={!expanded}
               onToggle={onMenuToggle}
               onSelect={area => onAreaChange(activeArea === area ? null : area)}
               onReset={() => onAreaChange(null)}
@@ -214,7 +215,7 @@ export default function HeadTCMScalpAreas() {
         {TILE_IDS.map(id => {
           const expandable = id === 'menu' || id === 'areas' || id === 'meridians'
           const isExpanded = expandedId === id
-          const content = renderTileContent(id, tileCtx)
+          const content = renderTileContent(id, tileCtx, false)
           return (
             <div
               key={id}
@@ -234,7 +235,7 @@ export default function HeadTCMScalpAreas() {
                 flexDirection: 'column',
                 alignItems: 'stretch',
                 justifyContent: TILE_TITLES[id] ? 'flex-start' : 'center',
-                background: (id === 'areas' || id === 'meridians') ? '#ffffff' : expandable ? 'rgba(148, 163, 184, 0.06)' : 'transparent',
+                background: (id === 'areas' || id === 'meridians') ? '#ffffff' : expandable ? '#ffffff' : 'transparent',
                 cursor: expandable ? 'pointer' : 'default',
                 overflow: id === 'menu' ? 'visible' : 'hidden',
                 transition: 'transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease',
@@ -262,7 +263,7 @@ export default function HeadTCMScalpAreas() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'rgba(0, 0, 0, 0.6)',
+            background: 'rgba(99, 236, 225, 0.6)',
             cursor: 'zoom-out',
             zIndex: 20,
           }}
@@ -273,7 +274,7 @@ export default function HeadTCMScalpAreas() {
               position: 'relative',
               width: '90%',
               height: '90%',
-              background: (expandedId === 'areas' || expandedId === 'meridians') ? '#ffffff' : '#111827',
+              background: (expandedId === 'areas' || expandedId === 'meridians') ? '#ffffff' : '#f1f5f9',
               borderRadius: 12,
               display: 'flex',
               flexDirection: 'column',
@@ -285,7 +286,7 @@ export default function HeadTCMScalpAreas() {
           >
             {TILE_TITLES[expandedId] && <div className={TILE_TITLE_CLASS}>{TILE_TITLES[expandedId]}</div>}
             <div style={{ flex: 1, minHeight: 0, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {renderTileContent(expandedId, tileCtx)}
+              {renderTileContent(expandedId, tileCtx, true)}
             </div>
             <button
               onClick={e => { e.stopPropagation(); toggle(expandedId) }}

@@ -45,7 +45,7 @@ const TRANSITION_STYLE = `
   display: none;
 }`
 
-const TRIGGER_CLASS = (active) => `text-xs font-semibold transition-colors ${
+const TRIGGER_CLASS = (active) => `text-base font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
   active
     ? 'text-amber-500 dark:text-amber-400'
     : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
@@ -59,7 +59,7 @@ const DROPDOWN_ITEM_CLASS = (active) => `block w-full text-left px-3 py-1.5 tran
 
 // Same trigger+dropdown shape as Sensory Points' SensoryPointMenu, but
 // listing the six brain points by name instead.
-function BrainPointMenu({ activePointId, menuOpen, onToggle, onSelect, onReset }) {
+function BrainPointMenu({ activePointId, menuOpen, onToggle, onSelect, onReset, compact }) {
   const dropdownRef = useRef(null)
   const activePoint = activePointId ? allPoints.find(p => p.id === activePointId) : null
 
@@ -103,7 +103,7 @@ function BrainPointMenu({ activePointId, menuOpen, onToggle, onSelect, onReset }
         // anchored one level up so the trigger can shrink to content width.
         <div
           ref={dropdownRef}
-          className="brain-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 max-h-40 overflow-y-auto z-20"
+          className={`brain-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
         >
           {BRAIN_POINT_IDS.map(id => {
             const point = allPoints.find(p => p.id === id)
@@ -127,7 +127,7 @@ function BrainPointMenu({ activePointId, menuOpen, onToggle, onSelect, onReset }
 // name — same trigger+dropdown shape as Sensory Points' SensoryPointSearch.
 // No dedup needed: each of the six brain points is already its own distinct
 // yin/yang record.
-function BrainPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
+function BrainPointSearch({ open, query, onToggle, onQueryChange, onSelect, compact }) {
   const containerRef = useRef(null)
   const listRef = useRef(null)
   const q = query.trim().toLowerCase()
@@ -181,7 +181,7 @@ function BrainPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
           />
           {q && (
             matches.length > 0 ? (
-              <div ref={listRef} className="brain-dropdown-scroll py-1 max-h-40 overflow-y-auto">
+              <div ref={listRef} className={`brain-dropdown-scroll py-1 overflow-y-auto ${compact ? 'max-h-40' : 'max-h-96'}`}>
                 {matches.map(({ id, name, indication }) => (
                   <button key={id} type="button" onClick={() => onSelect(id)} className={DROPDOWN_ITEM_CLASS(false)}>
                     <span className="text-xs font-semibold">{name}</span>
@@ -206,7 +206,7 @@ function BrainPointSearch({ open, query, onToggle, onQueryChange, onSelect }) {
 // matching point on the other tile too (when it has a matching coordinate —
 // yin/yang are separate records, so a given point usually only lights up
 // on one of Frontal/Posterior, not both).
-function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, searchQuery, onSearchQueryChange }) {
+function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, searchQuery, onSearchQueryChange }, expanded = false) {
   switch (id) {
     case 'menu':
       return (
@@ -215,6 +215,7 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
             <BrainPointMenu
               activePointId={activePointId}
               menuOpen={openPanel === 'menu'}
+              compact={!expanded}
               onToggle={() => onPanelToggle('menu')}
               onSelect={pointId => {
                 const nextId = activePointId === pointId ? null : pointId
@@ -226,6 +227,7 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
             <BrainPointSearch
               open={openPanel === 'search'}
               query={searchQuery}
+              compact={!expanded}
               onToggle={() => onPanelToggle('search')}
               onQueryChange={onSearchQueryChange}
               onSelect={pointId => {
@@ -314,7 +316,7 @@ export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null,
         {TILE_IDS.map(id => {
           const expandable = id !== 'empty'
           const isExpanded = expandedId === id
-          const content = renderTileContent(id, tileCtx)
+          const content = renderTileContent(id, tileCtx, false)
           return (
             <div
               key={id}
@@ -333,7 +335,7 @@ export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: id === 'menu' ? 'rgba(148, 163, 184, 0.06)' : expandable ? '#ffffff' : 'transparent',
+                background: id === 'menu' ? '#ffffff' : expandable ? '#ffffff' : 'transparent',
                 cursor: expandable ? 'pointer' : 'default',
                 overflow: id === 'menu' ? 'visible' : 'hidden',
                 transition: 'transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease',
@@ -356,7 +358,7 @@ export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'rgba(0, 0, 0, 0.6)',
+            background: 'rgba(99, 236, 225, 0.6)',
             cursor: 'zoom-out',
             zIndex: 20,
           }}
@@ -367,7 +369,7 @@ export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null,
               position: 'relative',
               width: '90%',
               height: '90%',
-              background: expandedId === 'menu' ? '#111827' : '#ffffff',
+              background: expandedId === 'menu' ? '#f1f5f9' : '#ffffff',
               borderRadius: 12,
               display: 'flex',
               alignItems: 'center',
@@ -376,7 +378,7 @@ export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null,
               overflow: expandedId === 'menu' ? 'visible' : 'hidden',
             }}
           >
-            {renderTileContent(expandedId, tileCtx)}
+            {renderTileContent(expandedId, tileCtx, true)}
             <button
               onClick={e => { e.stopPropagation(); toggle(expandedId) }}
               aria-label="Close"
