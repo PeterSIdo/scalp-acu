@@ -45,7 +45,7 @@ const TRANSITION_STYLE = `
   display: none;
 }`
 
-const TRIGGER_CLASS = (active) => `text-base font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
+const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
   active
     ? 'text-amber-500 dark:text-amber-400'
     : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
