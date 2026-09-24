@@ -43,64 +43,64 @@ const POINT_JSON_ID = {
   'Basal-ganglia':   'YNSA-Brain-BasalGanglia-yang',
 }
 
-// Coordinates read from basic-back.svg (viewBox 0 0 772 800). Circles use cx/cy
+// Coordinates read from basic-back.svg (viewBox 0 0 500 737). Circles use cx/cy
 // directly; matrix-transformed points (G-zone, Eye-yang group) and path-drawn
 // points (H-yang_2, I-yang, I-yang_2, C-yang, C-yang_2, B-yang_2, A-yang_2) use
 // their resolved/bounding-box center.
 const POINTS = [
   // ── A zone yang ──────────────────────────────────────────
-  { id: 'A-yang',          cx:   378, cy:   189,  color: RED   },
-  { id: 'A-yang_2',        cx:   378, cy:   172,  color: RED   },
-  { id: 'A-yang_3',        cx:   345, cy:   189,  color: RED   },
-  { id: 'A-yang_4',        cx:   345, cy:   172,  color: RED   },
+  { id: 'A-yang',          cx:   257, cy:   189,  color: RED   },
+  { id: 'A-yang_2',        cx:   257, cy:   172,  color: RED   },
+  { id: 'A-yang_3',        cx:   224, cy:   189,  color: RED   },
+  { id: 'A-yang_4',        cx:   224, cy:   172,  color: RED   },
   // ── B zone yang ──────────────────────────────────────────
-  { id: 'B-yang',          cx:   316, cy:   184,  color: RED   },
-  { id: 'B-yang_2',        cx:   399, cy:   184,  color: RED   },
+  { id: 'B-yang',          cx:   195, cy:   184,  color: RED   },
+  { id: 'B-yang_2',        cx:   278, cy:   184,  color: RED   },
   // ── C zone yang ──────────────────────────────────────────
-  { id: 'C-yang',          cx:   461, cy:   207,  color: RED   },
-  { id: 'C-yang_2',        cx:   253, cy:   207,  color: RED   },
+  { id: 'C-yang',          cx:   340, cy:   207,  color: RED   },
+  { id: 'C-yang_2',        cx:   132, cy:   207,  color: RED   },
   // ── D zone yang ──────────────────────────────────────────
-  { id: 'D-yang',          cx:   523, cy:   292,  color: RED   },
-  { id: 'D-yang_2',        cx:   196, cy:   289,  color: RED   },
-  { id: 'D5-yang',         cx:   549, cy:   275,  color: RED   },
-  { id: 'D5-yang_2',       cx:   170, cy:   275,  color: RED   },
-  { id: 'D6-yang',         cx:   176, cy:   281,  color: RED   },
-  { id: 'D6-yang_2',       cx:   544, cy:   283,  color: RED   },
+  { id: 'D-yang',          cx:   402, cy:   292,  color: RED   },
+  { id: 'D-yang_2',        cx:    75, cy:   289,  color: RED   },
+  { id: 'D5-yang',         cx:   428, cy:   275,  color: RED   },
+  { id: 'D5-yang_2',       cx:    49, cy:   275,  color: RED   },
+  { id: 'D6-yang',         cx:    55, cy:   281,  color: RED   },
+  { id: 'D6-yang_2',       cx:   423, cy:   283,  color: RED   },
   // ── E zone yang ──────────────────────────────────────────
-  { id: 'E1-yang',         cx:   404, cy:   289,  color: RED   },
-  { id: 'E12-yang',        cx:   377, cy:   299,  color: RED   },
-  { id: 'E1-yang_2',       cx:   318, cy:   289,  color: RED   },
-  { id: 'E12-yang_2',      cx:   345, cy:   299,  color: RED   },
+  { id: 'E1-yang',         cx:   283, cy:   289,  color: RED   },
+  { id: 'E12-yang',        cx:   256, cy:   299,  color: RED   },
+  { id: 'E1-yang_2',       cx:   197, cy:   289,  color: RED   },
+  { id: 'E12-yang_2',      cx:   224, cy:   299,  color: RED   },
   // ── F zone yang ──────────────────────────────────────────
-  { id: 'F',               cx: 515.5, cy:   387,  color: RED   },
-  { id: 'F_2',              cx:   208, cy:   387,  color: RED   },
+  { id: 'F',               cx: 394.5, cy:   387,  color: RED   },
+  { id: 'F_2',              cx:    87, cy:   387,  color: RED   },
   // ── G zone yang ──────────────────────────────────────────
-  { id: 'G1-yang',         cx:   518, cy:   405,  color: RED   },
-  { id: 'G2-yang',         cx:   512, cy:   415,  color: RED   },
-  { id: 'G3-yang',         cx:   504, cy:   405,  color: RED   },
-  { id: 'G1-yang_2',       cx:   205, cy:   409,  color: RED   },
-  { id: 'G2-yang_2',       cx:   211, cy:   419,  color: RED   },
-  { id: 'G3-yang_2',       cx:   219, cy:   409,  color: RED   },
+  { id: 'G1-yang',         cx:   397, cy:   405,  color: RED   },
+  { id: 'G2-yang',         cx:   391, cy:   415,  color: RED   },
+  { id: 'G3-yang',         cx:   383, cy:   405,  color: RED   },
+  { id: 'G1-yang_2',       cx:    84, cy:   409,  color: RED   },
+  { id: 'G2-yang_2',       cx:    90, cy:   419,  color: RED   },
+  { id: 'G3-yang_2',       cx:    98, cy:   409,  color: RED   },
   // ── H, I yang ────────────────────────────────────────────
-  { id: 'H-yang',          cx:   316, cy:   168,  color: GREEN },
-  { id: 'H-yang_2',        cx:   399, cy:   168,  color: GREEN },
-  { id: 'I-yang',          cx:   470, cy:   191,  color: GREEN },
-  { id: 'I-yang_2',        cx:   244, cy:   191,  color: GREEN },
+  { id: 'H-yang',          cx:   195, cy:   168,  color: GREEN },
+  { id: 'H-yang_2',        cx:   278, cy:   168,  color: GREEN },
+  { id: 'I-yang',          cx:   349, cy:   191,  color: GREEN },
+  { id: 'I-yang_2',        cx:   123, cy:   191,  color: GREEN },
   // ── Sensory yang ─────────────────────────────────────────
-  { id: 'sensory-eye',     cx:   344, cy:   207,  color: PINK  },
-  { id: 'sensory-eye_2',   cx:   378, cy:   207,  color: PINK  },
-  { id: 'sensory-nose',    cx:   344, cy:   223,  color: PINK  },
-  { id: 'sensory-nose_2',  cx:   378, cy:   223,  color: PINK  },
-  { id: 'sensory-mouth',   cx:   344, cy:   240,  color: PINK  },
-  { id: 'sensory-mouth_2', cx:   378, cy:   240,  color: PINK  },
-  { id: 'sensory-ear',     cx:   323, cy:   225,  color: PINK  },
-  { id: 'sensory-ear_2',   cx:   401, cy:   225,  color: PINK  },
+  { id: 'sensory-eye',     cx:   223, cy:   207,  color: PINK  },
+  { id: 'sensory-eye_2',   cx:   257, cy:   207,  color: PINK  },
+  { id: 'sensory-nose',    cx:   223, cy:   223,  color: PINK  },
+  { id: 'sensory-nose_2',  cx:   257, cy:   223,  color: PINK  },
+  { id: 'sensory-mouth',   cx:   223, cy:   240,  color: PINK  },
+  { id: 'sensory-mouth_2', cx:   257, cy:   240,  color: PINK  },
+  { id: 'sensory-ear',     cx:   202, cy:   225,  color: PINK  },
+  { id: 'sensory-ear_2',   cx:   280, cy:   225,  color: PINK  },
   // ── Brain points yang ────────────────────────────────────
-  { id: 'Cerebrum',        cx:   344, cy:   155,  color: LIME  },
-  { id: 'Cerebrum_2',      cx:   379, cy:   155,  color: LIME  },
-  { id: 'Cerebellum',      cx:   344, cy:   140,  color: LIME  },
-  { id: 'Cerebellum_2',    cx:   379, cy:   140,  color: LIME  },
-  { id: 'Basal-ganglia',   cx: 362.5, cy: 147.5,  color: LIME, rx: 6.5, ry: 14.5 },
+  { id: 'Cerebrum',        cx:   223, cy:   155,  color: LIME  },
+  { id: 'Cerebrum_2',      cx:   258, cy:   155,  color: LIME  },
+  { id: 'Cerebellum',      cx:   223, cy:   140,  color: LIME  },
+  { id: 'Cerebellum_2',    cx:   258, cy:   140,  color: LIME  },
+  { id: 'Basal-ganglia',   cx: 241.5, cy: 147.5,  color: LIME, rx: 6.5, ry: 14.5 },
 ]
 
 // basic-back.svg has no separate sensory/brain groups — both sets sit together
@@ -174,7 +174,7 @@ export default function HeadPosterior({ pickerMode = false, onPointSelect, highl
 
       <svg
         ref={svgRef}
-        viewBox="0 0 772 800"
+        viewBox="0 0 500 737"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', cursor: pickerMode ? 'crosshair' : 'default' }}
@@ -220,7 +220,7 @@ export default function HeadPosterior({ pickerMode = false, onPointSelect, highl
           const fSize  = 11
           const w      = label.length * 6.2 + pad * 2
           const h      = fSize + pad * 2
-          const tx = pt.cx + ringRx + 5 + w > 772 ? pt.cx - ringRx - 5 - w : pt.cx + ringRx + 5
+          const tx = pt.cx + ringRx + 5 + w > 500 ? pt.cx - ringRx - 5 - w : pt.cx + ringRx + 5
           const ty = pt.cy - h / 2
           return (
             <g key={`active-${id}`} pointerEvents="none">
@@ -251,7 +251,7 @@ export default function HeadPosterior({ pickerMode = false, onPointSelect, highl
           const fSize = 10
           const w     = zone ? zone.length * 6.2 + pad * 2 : 0
           const h     = fSize + pad * 2
-          const tx = pt.cx + ringRx + 3 + w > 772 ? pt.cx - ringRx - 3 - w : pt.cx + ringRx + 3
+          const tx = pt.cx + ringRx + 3 + w > 500 ? pt.cx - ringRx - 3 - w : pt.cx + ringRx + 3
           const ty = pt.cy - h / 2
           return (
             <g key={`zone-${id}`} pointerEvents="none">

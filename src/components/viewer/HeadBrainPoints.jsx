@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
+import HeadLateral from './HeadLateral'
 import HeadFrontal from './HeadFrontal'
 import HeadPosterior from './HeadPosterior'
 import { allPoints } from '../../data/points'
 
-// 2x2 grid, row-major: menu | empty / Frontal | Posterior. Brain Points has
-// no Lateral view (brain points aren't drawn on that diagram), so tile 1/2
-// is intentionally left blank rather than reusing Basic/Sensory Points'
-// menu|Lateral/Frontal/Posterior shape.
-const TILE_IDS = ['menu', 'empty', 'frontal', 'posterior']
+// 2x2 grid, row-major: menu | Lateral / Frontal | Posterior. Same shape and
+// tile order as Basic/Sensory Points. Brain points aren't visible from the
+// side, so the Lateral tile (and the menu tile's outline head) show the
+// diagram with no points.
+const TILE_IDS = ['menu', 'lateral', 'frontal', 'posterior']
 
 // The six brain points, in the same order as ViewerPage's
 // SUBGROUP_POINT_IDS['ynsa-brain']. Already yin/yang-split (unlike most
@@ -211,6 +212,11 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
     case 'menu':
       return (
         <div className="relative w-full h-full">
+          {/* Line-art lateral head behind the controls, as in Basic/Sensory
+              Points. No brain point is visible from the side, so
+              activeSubgroup="ynsa-brain" hides every point and pointFilter
+              matches none of the lateral overlay's points. */}
+          <HeadLateral variant="outline" pointFilter={pointFilter} activeSubgroup="ynsa-brain" />
           <div className="absolute left-3 right-3 top-3 flex items-baseline gap-4" onClick={e => e.stopPropagation()}>
             <BrainPointMenu
               activePointId={activePointId}
@@ -246,6 +252,8 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
     // HeadSensoryPoints for why brain/sensory points need this wired
     // explicitly instead of getting it for free via onZoneChange the way
     // Basic Points' zone-lettered points do.
+    case 'lateral':
+      return <HeadLateral pointFilter={pointFilter} activeSubgroup="ynsa-brain" />
     case 'frontal':
       return <HeadFrontal onPointSelect={p => { onPointIdChange(p?.id ?? null); onPointSelect?.(p) }} highlightJsonId={highlightJsonId} pointFilter={pointFilter} activeSubgroup="ynsa-brain" />
     case 'posterior':
@@ -314,7 +322,7 @@ export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null,
         }}
       >
         {TILE_IDS.map(id => {
-          const expandable = id !== 'empty'
+          const expandable = true
           const isExpanded = expandedId === id
           const content = renderTileContent(id, tileCtx, false)
           return (

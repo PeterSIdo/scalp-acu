@@ -215,6 +215,9 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
     case 'menu':
       return (
         <div className="relative w-full h-full">
+          {/* Line-art lateral head behind the controls — same as Basic Points'
+              menu tile; activeSubgroup="ynsa-sensory" leaves only the ear points. */}
+          <HeadLateral variant="outline" onPointSelect={p => { onPointIdChange(p?.id ?? null); onPointSelect?.(p) }} highlightJsonId={highlightJsonId} pointFilter={pointFilter} activeSubgroup="ynsa-sensory" />
           <div className="absolute left-3 right-3 top-3 flex items-baseline gap-4" onClick={e => e.stopPropagation()}>
             <SensoryPointMenu
               activePointId={activePointId}

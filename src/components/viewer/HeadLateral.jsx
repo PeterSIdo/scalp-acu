@@ -48,61 +48,61 @@ const POINT_JSON_ID = {
   'extra-ear-yang': 'YNSA-Extra-Ear-Yang',
 }
 
-// Coordinates read from basic-side.svg (viewBox 0 0 597 700). Circle points use
+// Coordinates read from basic-side.svg (viewBox 0 0 553 713). Circle points use
 // cx/cy directly; path-drawn points use their bounding-box center.
 const POINTS = [
   // ── Ear points ───────────────────────────────────────
-  { id: 'ear-yin',        cx:   182, cy:   181, color: BLUE   },
-  { id: 'extra-ear-yin',  cx:   283, cy:   139, color: BLUE   },
-  { id: 'extra-ear-yang', cx:   393, cy:   160, color: BLUE   },
-  { id: 'ear-yang',       cx:   451, cy:   229, color: BLUE   },
+  { id: 'ear-yin',        cx:   162, cy:   193, color: BLUE   },
+  { id: 'extra-ear-yin',  cx:   263, cy:   151, color: BLUE   },
+  { id: 'extra-ear-yang', cx:   368, cy:   158, color: BLUE   },
+  { id: 'ear-yang',       cx:   438, cy:   217, color: BLUE   },
   // ── H (extra lumbar) ─────────────────────────────────
-  { id: 'H-yin',    cx:   166, cy:   126, color: GREEN  },
-  { id: 'H-yang',   cx:   488, cy:   226, color: GREEN  },
+  { id: 'H-yin',    cx:   146, cy:   138, color: GREEN  },
+  { id: 'H-yang',   cx:   477, cy:   224, color: GREEN  },
   // ── I (extra lumbar) ─────────────────────────────────
-  { id: 'I-yin',    cx:   239, cy:   127, color: GREEN  },
-  { id: 'I-yang',   cx:   455, cy:   259, color: GREEN  },
+  { id: 'I-yin',    cx:   219, cy:   139, color: GREEN  },
+  { id: 'I-yang',   cx:   445, cy:   248, color: GREEN  },
   // ── A zone ───────────────────────────────────────────
-  { id: 'YNSA-A1-yin', cx:   122, cy:   155, color: ORANGE },
-  { id: 'YNSA-A8-yin', cx:   140, cy:   133, color: ORANGE },
-  { id: 'A1-yang',     cx:   530, cy:   239, color: RED    },
-  { id: 'A8-yang',     cx:   516, cy:   219, color: RED    },
+  { id: 'YNSA-A1-yin', cx:   102, cy:   167, color: ORANGE },
+  { id: 'YNSA-A8-yin', cx:   120, cy:   145, color: ORANGE },
+  { id: 'A1-yang',     cx:   518, cy:   232, color: RED    },
+  { id: 'A8-yang',     cx:   504, cy:   212, color: RED    },
   // ── B zone ───────────────────────────────────────────
-  { id: 'B-yin',    cx:   152, cy:   145, color: ORANGE },
-  { id: 'B-yang',   cx:   502, cy:   245, color: RED    },
+  { id: 'B-yin',    cx:   132, cy:   157, color: ORANGE },
+  { id: 'B-yang',   cx:   490, cy:   238, color: RED    },
   // ── C zone ───────────────────────────────────────────
-  { id: 'C-yin_2',  cx:   223, cy:   144, color: ORANGE },
-  { id: 'C-yang_2',  cx:   468, cy:   271, color: RED    },
+  { id: 'C-yin_2',  cx:   203, cy:   156, color: ORANGE },
+  { id: 'C-yang_2',  cx:   456, cy:   264, color: RED    },
   // ── D zone (single parent point) ─────────────────────
-  { id: 'D-yin',    cx:   259, cy:   348, color: ORANGE },
-  { id: 'D-yang',   cx:   422, cy:   330, color: RED    },
+  { id: 'D-yin',    cx:   232, cy:   359, color: ORANGE },
+  { id: 'D-yang',   cx:   410, cy:   323, color: RED    },
   // ── D zone (individual vertebrae) ────────────────────
-  { id: 'D1-yin',   cx: 300.5, cy: 311.5, color: ORANGE },
-  { id: 'D2-yin',   cx: 300.5, cy: 319.4, color: ORANGE },
-  { id: 'D3-yin',   cx: 300.5, cy: 327.3, color: ORANGE },
-  { id: 'D4-yin',   cx: 300.5, cy: 335.1, color: ORANGE },
-  { id: 'D5-yin',   cx: 300.5, cy:   343,   color: ORANGE },
-  { id: 'D6-yin',   cx: 300.5, cy: 350.9, color: ORANGE },
-  { id: 'D1-yang',  cx: 352.4, cy: 293.2, color: RED },
-  { id: 'D2-yang',  cx: 360.3, cy: 297.5, color: RED },
-  { id: 'D3-yang',  cx: 367.6, cy: 303.6, color: RED },
-  { id: 'D4-yang',  cx: 373.2, cy: 311.2, color: RED },
-  { id: 'D5-yang',  cx: 377.4, cy: 319.4, color: RED },
-  { id: 'D6-yang',  cx: 379.5, cy: 327.7, color: RED },
+  { id: 'D1-yin',   cx: 284.5, cy: 323.5, color: ORANGE },
+  { id: 'D2-yin',   cx: 284.5, cy: 331.4, color: ORANGE },
+  { id: 'D3-yin',   cx: 284.5, cy: 339.3, color: ORANGE },
+  { id: 'D4-yin',   cx: 284.5, cy: 347.1, color: ORANGE },
+  { id: 'D5-yin',   cx: 284.5, cy:   355,   color: ORANGE },
+  { id: 'D6-yin',   cx: 284.5, cy: 362.9, color: ORANGE },
+  { id: 'D1-yang',  cx: 340.4, cy: 286.2, color: RED },
+  { id: 'D2-yang',  cx: 348.3, cy: 290.5, color: RED },
+  { id: 'D3-yang',  cx: 355.6, cy: 296.6, color: RED },
+  { id: 'D4-yang',  cx: 361.2, cy: 304.2, color: RED },
+  { id: 'D5-yang',  cx: 365.4, cy: 312.4, color: RED },
+  { id: 'D6-yang',  cx: 367.5, cy: 320.7, color: RED },
   // ── E zone ───────────────────────────────────────────
-  { id: 'E1-yin',   cx:   131, cy:   215, color: ORANGE },
-  { id: 'E12-yin',  cx:    98, cy:   225, color: ORANGE },
-  { id: 'E1-yang',  cx:   502, cy:   307, color: RED    },
-  { id: 'E12-yang', cx:   520, cy:   317, color: RED    },
+  { id: 'E1-yin',   cx:   111, cy:   227, color: ORANGE },
+  { id: 'E12-yin',  cx:    78, cy:   237, color: ORANGE },
+  { id: 'E1-yang',  cx:   490, cy:   300, color: RED    },
+  { id: 'E12-yang', cx:   508, cy:   310, color: RED    },
   // ── F zone ───────────────────────────────────────────
-  { id: 'F-yang',   cx:   355, cy:   423, color: RED    },
+  { id: 'F-yang',   cx:   343, cy:   417, color: RED    },
   // ── G zone ───────────────────────────────────────────
-  { id: 'G1-yin',   cx:   244, cy:   331, color: ORANGE },
-  { id: 'G2-yin',   cx:   259, cy:   327, color: ORANGE },
-  { id: 'G3-yin',   cx:   274, cy:   331, color: ORANGE },
-  { id: 'G1-yang',  cx: 337.4, cy: 439.7, color: RED    },
-  { id: 'G2-yang',  cx: 350.6, cy: 448.1, color: RED    },
-  { id: 'G3-yang',  cx: 364.5, cy: 440.5, color: RED    },
+  { id: 'G1-yin',   cx:   213, cy:   342, color: ORANGE },
+  { id: 'G2-yin',   cx:   228, cy:   338, color: ORANGE },
+  { id: 'G3-yin',   cx:   243, cy:   342, color: ORANGE },
+  { id: 'G1-yang',  cx: 327.4, cy: 433.7, color: RED    },
+  { id: 'G2-yang',  cx: 340.6, cy: 442.1, color: RED    },
+  { id: 'G3-yang',  cx: 354.5, cy: 434.5, color: RED    },
 ]
 
 // Same points on basic-side-outline.svg (viewBox 0 0 558 706) — the line-art
@@ -155,7 +155,7 @@ const OUTLINE_XY = {
 const OUTLINE_POINTS = POINTS.map(p => ({ ...p, cx: OUTLINE_XY[p.id][0], cy: OUTLINE_XY[p.id][1] }))
 
 const VARIANTS = {
-  full:    { Svg: BasicSideSvg,        width: 597, height: 700, points: POINTS },
+  full:    { Svg: BasicSideSvg,        width: 553, height: 713, points: POINTS },
   outline: { Svg: BasicSideOutlineSvg, width: 558, height: 706, points: OUTLINE_POINTS },
 }
 
@@ -166,7 +166,11 @@ const VARIANTS = {
 // No brain points exist in the lateral view.
 const SVG_HIDE = {
   'ynsa-basic':   ['[id="ear-points"]'],
-  'ynsa-sensory': ['[id="basic-yin"]', '[id="basic-yang"]', '[id="extra-lumbar-point"]'],
+  // F-yang and the G-yang group ("Group 18") sit outside basic-yang in the
+  // amended basic-side.svg, so they are hidden by id as well.
+  'ynsa-sensory': ['[id="basic-yin"]', '[id="basic-yang"]', '[id="extra-lumbar-point"]', '[id="F-yang"]', '[id="Group 18"]'],
+  // Brain points aren't visible from the side — the head is shown bare.
+  'ynsa-brain':   ['[id="basic-yin"]', '[id="basic-yang"]', '[id="extra-lumbar-point"]', '[id="F-yang"]', '[id="Group 18"]', '[id="ear-points"]'],
 }
 
 function buildHideStyle(activeSubgroup) {
