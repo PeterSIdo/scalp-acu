@@ -15,7 +15,7 @@ const POINT_JSON_ID = {
   // B zone yin — bilateral
   'B-yin':           'YNSA-B-yin',               'B-yin_2':          'YNSA-B-yin',
   // C zone yin — bilateral
-  'C-yin':           'YNSA-C-yin',               'C-yin_2':          'YNSA-C-yin',
+  'C-yin_2':           'YNSA-C-yin',               'C-yin_4':          'YNSA-C-yin',
   // D zone yin — bilateral
   'D-yin':           'YNSA-D-yin',               'D-yin_2':          'YNSA-D-yin',
   // E zone yin — bilateral
@@ -35,49 +35,49 @@ const POINT_JSON_ID = {
   'Basal-ganglia':   'YNSA-Brain-BasalGanglia-yin',
 }
 
-// Coordinates read from basic-front.svg (viewBox 0 0 485 640). Circle points use
+// Coordinates read from basic-front.svg (viewBox 0 0 582 737). Circle points use
 // cx/cy directly; matrix-transformed points (Sensory-*) and path-drawn points
 // (I-yin) use their resolved/bounding-box center.
 const POINTS = [
   // ── A zone yin ───────────────────────────────────────────
-  { id: 'A8-yin',          cx: 225.749, cy: 107,    color: ORANGE },
-  { id: 'A1-yin',          cx: 225.749, cy: 134,    color: ORANGE },
-  { id: 'A8-yin_2',        cx: 273.749, cy: 107,    color: ORANGE },
-  { id: 'A1-yin_2',        cx: 273.749, cy: 134,    color: ORANGE },
+  { id: 'A8-yin',          cx:   262, cy:   133,    color: ORANGE },
+  { id: 'A1-yin',          cx:   262, cy:   160,    color: ORANGE },
+  { id: 'A8-yin_2',        cx:   310, cy:   133,    color: ORANGE },
+  { id: 'A1-yin_2',        cx:   310, cy:   160,    color: ORANGE },
   // ── B zone yin ───────────────────────────────────────────
-  { id: 'B-yin',           cx: 315.749, cy: 119,    color: ORANGE },
-  { id: 'B-yin_2',         cx: 186.749, cy: 119,    color: ORANGE },
+  { id: 'B-yin',           cx:   352, cy:   145,    color: ORANGE },
+  { id: 'B-yin_2',         cx:   223, cy:   145,    color: ORANGE },
   // ── C zone yin ───────────────────────────────────────────
-  { id: 'C-yin',           cx:  89.749, cy: 126,    color: ORANGE },
-  { id: 'C-yin_2',         cx: 397.749, cy: 121,    color: ORANGE },
+  { id: 'C-yin_2',         cx:   158, cy:   134,    color: ORANGE },
+  { id: 'C-yin_4',         cx:   416, cy:   134,    color: ORANGE },
   // ── D zone yin ───────────────────────────────────────────
-  { id: 'D-yin',           cx: 418.749, cy: 259,    color: ORANGE },
-  { id: 'D-yin_2',         cx:  75.749, cy: 263,    color: ORANGE },
+  { id: 'D-yin',           cx:   469, cy:   285,    color: ORANGE },
+  { id: 'D-yin_2',         cx:   112, cy:   289,    color: ORANGE },
   // ── E zone yin ───────────────────────────────────────────
-  { id: 'E1-yin',          cx: 324.749, cy: 207,    color: ORANGE },
-  { id: 'E12-yin',         cx: 273.749, cy: 222,    color: ORANGE },
-  { id: 'E12-yin_2',       cx: 225.749, cy: 223,    color: ORANGE },
-  { id: 'E1-yin_2',        cx: 176.749, cy: 207,    color: ORANGE },
+  { id: 'E1-yin',          cx:   361, cy:   233,    color: ORANGE },
+  { id: 'E12-yin',         cx:   310, cy:   248,    color: ORANGE },
+  { id: 'E12-yin_2',       cx:   262, cy:   249,    color: ORANGE },
+  { id: 'E1-yin_2',        cx:   213, cy:   233,    color: ORANGE },
   // ── H, I yin ─────────────────────────────────────────────
-  { id: 'H-yin',           cx: 186.749, cy: 101,    color: GREEN  },
-  { id: 'H-yin_2',         cx: 314.749, cy: 101,    color: GREEN  },
-  { id: 'I-yin',           cx:  71.749, cy: 108,    color: GREEN  },
-  { id: 'I-yin_2',         cx: 411.749, cy: 108,    color: GREEN  },
+  { id: 'H-yin',           cx:   223, cy:   127,    color: GREEN  },
+  { id: 'H-yin_2',         cx:   351, cy:   127,    color: GREEN  },
+  { id: 'I-yin',           cx:   431, cy:   116,    color: GREEN  },
+  { id: 'I-yin_2',         cx:   149, cy:   113,    color: GREEN  },
   // ── Sensory yin ──────────────────────────────────────────
-  { id: 'Sensory-eye',     cx: 226.749, cy: 156,    color: PINK   },
-  { id: 'Sensory-eye_2',   cx: 273.749, cy: 156,    color: PINK   },
-  { id: 'Sensory-nose',    cx: 226.749, cy: 176,    color: PINK   },
-  { id: 'Sensory-nose_2',  cx: 273.749, cy: 176,    color: PINK   },
-  { id: 'Sensory-mouth',   cx: 226.749, cy: 196,    color: PINK   },
-  { id: 'Sensory-mouth_2', cx: 273.749, cy: 196,    color: PINK   },
-  { id: 'Sensory-ear',     cx: 363.749, cy: 181,    color: PINK   },
-  { id: 'Sensory-ear_2',   cx: 128.749, cy: 181,    color: PINK   },
+  { id: 'Sensory-eye',     cx:   310, cy:   182,    color: PINK   },
+  { id: 'Sensory-eye_2',   cx:   263, cy:   182,    color: PINK   },
+  { id: 'Sensory-nose',    cx:   310, cy:   202,    color: PINK   },
+  { id: 'Sensory-nose_2',  cx:   263, cy:   202,    color: PINK   },
+  { id: 'Sensory-mouth',   cx:   310, cy:   222,    color: PINK   },
+  { id: 'Sensory-mouth_2', cx:   263, cy:   222,    color: PINK   },
+  { id: 'Sensory-ear',     cx:   385, cy:   196,    color: PINK   },
+  { id: 'Sensory-ear_2',   cx:   183, cy:   196,    color: PINK   },
   // ── Brain points yin ─────────────────────────────────────
-  { id: 'Cerebrum',        cx: 224.749, cy:  92,    color: LIME   },
-  { id: 'Cerebrum_2',      cx: 273.749, cy:  92,    color: LIME   },
-  { id: 'Cerebellum',      cx: 224.749, cy:  76,    color: LIME   },
-  { id: 'Cerebellum_2',    cx: 273.749, cy:  76,    color: LIME   },
-  { id: 'Basal-ganglia',   cx: 249.249, cy:  85,    color: LIME,  rx: 6.5, ry: 13 },
+  { id: 'Cerebrum',        cx:   261, cy:   118,    color: LIME   },
+  { id: 'Cerebrum_2',      cx:   310, cy:   118,    color: LIME   },
+  { id: 'Cerebellum',      cx:   261, cy:   102,    color: LIME   },
+  { id: 'Cerebellum_2',    cx:   310, cy:   102,    color: LIME   },
+  { id: 'Basal-ganglia',   cx: 285.5, cy:   111,    color: LIME,  rx: 6.5, ry: 13 },
 ]
 
 // basic-front.svg group IDs to hide per subgroup
@@ -150,7 +150,7 @@ export default function HeadFrontal({ pickerMode = false, onPointSelect, highlig
       {/* Interactive overlay — same viewBox as the base SVG */}
       <svg
         ref={svgRef}
-        viewBox="0 0 485 640"
+        viewBox="0 0 582 737"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', cursor: pickerMode ? 'crosshair' : 'default' }}
@@ -196,7 +196,7 @@ export default function HeadFrontal({ pickerMode = false, onPointSelect, highlig
           const fSize  = 11
           const w      = label.length * 6.2 + pad * 2
           const h      = fSize + pad * 2
-          const tx = pt.cx + ringRx + 5 + w > 485 ? pt.cx - ringRx - 5 - w : pt.cx + ringRx + 5
+          const tx = pt.cx + ringRx + 5 + w > 582 ? pt.cx - ringRx - 5 - w : pt.cx + ringRx + 5
           const ty = pt.cy - h / 2
           return (
             <g key={`active-${id}`} pointerEvents="none">
@@ -227,7 +227,7 @@ export default function HeadFrontal({ pickerMode = false, onPointSelect, highlig
           const fSize = 10
           const w     = zone ? zone.length * 6.2 + pad * 2 : 0
           const h     = fSize + pad * 2
-          const tx = pt.cx + ringRx + 3 + w > 485 ? pt.cx - ringRx - 3 - w : pt.cx + ringRx + 3
+          const tx = pt.cx + ringRx + 3 + w > 582 ? pt.cx - ringRx - 3 - w : pt.cx + ringRx + 3
           const ty = pt.cy - h / 2
           return (
             <g key={`zone-${id}`} pointerEvents="none">

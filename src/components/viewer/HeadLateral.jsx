@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { allPoints } from '../../data/points'
 import { zoneOf } from '../../data/basicZones'
 import BasicSideSvg from '../../assets/diagrams/basic-side.svg?react'
+import BasicSideOutlineSvg from '../../assets/diagrams/basic-side-outline.svg?react'
 
 const ORANGE = '#CB6608'
 const RED    = '#FF0808'
@@ -16,7 +17,7 @@ const POINT_JSON_ID = {
   // B zone
   'B-yin':    'YNSA-B-yin',    'B-yang':   'YNSA-B-yang',
   // C zone
-  'C-yin':    'YNSA-C-yin',    'C-yang':   'YNSA-C-yang',
+  'C-yin_2':    'YNSA-C-yin',    'C-yang_2':   'YNSA-C-yang',
   // D zone — single point
   'D-yin':    'YNSA-D-yin',    'D-yang':   'YNSA-D-yang',
   // D zone — individual sub-point descriptions
@@ -47,64 +48,118 @@ const POINT_JSON_ID = {
   'extra-ear-yang': 'YNSA-Extra-Ear-Yang',
 }
 
-// Coordinates read from basic-side.svg (viewBox 0 0 558 706). Circle points use
+// Coordinates read from basic-side.svg (viewBox 0 0 597 700). Circle points use
 // cx/cy directly; path-drawn points use their bounding-box center.
 const POINTS = [
   // ── Ear points ───────────────────────────────────────
-  { id: 'ear-yin',        cx: 164.5, cy: 198, color: BLUE   },
-  { id: 'extra-ear-yin',  cx: 283, cy: 116, color: BLUE   },
-  { id: 'extra-ear-yang', cx: 407.5, cy: 143, color: BLUE   },
-  { id: 'ear-yang',       cx: 456, cy: 245, color: BLUE   },
+  { id: 'ear-yin',        cx:   182, cy:   181, color: BLUE   },
+  { id: 'extra-ear-yin',  cx:   283, cy:   139, color: BLUE   },
+  { id: 'extra-ear-yang', cx:   393, cy:   160, color: BLUE   },
+  { id: 'ear-yang',       cx:   451, cy:   229, color: BLUE   },
   // ── H (extra lumbar) ─────────────────────────────────
-  { id: 'H-yin',    cx: 191, cy: 124, color: GREEN  },
-  { id: 'H-yang',   cx: 486, cy: 253, color: GREEN  },
+  { id: 'H-yin',    cx:   166, cy:   126, color: GREEN  },
+  { id: 'H-yang',   cx:   488, cy:   226, color: GREEN  },
   // ── I (extra lumbar) ─────────────────────────────────
-  { id: 'I-yin',    cx: 261, cy: 130, color: GREEN  },
-  { id: 'I-yang',   cx: 449, cy: 273, color: GREEN  },
+  { id: 'I-yin',    cx:   239, cy:   127, color: GREEN  },
+  { id: 'I-yang',   cx:   455, cy:   259, color: GREEN  },
   // ── A zone ───────────────────────────────────────────
-  { id: 'YNSA-A1-yin', cx: 134, cy: 162, color: ORANGE },
-  { id: 'YNSA-A8-yin', cx: 152, cy: 140, color: ORANGE },
-  { id: 'A1-yang',     cx: 521, cy: 264, color: RED    },
-  { id: 'A8-yang',     cx: 507, cy: 244, color: RED    },
+  { id: 'YNSA-A1-yin', cx:   122, cy:   155, color: ORANGE },
+  { id: 'YNSA-A8-yin', cx:   140, cy:   133, color: ORANGE },
+  { id: 'A1-yang',     cx:   530, cy:   239, color: RED    },
+  { id: 'A8-yang',     cx:   516, cy:   219, color: RED    },
   // ── B zone ───────────────────────────────────────────
-  { id: 'B-yin',    cx: 174, cy: 162, color: ORANGE },
-  { id: 'B-yang',   cx: 498, cy: 267, color: RED    },
+  { id: 'B-yin',    cx:   152, cy:   145, color: ORANGE },
+  { id: 'B-yang',   cx:   502, cy:   245, color: RED    },
   // ── C zone ───────────────────────────────────────────
-  { id: 'C-yin',    cx: 222, cy: 150, color: ORANGE },
-  { id: 'C-yang',   cx: 462, cy: 285, color: RED    },
+  { id: 'C-yin_2',  cx:   223, cy:   144, color: ORANGE },
+  { id: 'C-yang_2',  cx:   468, cy:   271, color: RED    },
   // ── D zone (single parent point) ─────────────────────
-  { id: 'D-yin',    cx: 253, cy: 362, color: ORANGE },
-  { id: 'D-yang',   cx: 426, cy: 348, color: RED    },
+  { id: 'D-yin',    cx:   259, cy:   348, color: ORANGE },
+  { id: 'D-yang',   cx:   422, cy:   330, color: RED    },
   // ── D zone (individual vertebrae) ────────────────────
-  { id: 'D1-yin',   cx: 311.5, cy: 345.5, color: ORANGE },
-  { id: 'D2-yin',   cx: 311.5, cy: 353.4, color: ORANGE },
-  { id: 'D3-yin',   cx: 311.5, cy: 361.3, color: ORANGE },
-  { id: 'D4-yin',   cx: 311.5, cy: 369.1, color: ORANGE },
-  { id: 'D5-yin',   cx: 311.5, cy: 377,   color: ORANGE },
-  { id: 'D6-yin',   cx: 311.5, cy: 384.9, color: ORANGE },
-  { id: 'D1-yang',  cx: 363.9, cy: 313.1, color: RED },
-  { id: 'D2-yang',  cx: 372.2, cy: 316.8, color: RED },
-  { id: 'D3-yang',  cx: 379.8, cy: 322.5, color: RED },
-  { id: 'D4-yang',  cx: 385.9, cy: 329.7, color: RED },
-  { id: 'D5-yang',  cx: 390.7, cy: 337.5, color: RED },
-  { id: 'D6-yang',  cx: 393.3, cy: 345.7, color: RED },
+  { id: 'D1-yin',   cx: 300.5, cy: 311.5, color: ORANGE },
+  { id: 'D2-yin',   cx: 300.5, cy: 319.4, color: ORANGE },
+  { id: 'D3-yin',   cx: 300.5, cy: 327.3, color: ORANGE },
+  { id: 'D4-yin',   cx: 300.5, cy: 335.1, color: ORANGE },
+  { id: 'D5-yin',   cx: 300.5, cy:   343,   color: ORANGE },
+  { id: 'D6-yin',   cx: 300.5, cy: 350.9, color: ORANGE },
+  { id: 'D1-yang',  cx: 352.4, cy: 293.2, color: RED },
+  { id: 'D2-yang',  cx: 360.3, cy: 297.5, color: RED },
+  { id: 'D3-yang',  cx: 367.6, cy: 303.6, color: RED },
+  { id: 'D4-yang',  cx: 373.2, cy: 311.2, color: RED },
+  { id: 'D5-yang',  cx: 377.4, cy: 319.4, color: RED },
+  { id: 'D6-yang',  cx: 379.5, cy: 327.7, color: RED },
   // ── E zone ───────────────────────────────────────────
-  { id: 'E1-yin',   cx: 134, cy: 214, color: ORANGE },
-  { id: 'E12-yin',  cx: 101, cy: 224, color: ORANGE },
-  { id: 'E1-yang',  cx: 496, cy: 321, color: RED    },
-  { id: 'E12-yang', cx: 514, cy: 331, color: RED    },
+  { id: 'E1-yin',   cx:   131, cy:   215, color: ORANGE },
+  { id: 'E12-yin',  cx:    98, cy:   225, color: ORANGE },
+  { id: 'E1-yang',  cx:   502, cy:   307, color: RED    },
+  { id: 'E12-yang', cx:   520, cy:   317, color: RED    },
   // ── F zone ───────────────────────────────────────────
-  { id: 'F-yang',   cx: 367, cy: 452, color: RED    },
+  { id: 'F-yang',   cx:   355, cy:   423, color: RED    },
   // ── G zone ───────────────────────────────────────────
-  { id: 'G1-yin',   cx: 238, cy: 345, color: ORANGE },
-  { id: 'G2-yin',   cx: 253, cy: 341, color: ORANGE },
-  { id: 'G3-yin',   cx: 268, cy: 345, color: ORANGE },
-  { id: 'G1-yang',  cx: 352, cy: 473, color: RED    },
-  { id: 'G2-yang',  cx: 366, cy: 480, color: RED    },
-  { id: 'G3-yang',  cx: 379, cy: 471, color: RED    },
+  { id: 'G1-yin',   cx:   244, cy:   331, color: ORANGE },
+  { id: 'G2-yin',   cx:   259, cy:   327, color: ORANGE },
+  { id: 'G3-yin',   cx:   274, cy:   331, color: ORANGE },
+  { id: 'G1-yang',  cx: 337.4, cy: 439.7, color: RED    },
+  { id: 'G2-yang',  cx: 350.6, cy: 448.1, color: RED    },
+  { id: 'G3-yang',  cx: 364.5, cy: 440.5, color: RED    },
 ]
 
-// basic-side.svg groups:
+// Same points on basic-side-outline.svg (viewBox 0 0 558 706) — the line-art
+// head used in the Basic Points grid tile 1/1. Its C-yin circle is id'd plain
+// "C-yin" there, but it is keyed here by the full diagram's "C-yin_2" so both
+// variants share POINTS/POINT_JSON_ID.
+const OUTLINE_XY = {
+  'H-yang':          [486, 253],
+  'H-yin':           [191, 124],
+  'I-yang':          [449, 273],
+  'I-yin':           [246, 137],
+  'extra-ear-yang':  [387, 174],
+  'extra-ear-yin':   [277, 153],
+  'ear-yin':         [176, 195],
+  'ear-yang':        [445, 243],
+  'G1-yang':         [352, 473],
+  'G2-yang':         [366, 480],
+  'G3-yang':         [379, 471],
+  'F-yang':          [367, 452],
+  'D6-yang':         [393.3, 345.7],
+  'D5-yang':         [390.7, 337.5],
+  'D4-yang':         [385.9, 329.7],
+  'D3-yang':         [379.8, 322.5],
+  'D2-yang':         [372.2, 316.8],
+  'D1-yang':         [363.9, 313.1],
+  'D-yang':          [426, 348],
+  'E12-yang':        [514, 331],
+  'E1-yang':         [496, 321],
+  'A8-yang':         [507, 244],
+  'A1-yang':         [521, 264],
+  'B-yang':          [498, 267],
+  'C-yang_2':        [462, 285],
+  'G3-yin':          [268, 345],
+  'G2-yin':          [253, 341],
+  'G1-yin':          [238, 345],
+  'E1-yin':          [134, 214],
+  'E12-yin':         [101, 224],
+  'D-yin':           [253, 362],
+  'C-yin_2':         [222, 150],
+  'B-yin':           [174, 162],
+  'YNSA-A1-yin':     [134, 162],
+  'YNSA-A8-yin':     [152, 140],
+  'D6-yin':          [311.5, 384.9],
+  'D5-yin':          [311.5, 377],
+  'D4-yin':          [311.5, 369.1],
+  'D3-yin':          [311.5, 361.3],
+  'D2-yin':          [311.5, 353.4],
+  'D1-yin':          [311.5, 345.5],
+}
+const OUTLINE_POINTS = POINTS.map(p => ({ ...p, cx: OUTLINE_XY[p.id][0], cy: OUTLINE_XY[p.id][1] }))
+
+const VARIANTS = {
+  full:    { Svg: BasicSideSvg,        width: 597, height: 700, points: POINTS },
+  outline: { Svg: BasicSideOutlineSvg, width: 558, height: 706, points: OUTLINE_POINTS },
+}
+
+// basic-side.svg / basic-side-outline.svg groups (same ids in both):
 //   basic-yin / basic-yang (and their sub-groups) → ABCDEFGHI yin/yang
 //   extra-lumbar-point → H, I
 //   ear-points → ear sensory (blue)
@@ -120,12 +175,13 @@ function buildHideStyle(activeSubgroup) {
   return selectors.map(s => `.svg-lateral ${s}`).join(',\n') + ' { display: none; }'
 }
 
-export default function HeadLateral({ pickerMode = false, onPointSelect, highlightJsonId = null, pointFilter = null, activeSubgroup = null, activeZone = null, onZoneChange }) {
+export default function HeadLateral({ pickerMode = false, onPointSelect, highlightJsonId = null, pointFilter = null, activeSubgroup = null, activeZone = null, onZoneChange, variant = 'full' }) {
+  const { Svg, width, height, points } = VARIANTS[variant]
   const [pickerPos, setPickerPos]   = useState(null)
   const [selectedId, setSelectedId] = useState(null)
   const [hoveredId,  setHoveredId]  = useState(null)
   const svgRef = useRef(null)
-  const visiblePoints = pointFilter ? POINTS.filter(p => pointFilter.has(POINT_JSON_ID[p.id])) : POINTS
+  const visiblePoints = pointFilter ? points.filter(p => pointFilter.has(POINT_JSON_ID[p.id])) : points
   const hideStyle = buildHideStyle(activeSubgroup)
 
   // Points to flash — clicking a point activates its own pulsing ring + label
@@ -171,14 +227,14 @@ export default function HeadLateral({ pickerMode = false, onPointSelect, highlig
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       {hideStyle && <style>{hideStyle}</style>}
 
-      <BasicSideSvg
+      <Svg
         className="svg-lateral"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
       />
 
       <svg
         ref={svgRef}
-        viewBox="0 0 558 706"
+        viewBox={`0 0 ${width} ${height}`}
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', cursor: pickerMode ? 'crosshair' : 'default' }}
@@ -215,7 +271,7 @@ export default function HeadLateral({ pickerMode = false, onPointSelect, highlig
           const fSize  = 11
           const w      = label.length * 6.2 + pad * 2
           const h      = fSize + pad * 2
-          const tx = pt.cx + 16 + w > 558 ? pt.cx - w - 16 : pt.cx + 16
+          const tx = pt.cx + 16 + w > width ? pt.cx - w - 16 : pt.cx + 16
           const ty = pt.cy - h / 2
           return (
             <g key={`active-${id}`} pointerEvents="none">
@@ -242,7 +298,7 @@ export default function HeadLateral({ pickerMode = false, onPointSelect, highlig
           const fSize = 10
           const w     = zone ? zone.length * 6.2 + pad * 2 : 0
           const h     = fSize + pad * 2
-          const tx = pt.cx + 14 + w > 558 ? pt.cx - w - 14 : pt.cx + 14
+          const tx = pt.cx + 14 + w > width ? pt.cx - w - 14 : pt.cx + 14
           const ty = pt.cy - h / 2
           return (
             <g key={`zone-${id}`} pointerEvents="none">

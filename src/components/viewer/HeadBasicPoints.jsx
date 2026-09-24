@@ -6,7 +6,7 @@ import HeadPosterior from './HeadPosterior'
 import { allPoints } from '../../data/points'
 import { ZONES, ZONE_INFO, zoneOf } from '../../data/basicZones'
 
-// 2x2 grid, row-major: menu | Lateral / Frontal | Posterior.
+// 2x2 grid, row-major: menu (outline head + controls) | Lateral / Frontal | Posterior.
 const TILE_IDS = ['menu', 'lateral', 'frontal', 'posterior']
 
 // Scoped so it only affects transitions started while this screen is mounted.
@@ -227,6 +227,9 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
     case 'menu':
       return (
         <div className="relative w-full h-full">
+          {/* Line-art lateral head behind the controls — same points/zone
+              flash as the Lateral tile, just the basic-side-outline.svg art. */}
+          <HeadLateral variant="outline" onPointSelect={onPointSelect} highlightJsonId={highlightJsonId} pointFilter={pointFilter} activeSubgroup="ynsa-basic" activeZone={activeZone} onZoneChange={onZoneChange} />
           <div className="absolute left-3 right-3 top-3 flex items-baseline gap-4" onClick={e => e.stopPropagation()}>
             <BasicPointMenu
               activeZone={activeZone}
@@ -386,7 +389,7 @@ export default function HeadBasicPoints({ onPointSelect, highlightJsonId = null,
               position: 'relative',
               width: '90%',
               height: '90%',
-              background: expandedId === 'menu' ? '#f1f5f9' : '#ffffff',
+              background: '#ffffff',
               borderRadius: 12,
               display: 'flex',
               alignItems: 'center',
