@@ -32,7 +32,7 @@ function reducer(state, action) {
   }
 }
 
-const ZoomableView = forwardRef(function ZoomableView({ children, hideControls = false }, ref) {
+const ZoomableView = forwardRef(function ZoomableView({ children, hideControls = false, wheelZoom = true }, ref) {
   const [{ scale, tx, ty }, dispatch] = useReducer(reducer, { scale: 1, tx: 0, ty: 0 })
   const containerRef = useRef(null)
   const isDragging = useRef(false)
@@ -46,10 +46,11 @@ const ZoomableView = forwardRef(function ZoomableView({ children, hideControls =
     reset:   () => dispatch({ type: 'RESET' }),
   }))
 
-  // Non-passive wheel listener so we can call preventDefault
+  // Non-passive wheel listener so we can call preventDefault. Disabled via
+  // wheelZoom={false} for content that scrolls itself (the Y-Points grid).
   useEffect(() => {
     const el = containerRef.current
-    if (!el) return
+    if (!el || !wheelZoom) return
     const onWheel = (e) => {
       e.preventDefault()
       const rect = el.getBoundingClientRect()
@@ -62,7 +63,7 @@ const ZoomableView = forwardRef(function ZoomableView({ children, hideControls =
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
-  }, [])
+  }, [wheelZoom])
 
   function onMouseDown(e) {
     if (e.button !== 0) return

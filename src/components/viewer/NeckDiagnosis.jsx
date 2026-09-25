@@ -4,7 +4,7 @@ import NeckRealSvg from '../../assets/diagrams/male-neck-real.svg?react'
 import AbdominalDiagSvg from '../../assets/diagrams/adbominal-diag-1.svg?react'
 import AbdominalRealSvg from '../../assets/diagrams/abdomial-real.svg?react'
 import YNSAYRealSvg from '../../assets/diagrams/YNSA-Y-real.svg?react'
-import HeadYPoints, { Y_REAL_POINTS } from './HeadYPoints'
+import HeadYPoints, { Y_REAL_POINTS, Y_REAL_VIEWBOX } from './HeadYPoints'
 import NeckMeridianMap, { REAL_POINTS, ABDOMEN_POINTS, ABDOMEN_REAL_POINTS } from './NeckMeridianMap'
 
 // 3x2 grid of neck references, in row-major order. Ids with no case in
@@ -28,32 +28,29 @@ const TILE_LABELS = {
 // Points flashes a search hit.
 function renderTileContent(id, { activeMeridian, onMeridianChange, isExpanded }) {
   switch (id) {
-    // YNSA-Y-Side.svg is much taller than wide, so fitting it into this wide,
-    // short tile by height (the default "meet" behavior) leaves big empty
-    // gutters left/right. diagramScale enlarges just the diagram — the
-    // Meridian menu stays put — and overflow:hidden (the grid tile, or the
-    // modal) clips the excess top/bottom. Kept enlarged in both compact and
-    // expanded states; only the corner labels toggle, since the compact
-    // tile is what clips them off-screen — expanded has enough room for the
-    // plain-HTML corner labels (pinned to the tile's real corners) instead.
+    // YNSA-Y-Side.svg (2026-09-25 re-export) places its own Weak/Strong
+    // Yin/Yang labels just above and below the head, so the diagram is shown
+    // unscaled (fit by height) in both compact and expanded states — any
+    // diagramScale > 1 clips the top "Weak" labels against the tile edge.
+    // The SVG labels replace the old plain-HTML corner labels here.
     case 'ynsa-y-side':
       return (
         <HeadYPoints
           activeMeridian={activeMeridian}
           onMeridianChange={onMeridianChange}
-          diagramScale={1.44}
-          hideCornerLabels
-          showCornerLabels={isExpanded}
         />
       )
     // Photo-reference companion to 'ynsa-y-side', same relationship as
-    // diag/real below — its own SVG shares the ids and viewBox of
-    // YNSA-Y-Side.svg but not point placement (see Y_REAL_POINTS), so it
+    // diag/real below — its own SVG shares the ids of
+    // YNSA-Y-Side.svg but not its viewBox or point placement (see Y_REAL_POINTS), so it
     // reuses HeadYPoints with Background/points swapped and the Meridian
     // menu hidden (shares activeMeridian with the primary tile instead).
     // showMeridianLabel replaces the hidden menu's "which meridian is
     // active" cue with a floating name label instead, same dark-box style
     // as NeckMeridianMap's per-point label below.
+    // Since the 2026-09-25 export, YNSA-Y-real.svg shares basic-side.svg's
+    // photo and 553x713 frame, so it's shown unscaled and centered to sit
+    // exactly where the Basic Points lateral tile shows the same head.
     case 'ynsa-y-real':
       return (
         <HeadYPoints
@@ -61,10 +58,9 @@ function renderTileContent(id, { activeMeridian, onMeridianChange, isExpanded })
           onMeridianChange={onMeridianChange}
           Background={YNSAYRealSvg}
           points={Y_REAL_POINTS}
-          diagramScale={1.44}
+          viewBox={Y_REAL_VIEWBOX}
           showMenu={false}
           showMeridianLabel
-          hideCornerLabels
         />
       )
     case 'diag':         return <NeckMeridianMap activeMeridian={activeMeridian} onMeridianChange={onMeridianChange} />
@@ -116,6 +112,11 @@ export default function NeckDiagnosis() {
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <style>{TRANSITION_STYLE}</style>
 
+      {/* Tiles match the Basic Points 2x2 grid's size: rows are (100% - gap) / 2,
+          so 3 rows need 150% + half a gap of height and the third row scrolls
+          into view. The scroll wrapper sits inside the relative root so the
+          expanded-tile overlay below stays pinned over the visible area. */}
+      <div style={{ position: 'absolute', inset: 0, overflowY: 'auto' }}>
       <div
         style={{
           display: 'grid',
@@ -123,7 +124,7 @@ export default function NeckDiagnosis() {
           gridTemplateRows: 'repeat(3, 1fr)',
           gap: '1rem',
           width: '100%',
-          height: '100%',
+          height: 'calc(150% + 0.5rem)',
           alignContent: 'start',
         }}
       >
@@ -164,6 +165,7 @@ export default function NeckDiagnosis() {
             </div>
           )
         })}
+      </div>
       </div>
 
       {expandedId && (

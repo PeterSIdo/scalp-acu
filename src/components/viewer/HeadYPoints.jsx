@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { allPoints } from '../../data/points'
 import { MERIDIANS } from '../../data/meridians'
 import YNSAYSideSvg from '../../assets/diagrams/YNSA-Y-Side.svg?react'
@@ -60,122 +60,129 @@ const POINT_JSON_ID = {
   'BL-yang_2':        'YNSA-Y-BL-yang-2',
 }
 
-// Coordinates re-extracted 2026-07-28 from the current YNSA-Y-Side.svg (viewBox 0 0 760 949).
-// The previous table (dated 2026-07-05, viewBox 27 23 947 1331) was for an older rebuild of
-// the SVG — the file has since been rebuilt again with an entirely different viewBox/layout,
-// which silently desynced every overlay position (clicks, hover, and the meridian flash all
-// landed on the wrong spot). Circle points use cx/cy directly; path-drawn (yang) points use
-// their bounding-box center.
+// Coordinates re-extracted 2026-09-25 from the current YNSA-Y-Side.svg (viewBox 0 0 558 706)
+// via headless getBBox center × getCTM per point id. Earlier tables (0 0 760 949 on 2026-07-28,
+// 27 23 947 1331 on 2026-07-05) were for older rebuilds — each re-export silently desyncs every
+// overlay position (clicks, hover, meridian flash), so re-extract whenever the SVG changes and
+// keep SIDE_VIEWBOX in sync with the file's viewBox.
+const SIDE_VIEWBOX = '0 0 558 706'
+export const Y_REAL_VIEWBOX = '0 0 553 713'
+
 const POINTS = [
   // ── Strong Y-Points ────────────────────────────────────
-  { id: 'LU-yin',         cx: 319.216,  cy: 354.216,  color: RED },
-  { id: 'LU-yang',        cx: 443.216,  cy: 380.216,  color: RED },
-  { id: 'HT-yin',         cx: 373.216,  cy: 365.216,  color: RED },
-  { id: 'HT-yang',        cx: 398.216,  cy: 369.216,  color: RED },
-  { id: 'PE-yin',         cx: 347.216,  cy: 359.216,  color: RED },
-  { id: 'PE-yang',        cx: 419.216,  cy: 376.216,  color: RED },
-  { id: 'SI-yin',         cx: 317.216,  cy: 386.216,  color: RED },
-  { id: 'SI-yang',        cx: 439.216,  cy: 404.216,  color: RED },
-  { id: 'ST-yin',         cx: 348.216,  cy: 383.216,  color: RED },
-  { id: 'ST-yang',        cx: 419.216,  cy: 397.216,  color: RED },
-  { id: 'LV-yin',         cx: 372.216,  cy: 387.216,  color: RED },
-  { id: 'LV-yang',        cx: 398.216,  cy: 392.216,  color: RED },
-  { id: 'SP-PANC-yin',    cx: 345.5,    cy: 405.623,  color: RED },
-  { id: 'SP-PANC-yang',   cx: 429.216,  cy: 423.216,  color: RED },
-  { id: 'GB-yin',         cx: 368.216,  cy: 411.216,  color: RED },
-  { id: 'GB-yang',        cx: 398.216,  cy: 418.216,  color: RED },
-  { id: 'SJ-yin',         cx: 317.216,  cy: 421.216,  color: RED },
-  { id: 'SJ-yang',        cx: 454.432,  cy: 458.216,  color: RED },
-  { id: 'KI-yin',         cx: 340.029,  cy: 429.716,  color: RED },
-  { id: 'KI-yang',        cx: 456.216,  cy: 548.216,  color: RED },
-  { id: 'LI-yin',         cx: 317.216,  cy: 453.216,  color: RED },
-  { id: 'LI-yang',        cx: 457.932,  cy: 480.216,  color: RED },
-  { id: 'BL-yin',         cx: 338.845,  cy: 454.216,  color: RED },
-  { id: 'BL-yang',        cx: 433.216,  cy: 567.216,  color: RED },
+  { id: 'LU-yin',         cx: 239.432, cy: 241.432, color: RED },
+  { id: 'LU-yang',        cx: 403.216, cy: 268.216, color: RED },
+  { id: 'HT-yin',         cx: 315.216, cy: 250.216, color: RED },
+  { id: 'HT-yang',        cx: 349.216, cy: 255.216, color: RED },
+  { id: 'PE-yin',         cx: 281.216, cy: 246.216, color: RED },
+  { id: 'PE-yang',        cx: 374.216, cy: 260.216, color: RED },
+  { id: 'SI-yin',         cx: 241.216, cy: 269.216, color: RED },
+  { id: 'SI-yang',        cx: 401.216, cy: 298.216, color: RED },
+  { id: 'ST-yin',         cx: 279.216, cy: 277.216, color: RED },
+  { id: 'ST-yang',        cx: 373.216, cy: 290.432, color: RED },
+  { id: 'LV-yin',         cx: 313,     cy: 278,     color: RED },
+  { id: 'LV-yang',        cx: 350.216, cy: 278.216, color: RED },
+  { id: 'SP-PANC-yin',    cx: 281.216, cy: 303.216, color: RED },
+  { id: 'SP-PANC-yang',   cx: 374.216, cy: 317.216, color: RED },
+  { id: 'GB-yin',         cx: 314.216, cy: 305.216, color: RED },
+  { id: 'GB-yang',        cx: 348.216, cy: 307.216, color: RED },
+  { id: 'SJ-yin',         cx: 255.216, cy: 316.216, color: RED },
+  { id: 'SJ-yang',        cx: 407.216, cy: 330.216, color: RED },
+  { id: 'KI-yin',         cx: 286.216, cy: 332.216, color: RED },
+  { id: 'KI-yang',        cx: 394.216, cy: 432.216, color: RED },
+  { id: 'LI-yin',         cx: 258.216, cy: 353.216, color: RED },
+  { id: 'LI-yang',        cx: 406.216, cy: 365.216, color: RED },
+  { id: 'BL-yin',         cx: 286.216, cy: 358.216, color: RED },
+  { id: 'BL-yang',        cx: 382.216, cy: 451.216, color: RED },
   // ── Weak Y-Points ──────────────────────────────────────
-  { id: 'LU-yin_2',         cx: 320.216,  cy: 330.216,  color: BLUE },
-  { id: 'LU-yang_2',        cx: 439.216,  cy: 356.216,  color: BLUE },
-  { id: 'HT-yin_2',         cx: 373.216,  cy: 341.216,  color: BLUE },
-  { id: 'HT-yang_2',        cx: 396.216,  cy: 347.216,  color: BLUE },
-  { id: 'PE-yin_2',         cx: 347.216,  cy: 336.216,  color: BLUE },
-  { id: 'PE-yang_2',        cx: 418.634,  cy: 351.058,  color: BLUE },
-  { id: 'SI-yin_2',         cx: 320.761,  cy: 305,      color: BLUE },
-  { id: 'SI-yang_2',        cx: 443.216,  cy: 331.216,  color: BLUE },
-  { id: 'ST-yin_2',         cx: 347.216,  cy: 313.216,  color: BLUE },
-  { id: 'ST-yang_2',        cx: 419.216,  cy: 323.716,  color: BLUE },
-  { id: 'LV-yin_2',         cx: 371.216,  cy: 319.216,  color: BLUE },
-  { id: 'LV-yang_2',        cx: 397.216,  cy: 321.216,  color: BLUE },
-  { id: 'SP-PANC-yin_2',    cx: 343.216,  cy: 290.216,  color: BLUE },
-  { id: 'SP-PANC-yang_2',   cx: 426.216,  cy: 304.216,  color: BLUE },
-  { id: 'GB-yin_2',         cx: 367,      cy: 292.216,  color: BLUE },
-  { id: 'GB-yang_2',        cx: 397.216,  cy: 299.216,  color: BLUE },
-  { id: 'SJ-yin_2',         cx: 318.216,  cy: 273.216,  color: BLUE },
-  { id: 'SJ-yang_2',        cx: 447.216,  cy: 300.216,  color: BLUE },
-  { id: 'KI-yin_2',         cx: 344.216,  cy: 268.216,  color: BLUE },
-  { id: 'KI-yang_2',        cx: 426.216,  cy: 280.216,  color: BLUE },
-  { id: 'LI-yin_2',         cx: 315.216,  cy: 245.678,  color: BLUE },
-  { id: 'LI-yang_2',        cx: 454.216,  cy: 270.073,  color: BLUE },
-  { id: 'BL-yin_2',         cx: 343.5,    cy: 247.716,  color: BLUE },
-  { id: 'BL-yang_2',        cx: 426.216,  cy: 259.216,  color: BLUE },
+  { id: 'LU-yin_2',         cx: 240.216, cy: 207.216, color: BLUE },
+  { id: 'LU-yang_2',        cx: 405.216, cy: 243.359, color: BLUE },
+  { id: 'HT-yin_2',         cx: 318,     cy: 224.216, color: BLUE },
+  { id: 'HT-yang_2',        cx: 348.216, cy: 231.216, color: BLUE },
+  { id: 'PE-yin_2',         cx: 280.216, cy: 219.216, color: BLUE },
+  { id: 'PE-yang_2',        cx: 375.634, cy: 236.058, color: BLUE },
+  { id: 'SI-yin_2',         cx: 244.216, cy: 176.216, color: BLUE },
+  { id: 'SI-yang_2',        cx: 409.432, cy: 214.359, color: BLUE },
+  { id: 'ST-yin_2',         cx: 282.216, cy: 195.216, color: BLUE },
+  { id: 'ST-yang_2',        cx: 376.216, cy: 208.216, color: BLUE },
+  { id: 'LV-yin_2',         cx: 317.216, cy: 198.216, color: BLUE },
+  { id: 'LV-yang_2',        cx: 349.216, cy: 202.216, color: BLUE },
+  { id: 'SP-PANC-yin_2',    cx: 284.216, cy: 168.216, color: BLUE },
+  { id: 'SP-PANC-yang_2',   cx: 378.216, cy: 180.216, color: BLUE },
+  { id: 'GB-yin_2',         cx: 319,     cy: 168,     color: BLUE },
+  { id: 'GB-yang_2',        cx: 351.216, cy: 174.216, color: BLUE },
+  { id: 'SJ-yin_2',         cx: 247.216, cy: 148.216, color: BLUE },
+  { id: 'SJ-yang_2',        cx: 411.216, cy: 183.359, color: BLUE },
+  { id: 'KI-yin_2',         cx: 285.216, cy: 144.216, color: BLUE },
+  { id: 'KI-yang_2',        cx: 378.216, cy: 151.216, color: BLUE },
+  { id: 'LI-yin_2',         cx: 251.216, cy: 124.216, color: BLUE },
+  { id: 'LI-yang_2',        cx: 411.216, cy: 154.216, color: BLUE },
+  { id: 'BL-yin_2',         cx: 287.216, cy: 117.216, color: BLUE },
+  { id: 'BL-yang_2',        cx: 378.216, cy: 124.216, color: BLUE },
 ]
 
+// Meridian menu/search items — only meridians that have Y-Points. The shared
+// MERIDIANS list also carries Governing Vessel for the neck/abdomen maps,
+// which has no Y-Point and so doesn't belong in this menu.
+const Y_MERIDIANS = MERIDIANS.filter(m => POINTS.some(p => p.id.startsWith(`${m.code}-`)))
+
 // Coordinates read directly from YNSA-Y-real.svg's own <circle>/<path> id="..."
-// elements (same viewBox 0 0 760 949, same 48 point ids as YNSA-Y-Side.svg) —
+// elements (viewBox Y_REAL_VIEWBOX, same 48 point ids as YNSA-Y-Side.svg) —
 // the photo-reference companion diagram. Circle points use cx/cy directly;
 // path-drawn points use their bounding-box center, same approach as POINTS
 // above. Point placement differs from POINTS since it's a different
 // anatomical model, so these are wired up separately rather than reused.
 export const Y_REAL_POINTS = [
   // ── Strong Y-Points ────────────────────────────────────
-  { id: 'LU-yin',         cx: 367.216,  cy: 341.216,  color: RED },
-  { id: 'LU-yang',        cx: 491.216,  cy: 367.216,  color: RED },
-  { id: 'HT-yin',         cx: 421.216,  cy: 352.216,  color: RED },
-  { id: 'HT-yang',        cx: 446.216,  cy: 356.216,  color: RED },
-  { id: 'PE-yin',         cx: 395.216,  cy: 346.216,  color: RED },
-  { id: 'PE-yang',        cx: 467.216,  cy: 363.216,  color: RED },
-  { id: 'SI-yin',         cx: 365.216,  cy: 373.216,  color: RED },
-  { id: 'SI-yang',        cx: 487.216,  cy: 391.216,  color: RED },
-  { id: 'ST-yin',         cx: 396.216,  cy: 370.216,  color: RED },
-  { id: 'ST-yang',        cx: 467.216,  cy: 384.216,  color: RED },
-  { id: 'LV-yin',         cx: 420.216,  cy: 374.216,  color: RED },
-  { id: 'LV-yang',        cx: 446.216,  cy: 379.216,  color: RED },
-  { id: 'SP-PANC-yin',    cx: 393.5,    cy: 392.623,  color: RED },
-  { id: 'SP-PANC-yang',   cx: 477.216,  cy: 410.216,  color: RED },
-  { id: 'GB-yin',         cx: 416.216,  cy: 398.216,  color: RED },
-  { id: 'GB-yang',        cx: 446.216,  cy: 405.216,  color: RED },
-  { id: 'SJ-yin',         cx: 365.216,  cy: 408.216,  color: RED },
-  { id: 'SJ-yang',        cx: 502.432,  cy: 445.216,  color: RED },
-  { id: 'KI-yin',         cx: 388.029,  cy: 416.716,  color: RED },
-  { id: 'KI-yang',        cx: 492.216,  cy: 531.216,  color: RED },
-  { id: 'LI-yin',         cx: 365.216,  cy: 440.216,  color: RED },
-  { id: 'LI-yang',        cx: 505.932,  cy: 467.216,  color: RED },
-  { id: 'BL-yin',         cx: 386.845,  cy: 441.216,  color: RED },
-  { id: 'BL-yang',        cx: 477.216,  cy: 555.216,  color: RED },
+  { id: 'LU-yin',         cx: 231.216, cy: 221.432, color: RED },
+  { id: 'LU-yang',        cx: 395,     cy: 248.216, color: RED },
+  { id: 'HT-yin',         cx: 307,     cy: 230.216, color: RED },
+  { id: 'HT-yang',        cx: 341,     cy: 235.216, color: RED },
+  { id: 'PE-yin',         cx: 273,     cy: 226.216, color: RED },
+  { id: 'PE-yang',        cx: 366,     cy: 240.216, color: RED },
+  { id: 'SI-yin',         cx: 233,     cy: 249.216, color: RED },
+  { id: 'SI-yang',        cx: 393,     cy: 278.216, color: RED },
+  { id: 'ST-yin',         cx: 271,     cy: 257.216, color: RED },
+  { id: 'ST-yang',        cx: 365,     cy: 270.432, color: RED },
+  { id: 'LV-yin',         cx: 304.784, cy: 258,     color: RED },
+  { id: 'LV-yang',        cx: 342,     cy: 258.216, color: RED },
+  { id: 'SP-PANC-yin',    cx: 273,     cy: 283.216, color: RED },
+  { id: 'SP-PANC-yang',   cx: 366,     cy: 297.216, color: RED },
+  { id: 'GB-yin',         cx: 306,     cy: 285.216, color: RED },
+  { id: 'GB-yang',        cx: 340,     cy: 287.216, color: RED },
+  { id: 'SJ-yin',         cx: 247,     cy: 296.216, color: RED },
+  { id: 'SJ-yang',        cx: 399,     cy: 310.216, color: RED },
+  { id: 'KI-yin',         cx: 278,     cy: 312.216, color: RED },
+  { id: 'KI-yang',        cx: 371,     cy: 412.216, color: RED },
+  { id: 'LI-yin',         cx: 250,     cy: 333.216, color: RED },
+  { id: 'LI-yang',        cx: 398,     cy: 345.216, color: RED },
+  { id: 'BL-yin',         cx: 278,     cy: 338.216, color: RED },
+  { id: 'BL-yang',        cx: 359,     cy: 431.216, color: RED },
   // ── Weak Y-Points ──────────────────────────────────────
-  { id: 'LU-yin_2',         cx: 368.216,  cy: 317.216,  color: BLUE },
-  { id: 'LU-yang_2',        cx: 487.216,  cy: 343.216,  color: BLUE },
-  { id: 'HT-yin_2',         cx: 421.216,  cy: 328.216,  color: BLUE },
-  { id: 'HT-yang_2',        cx: 444.216,  cy: 334.216,  color: BLUE },
-  { id: 'PE-yin_2',         cx: 395.216,  cy: 323.216,  color: BLUE },
-  { id: 'PE-yang_2',        cx: 466.634,  cy: 338.058,  color: BLUE },
-  { id: 'SI-yin_2',         cx: 368.761,  cy: 292,      color: BLUE },
-  { id: 'SI-yang_2',        cx: 491.216,  cy: 318.216,  color: BLUE },
-  { id: 'ST-yin_2',         cx: 395.216,  cy: 300.216,  color: BLUE },
-  { id: 'ST-yang_2',        cx: 467.216,  cy: 310.716,  color: BLUE },
-  { id: 'LV-yin_2',         cx: 419.216,  cy: 306.216,  color: BLUE },
-  { id: 'LV-yang_2',        cx: 445.216,  cy: 308.216,  color: BLUE },
-  { id: 'SP-PANC-yin_2',    cx: 391.216,  cy: 277.216,  color: BLUE },
-  { id: 'SP-PANC-yang_2',   cx: 474.216,  cy: 291.216,  color: BLUE },
-  { id: 'GB-yin_2',         cx: 415,      cy: 279.216,  color: BLUE },
-  { id: 'GB-yang_2',        cx: 445.216,  cy: 286.216,  color: BLUE },
-  { id: 'SJ-yin_2',         cx: 366.216,  cy: 260.216,  color: BLUE },
-  { id: 'SJ-yang_2',        cx: 495.216,  cy: 287.216,  color: BLUE },
-  { id: 'KI-yin_2',         cx: 392.216,  cy: 255.216,  color: BLUE },
-  { id: 'KI-yang_2',        cx: 474.216,  cy: 267.216,  color: BLUE },
-  { id: 'LI-yin_2',         cx: 363.216,  cy: 232.678,  color: BLUE },
-  { id: 'LI-yang_2',        cx: 502.216,  cy: 257.073,  color: BLUE },
-  { id: 'BL-yin_2',         cx: 391.5,    cy: 234.716,  color: BLUE },
-  { id: 'BL-yang_2',        cx: 474.216,  cy: 246.216,  color: BLUE },
+  { id: 'LU-yin_2',         cx: 232,     cy: 187.216, color: BLUE },
+  { id: 'LU-yang_2',        cx: 397,     cy: 223.359, color: BLUE },
+  { id: 'HT-yin_2',         cx: 309.784, cy: 204.216, color: BLUE },
+  { id: 'HT-yang_2',        cx: 340,     cy: 211.216, color: BLUE },
+  { id: 'PE-yin_2',         cx: 272,     cy: 199.216, color: BLUE },
+  { id: 'PE-yang_2',        cx: 367.418, cy: 216.058, color: BLUE },
+  { id: 'SI-yin_2',         cx: 236,     cy: 156.216, color: BLUE },
+  { id: 'SI-yang_2',        cx: 401.216, cy: 194.359, color: BLUE },
+  { id: 'ST-yin_2',         cx: 274,     cy: 175.216, color: BLUE },
+  { id: 'ST-yang_2',        cx: 368,     cy: 188.216, color: BLUE },
+  { id: 'LV-yin_2',         cx: 309,     cy: 178.216, color: BLUE },
+  { id: 'LV-yang_2',        cx: 341,     cy: 182.216, color: BLUE },
+  { id: 'SP-PANC-yin_2',    cx: 276,     cy: 148.216, color: BLUE },
+  { id: 'SP-PANC-yang_2',   cx: 370,     cy: 160.216, color: BLUE },
+  { id: 'GB-yin_2',         cx: 310.784, cy: 148,     color: BLUE },
+  { id: 'GB-yang_2',        cx: 343,     cy: 154.216, color: BLUE },
+  { id: 'SJ-yin_2',         cx: 239,     cy: 128.216, color: BLUE },
+  { id: 'SJ-yang_2',        cx: 403,     cy: 163.359, color: BLUE },
+  { id: 'KI-yin_2',         cx: 277,     cy: 124.216, color: BLUE },
+  { id: 'KI-yang_2',        cx: 370,     cy: 131.216, color: BLUE },
+  { id: 'LI-yin_2',         cx: 243,     cy: 104.216, color: BLUE },
+  { id: 'LI-yang_2',        cx: 402.999, cy: 134.216, color: BLUE },
+  { id: 'BL-yin_2',         cx: 279,     cy: 97.216,  color: BLUE },
+  { id: 'BL-yang_2',        cx: 370,     cy: 104.216, color: BLUE },
 ]
 
 // The four corner labels (Weak Yin / Weak Yang / Strong Yin / Strong Yang) are informational,
@@ -292,7 +299,7 @@ function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset })
           ref={dropdownRef}
           className="scroll-touch absolute top-full left-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[9.5rem] max-h-96 overflow-y-auto z-20"
         >
-          {MERIDIANS.map(({ code, name }) => (
+          {Y_MERIDIANS.map(({ code, name }) => (
             <button key={code} type="button" onClick={() => onSelect(code)} className={DROPDOWN_ITEM_CLASS(activeMeridian === code)}>
               {name}
             </button>
@@ -309,7 +316,7 @@ function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset })
 // pull in points whose indications/tags match `query`, mapped back to their meridian.
 function MeridianSearch({ open, query, onToggle, onQueryChange, onSelect }) {
   const q = query.trim().toLowerCase()
-  const matches = q ? MERIDIANS.filter(m => m.name.toLowerCase().includes(q)) : []
+  const matches = q ? Y_MERIDIANS.filter(m => m.name.toLowerCase().includes(q)) : []
 
   function handleKeyDown(e) {
     if (e.key === 'Enter' && matches.length > 0) onSelect(matches[0].code)
@@ -365,12 +372,12 @@ function MeridianSearch({ open, query, onToggle, onQueryChange, onSelect }) {
 // hideCornerLabels once there's room again (e.g. the tile is expanded).
 // Background/points default to the line-art diagram; the "real" reference-
 // photo tile passes YNSAYRealSvg + Y_REAL_POINTS instead — the two
-// backgrounds share a viewBox but not point placement, since they're
+// backgrounds share point ids but not viewBox or point placement, since they're
 // different anatomical models (same pattern as NeckMeridianMap's diag/real
 // split). showMenu hides the Meridian/Search dropdown chrome for that
 // second tile — it shares activeMeridian with the primary tile instead of
 // duplicating the controls.
-export default function HeadYPoints({ onPointSelect, highlightJsonId = null, activeMeridian: controlledMeridian, onMeridianChange, diagramScale = 1, hideCornerLabels = false, showCornerLabels = false, Background = YNSAYSideSvg, points = POINTS, showMenu = true, showMeridianLabel = false }) {
+export default function HeadYPoints({ onPointSelect, highlightJsonId = null, activeMeridian: controlledMeridian, onMeridianChange, diagramScale = 1, hideCornerLabels = false, showCornerLabels = false, Background = YNSAYSideSvg, points = POINTS, viewBox = SIDE_VIEWBOX, showMenu = true, showMeridianLabel = false }) {
   const [selectedId,       setSelectedId]       = useState(null)
   const [hoveredId,        setHoveredId]        = useState(null)
   const [internalMeridian, setInternalMeridian] = useState(null)
@@ -379,7 +386,13 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
 
   const activeMeridian = controlledMeridian !== undefined ? controlledMeridian : internalMeridian
 
+  // <style> is document-global, so scope every rule to this instance's wrapper —
+  // otherwise one tile's hideCornerLabels (the Y-real tile) hides the labels on
+  // every other HeadYPoints on screen too.
+  const scopeId = useId()
+  const scope = `[data-y-points="${scopeId}"] .svg-y-points`
   const style = `${hideCornerLabels ? HIDE_CORNER_LABELS_STYLE : STRONG_WEAK_LABEL_STYLE}\n${buildPointStyle(activeMeridian)}`
+    .replaceAll('.svg-y-points', scope)
 
   // Meridian name label — same floating dark-box/white-text style as
   // NeckMeridianMap's per-point label, used here for tiles that hide the
@@ -429,6 +442,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
 
   return (
     <div
+      data-y-points={scopeId}
       style={{ position: 'relative', width: '100%', height: '100%' }}
       onClick={() => openPanel && setOpenPanel(null)}
     >
@@ -474,15 +488,15 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
         {/* Background SVG — the head diagram and point artwork */}
         <Background
           className="svg-y-points"
-          preserveAspectRatio="xMidYMin meet"
+          preserveAspectRatio="xMidYMid meet"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
         />
 
         {/* Overlay SVG — pointer-events:none at root so clicks pass through to the wrapper
             (closing the menu); individual <g> elements re-enable pointer-events for points. */}
         <svg
-          viewBox="0 0 760 949"
-          preserveAspectRatio="xMidYMin meet"
+          viewBox={viewBox}
+          preserveAspectRatio="xMidYMid meet"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
@@ -526,7 +540,8 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
             const fSize = 11
             const w = meridianLabelName.length * 6.2 + pad * 2
             const h = fSize + pad * 2
-            const tx = meridianLabelAnchor.cx + 20 + w > 760 ? meridianLabelAnchor.cx - w - 20 : meridianLabelAnchor.cx + 20
+            const vbWidth = Number(viewBox.split(/\s+/)[2])
+            const tx = meridianLabelAnchor.cx + 20 + w > vbWidth ? meridianLabelAnchor.cx - w - 20 : meridianLabelAnchor.cx + 20
             const ty = meridianLabelAnchor.cy - h / 2
             return (
               <g pointerEvents="none">
