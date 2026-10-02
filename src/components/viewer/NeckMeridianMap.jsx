@@ -55,8 +55,8 @@ export const REAL_POINTS = {
   PC:        { cx: 174, cy: 178 },
   LU:        { cx: 147, cy: 178 },
   GB:        { cx: 162, cy: 203 },
-  KD:        { cx: 229, cy: 223 },
-  UB:        { cx: 229, cy: 240 },
+  KD:        { cx: 229, cy: 225 },
+  UB:        { cx: 229, cy: 242 },
   LI:        { cx: 294, cy: 171 },
   SJ:        { cx: 277, cy: 189 },
 }
@@ -89,7 +89,7 @@ export const ABDOMEN_POINTS = {
 }
 
 // Point centers read directly from abdomial-real.svg's own <ellipse>/<path>
-// id="..." elements (viewBox 0 0 410 540) — the photo-reference companion to
+// id="..." elements (viewBox 0 0 508 540) — the photo-reference companion to
 // adbominal-diag-1.svg, using the same meridian-abbreviation ids and the same
 // bilateral KD/KD_2 pair. Ellipses with a `rotate(...)` transform around their
 // own center (GB, KD) use cx/cy as-is; ones with a `matrix(...)` transform
@@ -97,19 +97,19 @@ export const ABDOMEN_POINTS = {
 // hand, same approach as ABDOMEN_POINTS above. LU is a stroke-only path — its
 // bounding-box center was used instead.
 export const ABDOMEN_REAL_POINTS = {
-  LI:        { cx: 254.5,  cy: 401 },
-  GB:        { cx: 161.233, cy: 287.078 },
-  UB:        { cx: 214.5,  cy: 474 },
-  HT:        { cx: 212.5,  cy: 237 },
-  SI:        { cx: 160.5,  cy: 401 },
-  LV:        { cx: 254.5,  cy: 339 },
-  LU:        { cx: 160.5,  cy: 339 },
-  ST:        { cx: 212.5,  cy: 326 },
-  SJ:        { cx: 212.5,  cy: 392 },
-  PC:        { cx: 212.5,  cy: 280 },
-  'SP/PANC': { cx: 264.233, cy: 287.077 },
-  KD:        { cx: 274.936, cy: 452.55 },
-  KD_2:      { cx: 159.935, cy: 452.549 },
+  LI:        { cx: 303.5,   cy: 395 },
+  GB:        { cx: 210.233, cy: 281.078 },
+  UB:        { cx: 263.5,   cy: 468 },
+  HT:        { cx: 261.5,   cy: 231 },
+  SI:        { cx: 209.5,   cy: 395 },
+  LV:        { cx: 303.5,   cy: 333 },
+  LU:        { cx: 209.5,   cy: 333 },
+  ST:        { cx: 261.5,   cy: 320 },
+  SJ:        { cx: 261.5,   cy: 386 },
+  PC:        { cx: 261.5,   cy: 274 },
+  'SP/PANC': { cx: 313.233, cy: 281.077 },
+  KD:        { cx: 323.936, cy: 446.55 },
+  KD_2:      { cx: 208.935, cy: 446.549 },
 }
 
 // Tapping/clicking a point selects its meridian (shared with the Meridian

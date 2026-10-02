@@ -238,10 +238,10 @@ function buildPointStyle(activeMeridian) {
 
 // Shared text style for both the Meridian and Search triggers — plain text, no button
 // chrome, matching the SubgroupTabs font/weight elsewhere in the viewer.
-const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
+const TRIGGER_CLASS = (active) => `inline-flex items-center gap-1 w-28 text-xs font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
   active
-    ? 'text-amber-500 dark:text-amber-400'
-    : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
+    ? 'text-red-700'
+    : 'text-black hover:text-red-700'
 }`
 
 const DROPDOWN_ITEM_CLASS = (active) => `block w-full text-left px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors ${
@@ -279,19 +279,22 @@ function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset })
     <div className="relative">
       <div className="flex items-center gap-1.5">
         <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activeMeridian || menuOpen)}>
-          {activeName ?? 'Meridian'}
-          <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
+          <span className="flex-1 min-w-0 truncate text-left">{activeName ?? 'Meridian'}</span>
+          <span>{menuOpen ? '▲' : '▼'}</span>
         </button>
-        {activeMeridian && (
-          <button
-            type="button"
-            onClick={onReset}
-            aria-label="Clear meridian filter"
-            className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs leading-none font-bold shadow-sm transition-colors"
-          >
-            ×
-          </button>
-        )}
+        {/* Fixed-size slot so the clear button appearing doesn't shift Search sideways. */}
+        <span className="w-5 h-5 flex-shrink-0">
+          {activeMeridian && (
+            <button
+              type="button"
+              onClick={onReset}
+              aria-label="Clear meridian filter"
+              className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs leading-none font-bold shadow-sm transition-colors"
+            >
+              ×
+            </button>
+          )}
+        </span>
       </div>
 
       {menuOpen && (
@@ -326,7 +329,7 @@ function MeridianSearch({ open, query, onToggle, onQueryChange, onSelect }) {
   return (
     <div className="relative">
       <button type="button" onClick={() => onToggle()} className={TRIGGER_CLASS(open)}>
-        Search
+        <span className="flex-1 text-center">Search</span>
       </button>
 
       {open && (

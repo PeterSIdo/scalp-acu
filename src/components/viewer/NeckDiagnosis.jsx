@@ -72,8 +72,8 @@ function renderTileContent(id, { activeMeridian, onMeridianChange, isExpanded })
     case 'abdomen':       return <NeckMeridianMap activeMeridian={activeMeridian} onMeridianChange={onMeridianChange} Background={AbdominalDiagSvg} points={ABDOMEN_POINTS} viewBox="0 0 410 539" />
     // Photo-reference companion to 'abdomen', same relationship as diag/real
     // above — its own SVG already has point ids baked in with matching
-    // coordinates (see ABDOMEN_REAL_POINTS), just a taller viewBox (410x540).
-    case 'abdomen-real':  return <NeckMeridianMap activeMeridian={activeMeridian} onMeridianChange={onMeridianChange} Background={AbdominalRealSvg} points={ABDOMEN_REAL_POINTS} viewBox="0 0 410 540" />
+    // coordinates (see ABDOMEN_REAL_POINTS), its own viewBox (508x540).
+    case 'abdomen-real':  return <NeckMeridianMap activeMeridian={activeMeridian} onMeridianChange={onMeridianChange} Background={AbdominalRealSvg} points={ABDOMEN_REAL_POINTS} viewBox="0 0 508 540" />
     default:             return null
   }
 }
