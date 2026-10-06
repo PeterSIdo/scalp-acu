@@ -20,9 +20,11 @@ export default function InfoPanel({ point, isSubscribed }) {
         <span className="bg-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-semibold px-2 py-0.5 rounded">
           {point.system}
         </span>
-        <span className="bg-gray-100 dark:bg-gray-700 text-black dark:text-gray-300 text-xs font-semibold px-2 py-0.5 rounded capitalize">
-          {point.zone}
-        </span>
+        {point.zone && (
+          <span className="bg-gray-100 dark:bg-gray-700 text-black dark:text-gray-300 text-xs font-semibold px-2 py-0.5 rounded capitalize">
+            {point.zone}
+          </span>
+        )}
         {point.side && point.side !== 'midline' && (
           <span className="bg-gray-100 dark:bg-gray-700 text-black dark:text-gray-300 text-xs font-semibold px-2 py-0.5 rounded capitalize">
             {point.side}
@@ -71,6 +73,35 @@ export default function InfoPanel({ point, isSubscribed }) {
                 </span>
               ))}
             </div>
+          </div>
+        </>
+      )}
+
+      {point.tcm && (
+        <>
+          <Divider />
+          <div className="mb-4">
+            <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">TCM Scalp Acupuncture</h3>
+            <p className="text-black dark:text-gray-300 text-sm leading-relaxed mb-2">
+              <span className="font-semibold">Area: </span>{point.tcm.area}
+            </p>
+            {point.tcm.points && (
+              <p className="text-black dark:text-gray-300 text-sm leading-relaxed mb-2">
+                <span className="font-semibold">Key points: </span>{point.tcm.points}
+              </p>
+            )}
+            {point.tcm.uses?.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {point.tcm.uses.map(use => (
+                  <span key={use} className="bg-gray-100 dark:bg-gray-800 text-black dark:text-gray-300 text-xs px-2 py-1 rounded">
+                    {use}
+                  </span>
+                ))}
+              </div>
+            )}
+            {point.tcm.note && (
+              <p className="text-gray-500 dark:text-gray-400 text-xs italic">{point.tcm.note}</p>
+            )}
           </div>
         </>
       )}

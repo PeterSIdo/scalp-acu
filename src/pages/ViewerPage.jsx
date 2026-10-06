@@ -8,6 +8,7 @@ import HeadSensoryPoints from '../components/viewer/HeadSensoryPoints'
 import HeadBrainPoints from '../components/viewer/HeadBrainPoints'
 import HeadTCMScalpAreas from '../components/viewer/HeadTCMScalpAreas'
 import NeckDiagnosis   from '../components/viewer/NeckDiagnosis'
+import HeadBrainZones from '../components/viewer/HeadBrainZones'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
 import SearchPanel from '../components/ui/SearchPanel'
@@ -34,6 +35,14 @@ const SYSTEMS = [
     ],
   },
   { id: 'ear',  label: 'Ear',   fullName: 'Ear Acupuncture',         subgroups: null, available: false },
+  {
+    id: 'brain',
+    label: 'Brain Zones',
+    fullName: 'Brain Zones',
+    subgroups: [
+      { id: 'brain-zones', label: 'Zones', views: ['BrainZonesGrid'], available: true },
+    ],
+  },
 ]
 
 // Which JSON point IDs belong to each subgroup — used to filter diagram dots
@@ -319,6 +328,7 @@ export default function ViewerPage() {
               {activeView === 'BrainGrid' && <HeadBrainPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-brain']} />}
               {activeView === 'Neck'      && <NeckDiagnosis />}
               {activeView === 'TCMGrid'   && <HeadTCMScalpAreas />}
+              {activeView === 'BrainZonesGrid' && <HeadBrainZones onPointSelect={handlePointSelect} />}
             </ZoomableView>
           ) : (
             <div className="flex flex-col items-center justify-center h-full gap-2 text-center">

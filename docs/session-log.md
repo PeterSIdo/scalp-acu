@@ -148,3 +148,48 @@ the app's canonical codes instead:
 - **Meridians tile has no interactive points/legend yet** — same
   "diagram-only, no data layer" state the Areas tile started in.
 - Grid row 3 (`empty3`, `empty4`) still fully reserved/blank.
+
+## 2026-10-06 — Brain Zones: swap tiles, wire Brain Zone menu to diagram
+
+- **Tiles swapped** (`HeadBrainZones.jsx`, `TILE_IDS = ['zones', 'zones2']`):
+  `brain-zones.svg` (interactive diagram) is now grid 1/1, the
+  `brain-zones2.svg` photo is 1/2 (reference only, no menu).
+- **Both menus on tile 1/1**: Brain Zone and Body Part dropdowns sit side
+  by side in its top-left corner. Dropdown lists are now content-width
+  (`min-w-full w-max`) instead of fixed `w-60`/`w-40` wrappers.
+- **Brain Zone ↔ diagram wiring** (`BrainZonesMap`, formerly
+  `BrainBodyPartsMap`): `brain-zones.svg` has no ids/labels, so each
+  `BRAIN_ZONES` entry got a `fill` key matching its zone path's unique fill
+  colour. The colours were assigned by anatomical position, so they are
+  inferred and should be checked:
+  1 Visual `#9CDCEE` (occipital), 2 Association `#6ECC9D` (temporal),
+  3 Motor `#FB5762` (red strip), 4 Broca `#E499D3`, 5 Auditory `#FFC76C`,
+  9 Sensory `#74A0FF`, 10 Somatosensory Assoc. `#B895F5`, 11 Wernicke
+  `#EAA2A3`, 12 Motor/eye `#EFF0D0`, 13 Higher Mental `#FFD7D7`,
+  14 Motor/cerebellum `url(#paint0_linear_7_117)`. Brainstem (`#9F9405`)
+  is not interactive.
+  - Menu → diagram: the selected zone gets a pulsing amber/white outline
+    traced from its path `d`, and the other zones dim to 35% opacity.
+  - Diagram → menu: clicks are hit-tested with `isPointInFill`, topmost
+    path first. Clicking the selected zone again clears it. Clicks outside
+    any zone still expand the tile. The cursor is a pointer only over zones.
+  - Body Part ellipse hit targets still take priority over the motor-strip
+    zone click.
+- Verified headlessly (Playwright): menu→highlight, diagram click→menu
+  label, Body Part still independent, no page errors.
+
+## 2026-10-06 (cont.) — Brain Zone info panel
+
+- Selecting a zone (from the menu or by clicking the diagram) now opens the
+  same InfoPanel the YNSA points use: the right side panel on desktop and the
+  bottom sheet on mobile. The title is the zone name and the description is
+  its functions. `HeadBrainZones` takes `onPointSelect` (wired from
+  ViewerPage's `handlePointSelect`). `zoneToPanelItem` shapes a zone into
+  `{ id, name, system: 'Brain Zones', shortDescription }`. Clearing the
+  zone clears the panel.
+- Function texts updated to the user's capitalization
+  (e.g. "Sight, Image recognition, Image perception"). Fixed typos in the
+  supplied list: "Broca's Aera" → "Broca's Area", "objsect" → "object".
+  Deep layers 6–8 are still omitted.
+- InfoPanel: the zone badge renders only when `point.zone` is set. Brain
+  zones have none, so this avoids showing an empty pill.
