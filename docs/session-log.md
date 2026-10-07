@@ -235,3 +235,18 @@ the app's canonical codes instead:
   behind it, but the diagram has every meridian on both sides.
 - Sensory intro says "four points", but the tab also shows Extra Ear
   Yin/Yang.
+
+---
+
+## 2026-10-07 — TCM Scalp Acupuncture intro
+
+- Added a `tcm-scalp-areas` entry to `src/data/categoryIntros.js` (user-supplied
+  text, 4 paragraphs, system badge "TCM").
+- `HeadTCMScalpAreas` now takes `onPointSelect` (passed from `ViewerPage`) and
+  shows an "About TCM Scalp Acupuncture" link at the bottom-left of the areas
+  tile (1/1), in both the grid and the expanded view. Clicking it opens the
+  intro in the InfoPanel / mobile bottom sheet, same as the YNSA intros.
+- Moved Brain Zones under the TCM menu: it is now a second TCM tab
+  ("Scalp Areas" | "Brain Zones"); the separate top-level "Brain Zones"
+  system was removed from `SYSTEMS` in `ViewerPage.jsx`.
+- Top menu order is now YNSA, TCM, Zhu's, Ear.

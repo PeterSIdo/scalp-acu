@@ -1,4 +1,4 @@
-// Introductory text for each YNSA point category, keyed by subgroup id.
+// Introductory text for each point category (YNSA, TCM), keyed by subgroup id.
 // Shown in the InfoPanel (desktop) / bottom sheet (mobile) via the
 // "About … Points" link in each grid's top-left tile — same place a
 // selected point's description appears. isCategory tells InfoPanel to
@@ -53,6 +53,18 @@ export const CATEGORY_INTROS = {
     groups: [
       { label: 'Yin',  items: ['Lung', 'Pericardium', 'Heart', 'Spleen', 'Liver', 'Kidney'] },
       { label: 'Yang', items: ['Large Intestine', 'San Jiao (Triple Burner)', 'Small Intestine', 'Stomach', 'Gallbladder', 'Bladder'] },
+    ],
+  },
+  'tcm-scalp-areas': {
+    isCategory: true,
+    linkLabel: 'About TCM Scalp Acupuncture',
+    name: 'TCM Scalp Acupuncture',
+    system: 'TCM',
+    paragraphs: [
+      'Scalp acupuncture is a modern development within Chinese medicine. Rather than following the traditional meridian channels, it is based on a map of the scalp that mirrors the functional areas of the brain beneath it, such as the regions governing movement, sensation, vision, speech, hearing and balance.',
+      'Instead of treating single points, the practitioner needles whole zones. Fine needles are inserted at a shallow angle just under the skin, running along each zone, and are then stimulated with specific manipulation techniques. The aim is to influence brain activity and, through it, to restore and strengthen the functions of the body.',
+      'Scalp acupuncture also differs from traditional acupuncture in its approach to treatment. Traditional practice is highly individual, and two practitioners may choose quite different points for the same complaint. Scalp acupuncture is more standardised: patients with the same diagnosis usually receive the same or very similar treatment, much as in Western medicine.',
+      'By bringing together classical Chinese needling with Western understanding of the nervous system, scalp acupuncture is used particularly for conditions affecting the brain and nervous system, including paralysis and speech difficulties after stroke.',
     ],
   },
 }

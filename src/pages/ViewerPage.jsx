@@ -25,24 +25,17 @@ const SYSTEMS = [
       { id: 'ynsa-neck',    label: 'Y-Points',          views: ['Neck'],                            available: true  },
     ],
   },
-  { id: 'zhus', label: "Zhu's", fullName: "Zhu's Scalp Acupuncture", subgroups: null, available: false },
   {
     id: 'tcm',
     label: 'TCM',
     fullName: 'TCM Scalp Points',
     subgroups: [
       { id: 'tcm-scalp-areas', label: 'Scalp Areas', views: ['TCMGrid'], available: true },
+      { id: 'brain-zones',     label: 'Brain Zones', views: ['BrainZonesGrid'], available: true },
     ],
   },
+  { id: 'zhus', label: "Zhu's", fullName: "Zhu's Scalp Acupuncture", subgroups: null, available: false },
   { id: 'ear',  label: 'Ear',   fullName: 'Ear Acupuncture',         subgroups: null, available: false },
-  {
-    id: 'brain',
-    label: 'Brain Zones',
-    fullName: 'Brain Zones',
-    subgroups: [
-      { id: 'brain-zones', label: 'Zones', views: ['BrainZonesGrid'], available: true },
-    ],
-  },
 ]
 
 // Which JSON point IDs belong to each subgroup — used to filter diagram dots
@@ -327,7 +320,7 @@ export default function ViewerPage() {
               {activeView === 'SensoryGrid' && <HeadSensoryPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-sensory']} />}
               {activeView === 'BrainGrid' && <HeadBrainPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-brain']} />}
               {activeView === 'Neck'      && <NeckDiagnosis onPointSelect={handlePointSelect} />}
-              {activeView === 'TCMGrid'   && <HeadTCMScalpAreas />}
+              {activeView === 'TCMGrid'   && <HeadTCMScalpAreas onPointSelect={handlePointSelect} />}
               {activeView === 'BrainZonesGrid' && <HeadBrainZones onPointSelect={handlePointSelect} />}
             </ZoomableView>
           ) : (

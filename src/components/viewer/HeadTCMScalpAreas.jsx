@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import ScalpAreasSvg from '../../assets/diagrams/tcm-scalp-areas.svg?react'
 import ScalpMeridiansSvg from '../../assets/diagrams/tcm-scalp-meridians.svg?react'
+import CategoryIntroLink from '../ui/CategoryIntroLink'
 
 // 2x2 grid, row-major: areas diagram (with the TCM Area menu) | meridians
 // diagram, then 2 tiles reserved for future content (photo reference, other
@@ -15,7 +16,8 @@ const AREAS_VIEWBOX = '54 217 689 719'
 // so each entry carries the `d` of its coloured line(s) and the bbox of its
 // label text [x, y, w, h], copied from the SVG — re-extract both if the
 // diagram is re-exported. No tcm.json yet, so selection only drives the
-// diagram highlight + menu label (no InfoPanel wiring).
+// diagram highlight + menu label (no InfoPanel wiring). The only InfoPanel
+// content is the category intro, via the link in the areas tile.
 const TCM_AREAS = [
   { name: 'Motor Area',                              color: '#A81F88', lines: ['M451 321.5L314 577.5'],  label: [456, 237, 55, 15] },
   { name: 'Sensory Area',                            color: '#FB5762', lines: ['M483 329.5L347 582.5'],  label: [575, 242, 77, 19] },
@@ -293,8 +295,8 @@ function MeridiansDiagram({ activeMeridian, onSelect }) {
 
 // Both diagram tiles use the same layout (menu row above the diagram, same
 // viewBox size), so the heads render at the same size in 1/1 and 1/2.
-function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMeridianChange, openMenu, onMenuToggle, onMenuClose }, expanded = false) {
-  let menu, diagram
+function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMeridianChange, openMenu, onMenuToggle, onMenuClose, onPointSelect }, expanded = false) {
+  let menu, diagram, introLink = null
   switch (id) {
     case 'areas': {
       const toggleArea = area => { onMenuClose(); onAreaChange(activeArea === area ? null : area) }
@@ -311,6 +313,7 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
         />
       )
       diagram = <AreasDiagram activeArea={activeArea} onSelect={toggleArea} />
+      introLink = <CategoryIntroLink subgroupId="tcm-scalp-areas" onSelect={onPointSelect} />
       break
     }
     case 'meridians': {
@@ -334,18 +337,19 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
       return null
   }
   return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <div className="relative px-3 pb-1 flex-shrink-0 z-20" onClick={e => e.stopPropagation()}>
         {menu}
       </div>
       <div style={{ flex: 1, minHeight: 0 }}>
         {diagram}
       </div>
+      {introLink}
     </div>
   )
 }
 
-export default function HeadTCMScalpAreas() {
+export default function HeadTCMScalpAreas({ onPointSelect }) {
   const [expandedId,     setExpandedId]     = useState(null)
   const [activeArea,     setActiveArea]     = useState(null)
   const [activeMeridian, setActiveMeridian] = useState(null)
@@ -376,6 +380,7 @@ export default function HeadTCMScalpAreas() {
     openMenu,
     onMenuToggle: id => setOpenMenu(open => (open === id ? null : id)),
     onMenuClose: () => setOpenMenu(null),
+    onPointSelect,
   }
 
   return (
