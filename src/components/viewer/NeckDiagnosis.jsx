@@ -221,6 +221,9 @@ export default function NeckDiagnosis({ onPointSelect }) {
             style={{
               viewTransitionName: `neck-tile-${expandedId}`,
               position: 'relative',
+              // Plain arrow over the white panel, as on the other grids — the
+              // backdrop's zoom-out cursor would otherwise be inherited.
+              cursor: 'default',
               width: '90%',
               height: '90%',
               background: '#ffffff',

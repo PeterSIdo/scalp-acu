@@ -453,9 +453,12 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
         </div>
       )}
 
+      {/* The row spans the tile's width above the diagram (z-10), so its empty
+          part lets clicks through — otherwise it swallows taps on the expanded
+          view's × button and white area. Only the controls catch clicks. */}
       {showMenu && (
         <div
-          className={`absolute left-3 right-3 z-10 flex items-center gap-2 ${showCornerLabels ? 'top-9' : 'top-3'}`}
+          className={`absolute left-3 right-3 z-10 flex items-center gap-2 pointer-events-none [&>*]:pointer-events-auto ${showCornerLabels ? 'top-9' : 'top-3'}`}
           onClick={e => e.stopPropagation()}
         >
           <HamburgerMenu
