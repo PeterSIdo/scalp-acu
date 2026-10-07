@@ -340,3 +340,11 @@ the app's canonical codes instead:
   names, functions phrases and TCM uses, plus body-part names. Picking a
   zone selects it (panel opens); picking a body part selects it on the
   motor strip. × clears text, zone and body part.
+
+## 2026-10-07 — Y-Points Diagnostic Flow
+
+- New `ynsa-neck-flow` category entry (user's 7-step Diagnostic flow) shown
+  via a "Diagnostic Flow" link right of "About Y Points" in the Y-Points
+  tile 1/1; same link style and InfoPanel category layout. InfoPanel
+  category layout gained an optional numbered `steps` list (bold label +
+  text); `CategoryIntroLink` takes an optional `className` to sit in a row.

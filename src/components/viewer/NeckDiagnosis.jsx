@@ -43,7 +43,10 @@ function renderTileContent(id, { activeMeridian, onMeridianChange, onDiagMeridia
             onMeridianChange={onMeridianChange}
             onPointSelect={onPointSelect}
           />
-          <CategoryIntroLink subgroupId="ynsa-neck" onSelect={intro => { onMeridianChange(null); onPointSelect?.(intro) }} />
+          <div className="absolute left-3 bottom-2 z-10 flex gap-4">
+            <CategoryIntroLink className="" subgroupId="ynsa-neck" onSelect={intro => { onMeridianChange(null); onPointSelect?.(intro) }} />
+            <CategoryIntroLink className="" subgroupId="ynsa-neck-flow" onSelect={intro => { onMeridianChange(null); onPointSelect?.(intro) }} />
+          </div>
         </div>
       )
     // Photo-reference companion to 'ynsa-y-side', same relationship as

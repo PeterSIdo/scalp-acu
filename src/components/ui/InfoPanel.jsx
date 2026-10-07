@@ -21,9 +21,19 @@ export default function InfoPanel({ point, isSubscribed }) {
           </span>
         </div>
 
-        {point.paragraphs.map((text, i) => (
+        {point.paragraphs?.map((text, i) => (
           <p key={i} className="text-black dark:text-gray-300 text-sm leading-relaxed mb-4">{text}</p>
         ))}
+
+        {point.steps?.length > 0 && (
+          <ol className="list-decimal pl-5 space-y-2 mb-4">
+            {point.steps.map((step, i) => (
+              <li key={i} className="text-black dark:text-gray-300 text-sm leading-relaxed">
+                <span className="font-semibold">{step.label}</span> {step.text}
+              </li>
+            ))}
+          </ol>
+        )}
 
         {point.groups?.length > 0 && (
           <>

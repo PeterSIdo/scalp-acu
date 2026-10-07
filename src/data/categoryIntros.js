@@ -55,6 +55,23 @@ export const CATEGORY_INTROS = {
       { label: 'Yang', items: ['Large Intestine', 'San Jiao (Triple Burner)', 'Small Intestine', 'Stomach', 'Gallbladder', 'Bladder'] },
     ],
   },
+  // Second link on the Y-Points tile, right of "About Y Points". `steps`
+  // render as a numbered list: bold label, then text.
+  'ynsa-neck-flow': {
+    isCategory: true,
+    linkLabel: 'Diagnostic Flow',
+    name: 'Diagnostic Flow',
+    system: 'YNSA',
+    steps: [
+      { label: 'Take the history.', text: 'Note the main complaint, the affected area and any internal or emotional symptoms.' },
+      { label: 'Palpate the diagnostic zones.', text: 'Use gentle, even pressure on both sides of the neck or abdomen, comparing left with right.' },
+      { label: 'Identify positive zones.', text: 'Look for tenderness, tension or hardness, and note which side and which zone it is in.' },
+      { label: 'Select the Y point.', text: 'Match each positive zone to its Y point on the same side, choosing Yin or Yang according to the zone.' },
+      { label: 'Needle and recheck.', text: 'Insert the needle, then palpate the zone again. Reduced tenderness confirms the correct point. If there is no change, adjust the needle position slightly and recheck.' },
+      { label: 'Add other points as needed.', text: 'Use the Basic, Sensory or Brain points for the specific complaint, for example the Basic points for pain in a body region.' },
+      { label: 'Reassess the complaint.', text: 'Check pain, range of movement or symptoms before ending the session.' },
+    ],
+  },
   'tcm-scalp-areas': {
     isCategory: true,
     linkLabel: 'About TCM Scalp Acupuncture',
