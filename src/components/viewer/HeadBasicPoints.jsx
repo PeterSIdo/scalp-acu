@@ -4,7 +4,7 @@ import HeadLateral from './HeadLateral'
 import HeadFrontal from './HeadFrontal'
 import HeadPosterior from './HeadPosterior'
 import { allPoints } from '../../data/points'
-import CategoryIntroLink from '../ui/CategoryIntroLink'
+import { CATEGORY_INTROS } from '../../data/categoryIntros'
 import InlineSearch from '../ui/InlineSearch'
 import { ZONES, ZONE_INFO, zoneOf } from '../../data/basicZones'
 
@@ -120,6 +120,54 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset, com
   )
 }
 
+// Hamburger (three-line) navigation menu for the tile. Each item switches
+// which control sits next to it: the zone dropdown, the indication search, the
+// category intro (opened in the InfoPanel), or — later — Case Studies.
+const NAV_ITEMS = [
+  { id: 'basic',  label: 'Basic Points' },
+  { id: 'search', label: 'Search by indications' },
+  { id: 'about',  label: 'About Basic Points' },
+  { id: 'cases',  label: 'Case Studies', disabled: true, note: 'Coming soon' },
+]
+
+function NavMenu({ open, activeMode, onToggle, onSelect }) {
+  return (
+    <div onClick={e => e.stopPropagation()}>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-label="Menu"
+        aria-expanded={open}
+        className={`flex flex-col justify-center gap-[3px] w-7 h-6 px-1.5 rounded bg-[#63ECE1] transition-colors ${open ? 'text-red-700' : 'text-black hover:text-red-700'}`}
+      >
+        <span className="block h-0.5 w-full rounded bg-current" />
+        <span className="block h-0.5 w-full rounded bg-current" />
+        <span className="block h-0.5 w-full rounded bg-current" />
+      </button>
+
+      {open && (
+        // Anchored to the shared row wrapper (see BasicPointMenu's dropdown).
+        <div className="absolute top-full left-0 w-52 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 z-30">
+          {NAV_ITEMS.map(item => (
+            <button
+              key={item.id}
+              type="button"
+              disabled={item.disabled}
+              onClick={() => onSelect(item.id)}
+              className={item.disabled
+                ? 'block w-full text-left px-3 py-1.5 text-xs font-semibold text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                : `${DROPDOWN_ITEM_CLASS(activeMode === item.id)} text-xs font-semibold`}
+            >
+              {item.label}
+              {item.note && <span className="ml-1.5 text-[11px] font-normal italic">({item.note})</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // Search matches indication text (e.g. "vertigo", "whiplash"). Sub-points
 // within a zone share identical indications text, so results are deduped to
 // one entry per matching zone.
@@ -140,7 +188,7 @@ function searchZones(query) {
 // activeZone/onZoneChange are shared across all three diagram tiles — selecting
 // a zone from the menu, or clicking any point on any tile, flashes every point
 // in that zone across the other tiles too (same idea as Y-Points' activeMeridian).
-function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, onPanelOpen, onPanelClose, searchQuery, onSearchQueryChange }, expanded = false) {
+function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, onPanelOpen, onPanelClose, searchQuery, onSearchQueryChange, navMode, onNavSelect }, expanded = false) {
   switch (id) {
     case 'menu':
       return (
@@ -148,8 +196,14 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
           {/* Line-art lateral head behind the controls — same points/zone
               flash as the Lateral tile, just the basic-side-outline.svg art. */}
           <HeadLateral variant="outline" onPointSelect={onPointSelect} highlightJsonId={highlightJsonId} pointFilter={pointFilter} activeSubgroup="ynsa-basic" activeZone={activeZone} onZoneChange={onZoneChange} />
-          <div className="absolute left-3 right-3 top-3 flex items-baseline gap-4" onClick={e => e.stopPropagation()}>
-            <BasicPointMenu
+          <div className="absolute left-3 right-3 top-3 flex items-center gap-2" onClick={e => e.stopPropagation()}>
+            <NavMenu
+              open={openPanel === 'nav'}
+              activeMode={navMode}
+              onToggle={() => onPanelToggle('nav')}
+              onSelect={onNavSelect}
+            />
+            {navMode === 'basic' && <BasicPointMenu
               activeZone={activeZone}
               menuOpen={openPanel === 'menu'}
               compact={!expanded}
@@ -162,12 +216,14 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
                 // zone's sub-points (A1..A8, D1..D6, etc.) share identical
                 // descriptive text, so the first match is a faithful stand-in.
                 const nextZone = activeZone === z ? null : z
+                onPanelClose()
                 onZoneChange(nextZone)
                 onPointSelect?.(nextZone ? allPoints.find(p => zoneOf(p.id) === nextZone) ?? null : null)
               }}
               onReset={() => { onZoneChange(null); onPointSelect?.(null) }}
-            />
-            <InlineSearch
+            />}
+            {navMode === 'search' && <InlineSearch
+              autoFocus={openPanel === 'search'}
               query={searchQuery}
               open={openPanel === 'search'}
               matches={searchZones(searchQuery)}
@@ -187,9 +243,8 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
                 onZoneChange(null)
                 onPointSelect?.(null)
               }}
-            />
+            />}
           </div>
-          <CategoryIntroLink subgroupId="ynsa-basic" onSelect={intro => { onZoneChange(null); onPointSelect?.(intro) }} />
         </div>
       )
     case 'lateral':
@@ -206,8 +261,25 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
 export default function HeadBasicPoints({ onPointSelect, highlightJsonId = null, pointFilter = null }) {
   const [expandedId,  setExpandedId]  = useState(null)
   const [activeZone,  setActiveZone]  = useState(null)
-  const [openPanel,   setOpenPanel]   = useState(null) // null | 'menu' | 'search'
+  const [openPanel,   setOpenPanel]   = useState(null) // null | 'nav' | 'menu' | 'search'
   const [searchQuery, setSearchQuery] = useState('')
+  const [navMode,     setNavMode]     = useState(null) // null | 'basic' | 'search'
+
+  // Hamburger picks: Basic Points / Search swap the control next to the
+  // hamburger and open it straight away; About shows the intro in the InfoPanel.
+  function selectNav(item) {
+    if (item === 'basic') {
+      setNavMode('basic')
+      setOpenPanel('menu')
+    } else if (item === 'search') {
+      setNavMode('search')
+      setOpenPanel('search')
+    } else if (item === 'about') {
+      setOpenPanel(null)
+      setActiveZone(null)
+      onPointSelect?.(CATEGORY_INTROS['ynsa-basic'])
+    }
+  }
 
   useEffect(() => {
     function onKeyDown(e) {
@@ -243,6 +315,8 @@ export default function HeadBasicPoints({ onPointSelect, highlightJsonId = null,
     onPanelClose: () => setOpenPanel(null),
     searchQuery,
     onSearchQueryChange: setSearchQuery,
+    navMode,
+    onNavSelect: selectNav,
   }
 
   return (

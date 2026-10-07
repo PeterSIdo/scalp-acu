@@ -25,6 +25,7 @@ export default function InlineSearch({
   query, open, matches, placeholder, emptyText, compact,
   onOpen, onQueryChange, onPick, onClear,
   dropdownClassName = 'left-0 right-0',
+  autoFocus = false,
 }) {
   const listRef = useRef(null)
   const fieldRef = useRef(null)
@@ -77,6 +78,7 @@ export default function InlineSearch({
         <textarea
           ref={fieldRef}
           rows={1}
+          autoFocus={autoFocus}
           value={query}
           title={query || undefined}
           onChange={e => { onQueryChange(e.target.value); onOpen() }}

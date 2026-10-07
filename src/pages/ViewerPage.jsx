@@ -132,6 +132,14 @@ export default function ViewerPage() {
   const [sheetDragY, setSheetDragY] = useState(0)
   const [sheetDragging, setSheetDragging] = useState(false)
   const sheetDragStartY = useRef(null)
+  const [sheetExpanded, setSheetExpanded] = useState(false)
+  const sheetRef = useRef(null)
+  const [sheetStartHeight, setSheetStartHeight] = useState(0)
+
+  function closeSheet() {
+    setSelectedPoint(null)
+    setSheetExpanded(false)
+  }
 
   function handleTouchStart(e) {
     swipeStartX.current = e.touches[0].clientX
@@ -152,19 +160,27 @@ export default function ViewerPage() {
 
   // Mobile bottom sheet — dragged only from its header (not the scrollable
   // body), so it doesn't fight with scrolling the point description.
+  // Two resting heights: collapsed (bottom third) and expanded (most of the
+  // screen). Swipe up expands; swipe down collapses, then dismisses.
   function handleSheetTouchStart(e) {
     sheetDragStartY.current = e.touches[0].clientY
+    setSheetStartHeight(sheetRef.current?.offsetHeight ?? 0)
     setSheetDragging(true)
   }
 
   function handleSheetTouchMove(e) {
     if (sheetDragStartY.current === null) return
-    const dy = e.touches[0].clientY - sheetDragStartY.current
-    if (dy > 0) setSheetDragY(dy)
+    setSheetDragY(e.touches[0].clientY - sheetDragStartY.current)
   }
 
   function handleSheetTouchEnd() {
-    if (sheetDragY > 80) setSelectedPoint(null)
+    if (sheetExpanded) {
+      if (sheetDragY > 80) setSheetExpanded(false)
+    } else if (sheetDragY < -60) {
+      setSheetExpanded(true)
+    } else if (sheetDragY > 80) {
+      closeSheet()
+    }
     setSheetDragY(0)
     setSheetDragging(false)
     sheetDragStartY.current = null
@@ -385,11 +401,18 @@ export default function ViewerPage() {
         </div>
       </div>
 
-      {/* Mobile bottom sheet — swipe the header down to dismiss */}
+      {/* Mobile bottom sheet — swipe the header up to expand, down to collapse / dismiss */}
       {selectedPoint && !mobileSearchOpen && isAvailable && (
         <div
-          className={`md:hidden fixed inset-x-0 bottom-0 z-50 flex flex-col bg-white dark:bg-gray-950 rounded-t-2xl shadow-2xl max-h-[34vh] ${sheetDragging ? '' : 'transition-transform duration-200'}`}
-          style={sheetDragY ? { transform: `translateY(${sheetDragY}px)` } : undefined}
+          ref={sheetRef}
+          className={`md:hidden fixed inset-x-0 bottom-0 z-50 flex flex-col bg-white dark:bg-gray-950 rounded-t-2xl shadow-2xl ${sheetExpanded ? 'h-[85vh]' : 'max-h-[34vh]'} ${sheetDragging ? '' : 'transition-[transform,height] duration-200'}`}
+          style={
+            !sheetDragY ? undefined
+            // Collapsed + dragging down: slide the sheet away (dismiss gesture).
+            : !sheetExpanded && sheetDragY > 0 ? { transform: `translateY(${sheetDragY}px)` }
+            // Otherwise the sheet follows the finger by resizing.
+            : { height: Math.min(Math.max(sheetStartHeight - sheetDragY, 120), window.innerHeight * 0.9), maxHeight: 'none' }
+          }
         >
           <div
             className="relative flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex-shrink-0 touch-none"
@@ -400,7 +423,7 @@ export default function ViewerPage() {
             <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 top-2" />
             <span className="text-sm font-semibold text-gray-900 dark:text-gray-200">{selectedPoint.name}</span>
             <button
-              onClick={() => setSelectedPoint(null)}
+              onClick={closeSheet}
               className="text-gray-400 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white text-2xl leading-none ml-3"
               aria-label="Close"
             >×</button>
