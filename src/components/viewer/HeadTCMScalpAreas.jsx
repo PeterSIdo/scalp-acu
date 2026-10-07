@@ -409,27 +409,30 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
     }
     // No menu of its own; its Motor and Sensory lines/labels select the same
     // shared activeArea as tile 1/1. Its head outline sits at the same
-    // coordinates as tcm-scalp-areas.svg, so sharing AREAS_VIEWBOX plus an
-    // invisible spacer as tall as tile 1/1's menu row (the search field box
-    // is the tallest item there) renders the head at the same size and
-    // position as tile 1/1.
+    // coordinates as tcm-scalp-areas.svg, so sharing AREAS_VIEWBOX renders
+    // the head at the same size and position as tile 1/1.
     case 'motor':
-      menu = (
-        <span aria-hidden="true" className="invisible inline-block px-2 py-1 border text-xs leading-4">Spacer</span>
-      )
       diagram = <AreasDiagram activeArea={activeArea} onSelect={toggleArea} Svg={MotorAreaMeasurementSvg} areas={MOTOR_DIAGRAM_AREAS} />
       break
     default:
       return null
   }
+  // The menu row floats over the diagram's top edge (as on the YNSA grids)
+  // instead of pushing it down, so every diagram gets the tile's full height
+  // and the heads stay the same size across tiles. The row itself lets
+  // clicks through to the diagram; only the controls catch them.
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div className="relative px-3 pt-3 pb-1 flex-shrink-0 z-20" onClick={e => e.stopPropagation()}>
-        {menu}
-      </div>
-      <div style={{ flex: 1, minHeight: 0 }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <div style={{ position: 'absolute', inset: 0 }}>
         {diagram}
       </div>
+      {menu && (
+        <div className="absolute left-0 right-0 top-0 px-3 pt-3 z-20 pointer-events-none">
+          <div className="w-fit pointer-events-auto" onClick={e => e.stopPropagation()}>
+            {menu}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
