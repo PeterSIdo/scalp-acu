@@ -6,6 +6,8 @@ import HeadPosterior from './HeadPosterior'
 import { allPoints } from '../../data/points'
 import { CATEGORY_INTROS } from '../../data/categoryIntros'
 import InlineSearch from '../ui/InlineSearch'
+import HamburgerMenu from '../ui/HamburgerMenu'
+import { CASE_STUDIES_ITEM } from '../../data/navItems'
 import { ZONES, ZONE_INFO, zoneOf } from '../../data/basicZones'
 
 // 2x2 grid, row-major: menu (outline head + controls) | Lateral / Frontal | Posterior.
@@ -120,53 +122,14 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset, com
   )
 }
 
-// Hamburger (three-line) navigation menu for the tile. Each item switches
-// which control sits next to it: the zone dropdown, the indication search, the
-// category intro (opened in the InfoPanel), or — later — Case Studies.
+// Hamburger menu items. Basic Points / Search swap the control shown beside
+// the hamburger; About opens the category intro in the InfoPanel.
 const NAV_ITEMS = [
   { id: 'basic',  label: 'Basic Points' },
   { id: 'search', label: 'Search by indications' },
   { id: 'about',  label: 'About Basic Points' },
-  { id: 'cases',  label: 'Case Studies', disabled: true, note: 'Coming soon' },
+  CASE_STUDIES_ITEM,
 ]
-
-function NavMenu({ open, activeMode, onToggle, onSelect }) {
-  return (
-    <div onClick={e => e.stopPropagation()}>
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-label="Menu"
-        aria-expanded={open}
-        className={`flex flex-col justify-center gap-[3px] w-7 h-6 px-1.5 rounded bg-[#63ECE1] transition-colors ${open ? 'text-red-700' : 'text-black hover:text-red-700'}`}
-      >
-        <span className="block h-0.5 w-full rounded bg-current" />
-        <span className="block h-0.5 w-full rounded bg-current" />
-        <span className="block h-0.5 w-full rounded bg-current" />
-      </button>
-
-      {open && (
-        // Anchored to the shared row wrapper (see BasicPointMenu's dropdown).
-        <div className="absolute top-full left-0 w-52 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 z-30">
-          {NAV_ITEMS.map(item => (
-            <button
-              key={item.id}
-              type="button"
-              disabled={item.disabled}
-              onClick={() => onSelect(item.id)}
-              className={item.disabled
-                ? 'block w-full text-left px-3 py-1.5 text-xs font-semibold text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                : `${DROPDOWN_ITEM_CLASS(activeMode === item.id)} text-xs font-semibold`}
-            >
-              {item.label}
-              {item.note && <span className="ml-1.5 text-[11px] font-normal italic">({item.note})</span>}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
 
 // Search matches indication text (e.g. "vertigo", "whiplash"). Sub-points
 // within a zone share identical indications text, so results are deduped to
@@ -197,9 +160,10 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
               flash as the Lateral tile, just the basic-side-outline.svg art. */}
           <HeadLateral variant="outline" onPointSelect={onPointSelect} highlightJsonId={highlightJsonId} pointFilter={pointFilter} activeSubgroup="ynsa-basic" activeZone={activeZone} onZoneChange={onZoneChange} />
           <div className="absolute left-3 right-3 top-3 flex items-center gap-2" onClick={e => e.stopPropagation()}>
-            <NavMenu
+            <HamburgerMenu
+              items={NAV_ITEMS}
               open={openPanel === 'nav'}
-              activeMode={navMode}
+              activeId={navMode}
               onToggle={() => onPanelToggle('nav')}
               onSelect={onNavSelect}
             />

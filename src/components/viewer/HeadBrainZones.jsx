@@ -3,6 +3,8 @@ import { flushSync } from 'react-dom'
 import BrainZonesSvg from '../../assets/diagrams/brain-zones.svg?react'
 import BrainZones2Svg from '../../assets/diagrams/brain-zones2.svg?react'
 import InlineSearch from '../ui/InlineSearch'
+import HamburgerMenu from '../ui/HamburgerMenu'
+import { CASE_STUDIES_ITEM } from '../../data/navItems'
 
 // 2x2 grid like TCM Scalp Areas, so tiles are the same size there and here.
 // Row 1: brain-zones diagram with clickable zones + motor-strip body parts
@@ -337,9 +339,18 @@ function searchBrainZones(query) {
   return [...zones, ...parts]
 }
 
+// Hamburger menu items — same flow as the other grids. No About entry yet:
+// there is no Brain Zones category intro to show.
+const NAV_ITEMS = [
+  { id: 'zones',  label: 'Brain Zones' },
+  { id: 'parts',  label: 'Body Parts' },
+  { id: 'search', label: 'Search by zones, functions' },
+  CASE_STUDIES_ITEM,
+]
+
 // Same layout as TCM Scalp Areas' tile 1/1: menu row (menus + search) above
 // the diagram rather than floating over it.
-function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartChange, openMenu, onMenuToggle, onMenuOpen, onMenuClose, searchQuery, onSearchQueryChange }, expanded = false) {
+function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartChange, openMenu, onMenuToggle, onMenuOpen, onMenuClose, searchQuery, onSearchQueryChange, navMode, onNavSelect }, expanded = false) {
   switch (id) {
     case 'zones': {
       const pick = key => {
@@ -352,7 +363,15 @@ function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartCha
         <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
           <div className="relative px-3 pb-1 flex-shrink-0 z-20" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-2">
-              <DropdownMenu
+              <HamburgerMenu
+                items={NAV_ITEMS}
+                open={openMenu === 'nav'}
+                activeId={navMode}
+                dropdownClassName="left-3"
+                onToggle={() => onMenuToggle('nav')}
+                onSelect={onNavSelect}
+              />
+              {navMode === 'zones' && <DropdownMenu
                 items={ZONE_ITEMS}
                 placeholder="Brain Zone"
                 activeKey={activeZone}
@@ -361,8 +380,8 @@ function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartCha
                 onToggle={() => onMenuToggle('zones')}
                 onSelect={num => { onMenuClose(); onZoneChange(activeZone === num ? null : num) }}
                 onReset={() => onZoneChange(null)}
-              />
-              <DropdownMenu
+              />}
+              {navMode === 'parts' && <DropdownMenu
                 items={PART_ITEMS}
                 placeholder="Body Part"
                 activeKey={activePart}
@@ -371,8 +390,9 @@ function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartCha
                 onToggle={() => onMenuToggle('parts')}
                 onSelect={name => { onMenuClose(); onPartChange(activePart === name ? null : name) }}
                 onReset={() => onPartChange(null)}
-              />
-              <InlineSearch
+              />}
+              {navMode === 'search' && <InlineSearch
+                autoFocus={openMenu === 'search'}
                 query={searchQuery}
                 open={openMenu === 'search'}
                 matches={searchBrainZones(searchQuery)}
@@ -384,7 +404,7 @@ function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartCha
                 onQueryChange={onSearchQueryChange}
                 onPick={pick}
                 onClear={() => { onSearchQueryChange(''); onMenuClose(); onZoneChange(null); onPartChange(null) }}
-              />
+              />}
             </div>
           </div>
           <div style={{ flex: 1, minHeight: 0 }}>
@@ -406,6 +426,13 @@ export default function HeadBrainZones({ onPointSelect }) {
   const [activePart, setActivePart] = useState(null)
   const [openMenu,   setOpenMenu]   = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [navMode,    setNavMode]    = useState(null) // null | 'zones' | 'parts' | 'search'
+
+  // Hamburger picks swap the control beside the hamburger and open it.
+  function selectNav(item) {
+    setNavMode(item)
+    setOpenMenu(item)
+  }
 
   useEffect(() => {
     function onKeyDown(e) {
@@ -443,6 +470,8 @@ export default function HeadBrainZones({ onPointSelect }) {
     onMenuClose: () => setOpenMenu(null),
     searchQuery,
     onSearchQueryChange: setSearchQuery,
+    navMode,
+    onNavSelect: selectNav,
   }
 
   return (

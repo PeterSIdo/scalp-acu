@@ -4,8 +4,10 @@ import HeadLateral from './HeadLateral'
 import HeadFrontal from './HeadFrontal'
 import HeadPosterior from './HeadPosterior'
 import { allPoints } from '../../data/points'
-import CategoryIntroLink from '../ui/CategoryIntroLink'
+import { CATEGORY_INTROS } from '../../data/categoryIntros'
 import InlineSearch from '../ui/InlineSearch'
+import HamburgerMenu from '../ui/HamburgerMenu'
+import { CASE_STUDIES_ITEM } from '../../data/navItems'
 
 // 2x2 grid, row-major: menu | Lateral / Frontal | Posterior. Same shape and
 // tile order as Basic/Sensory Points. Brain points aren't visible from the
@@ -149,7 +151,15 @@ function searchPoints(query) {
 // matching point on the other tile too (when it has a matching coordinate —
 // yin/yang are separate records, so a given point usually only lights up
 // on one of Frontal/Posterior, not both).
-function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, onPanelOpen, onPanelClose, searchQuery, onSearchQueryChange }, expanded = false) {
+// Hamburger menu items — same flow as Basic Points.
+const NAV_ITEMS = [
+  { id: 'brain',  label: 'Brain Points' },
+  { id: 'search', label: 'Search by points, indications' },
+  { id: 'about',  label: 'About Brain Points' },
+  CASE_STUDIES_ITEM,
+]
+
+function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, onPanelOpen, onPanelClose, searchQuery, onSearchQueryChange, navMode, onNavSelect }, expanded = false) {
   switch (id) {
     case 'menu':
       return (
@@ -159,20 +169,29 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
               activeSubgroup="ynsa-brain" hides every point and pointFilter
               matches none of the lateral overlay's points. */}
           <HeadLateral variant="outline" pointFilter={pointFilter} activeSubgroup="ynsa-brain" />
-          <div className="absolute left-3 right-3 top-3 flex items-baseline gap-4" onClick={e => e.stopPropagation()}>
-            <BrainPointMenu
+          <div className="absolute left-3 right-3 top-3 flex items-center gap-2" onClick={e => e.stopPropagation()}>
+            <HamburgerMenu
+              items={NAV_ITEMS}
+              open={openPanel === 'nav'}
+              activeId={navMode}
+              onToggle={() => onPanelToggle('nav')}
+              onSelect={onNavSelect}
+            />
+            {navMode === 'brain' && <BrainPointMenu
               activePointId={activePointId}
               menuOpen={openPanel === 'menu'}
               compact={!expanded}
               onToggle={() => onPanelToggle('menu')}
               onSelect={pointId => {
                 const nextId = activePointId === pointId ? null : pointId
+                onPanelClose()
                 onPointIdChange(nextId)
                 onPointSelect?.(nextId ? allPoints.find(p => p.id === nextId) ?? null : null)
               }}
               onReset={() => { onPointIdChange(null); onPointSelect?.(null) }}
-            />
-            <InlineSearch
+            />}
+            {navMode === 'search' && <InlineSearch
+              autoFocus={openPanel === 'search'}
               query={searchQuery}
               open={openPanel === 'search'}
               matches={searchPoints(searchQuery)}
@@ -192,9 +211,8 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
                 onPointIdChange(null)
                 onPointSelect?.(null)
               }}
-            />
+            />}
           </div>
-          <CategoryIntroLink subgroupId="ynsa-brain" onSelect={intro => { onPointIdChange(null); onPointSelect?.(intro) }} />
         </div>
       )
     // Clicking a point directly on a diagram must also update activePointId
@@ -217,8 +235,25 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
 export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null, pointFilter = null }) {
   const [expandedId,    setExpandedId]    = useState(null)
   const [activePointId, setActivePointId] = useState(null)
-  const [openPanel,     setOpenPanel]     = useState(null) // null | 'menu' | 'search'
+  const [openPanel,     setOpenPanel]     = useState(null) // null | 'nav' | 'menu' | 'search'
   const [searchQuery,   setSearchQuery]   = useState('')
+  const [navMode, setNavMode] = useState(null) // null | 'brain' | 'search'
+
+  // Hamburger picks: the point list / search swap the control beside the
+  // hamburger and open straight away; About shows the intro in the InfoPanel.
+  function selectNav(item) {
+    if (item === 'brain') {
+      setNavMode('brain')
+      setOpenPanel('menu')
+    } else if (item === 'search') {
+      setNavMode('search')
+      setOpenPanel('search')
+    } else if (item === 'about') {
+      setOpenPanel(null)
+      setActivePointId(null)
+      onPointSelect?.(CATEGORY_INTROS['ynsa-brain'])
+    }
+  }
 
   useEffect(() => {
     function onKeyDown(e) {
@@ -255,6 +290,8 @@ export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null,
     onPanelClose: () => setOpenPanel(null),
     searchQuery,
     onSearchQueryChange: setSearchQuery,
+    navMode,
+    onNavSelect: selectNav,
   }
 
   return (

@@ -3,7 +3,9 @@ import { flushSync } from 'react-dom'
 import ScalpAreasSvg from '../../assets/diagrams/tcm-scalp-areas.svg?react'
 import ScalpMeridiansSvg from '../../assets/diagrams/tcm-scalp-meridians.svg?react'
 import MotorAreaMeasurementSvg from '../../assets/diagrams/motor-area-measurement.svg?react'
-import CategoryIntroLink from '../ui/CategoryIntroLink'
+import { CATEGORY_INTROS } from '../../data/categoryIntros'
+import HamburgerMenu from '../ui/HamburgerMenu'
+import { CASE_STUDIES_ITEM } from '../../data/navItems'
 import InlineSearch from '../ui/InlineSearch'
 import { TCM_AREA_INFO } from '../../data/tcmAreaInfo'
 
@@ -335,17 +337,33 @@ function MeridiansDiagram({ activeMeridian, onSelect }) {
   )
 }
 
+// Hamburger menu items for the areas tile — same flow as the YNSA grids.
+const NAV_ITEMS = [
+  { id: 'areas',  label: 'TCM Areas' },
+  { id: 'search', label: 'Search by areas, indications' },
+  { id: 'about',  label: 'About TCM Scalp Acupuncture' },
+  CASE_STUDIES_ITEM,
+]
+
 // Both diagram tiles use the same layout (menu row above the diagram, same
 // viewBox size), so the heads render at the same size in 1/1 and 1/2.
-function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMeridianChange, openMenu, onMenuToggle, onMenuOpen, onMenuClose, onPointSelect, searchQuery, onSearchQueryChange }, expanded = false) {
-  let menu, diagram, introLink = null
+function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMeridianChange, openMenu, onMenuToggle, onMenuOpen, onMenuClose, onPointSelect, searchQuery, onSearchQueryChange, navMode, onNavSelect }, expanded = false) {
+  let menu, diagram
   const selectArea = area => { onAreaChange(area); onPointSelect?.(area ? TCM_AREA_INFO[area] ?? null : null) }
   const toggleArea = area => { onMenuClose(); selectArea(activeArea === area ? null : area) }
   switch (id) {
     case 'areas': {
       menu = (
         <div className="flex items-center gap-2">
-          <TCMMenu
+          <HamburgerMenu
+            items={NAV_ITEMS}
+            open={openMenu === 'nav'}
+            activeId={navMode}
+            dropdownClassName="left-3"
+            onToggle={() => onMenuToggle('nav')}
+            onSelect={onNavSelect}
+          />
+          {navMode === 'areas' && <TCMMenu
             items={AREA_ITEMS}
             placeholder="TCM Area"
             activeKey={activeArea}
@@ -354,8 +372,9 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
             onToggle={() => onMenuToggle('areas')}
             onSelect={toggleArea}
             onReset={() => selectArea(null)}
-          />
-          <InlineSearch
+          />}
+          {navMode === 'search' && <InlineSearch
+            autoFocus={openMenu === 'search'}
             query={searchQuery}
             open={openMenu === 'search'}
             matches={searchAreas(searchQuery)}
@@ -367,11 +386,10 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
             onQueryChange={onSearchQueryChange}
             onPick={area => { onMenuClose(); selectArea(area) }}
             onClear={() => { onSearchQueryChange(''); onMenuClose(); selectArea(null) }}
-          />
+          />}
         </div>
       )
       diagram = <AreasDiagram activeArea={activeArea} onSelect={toggleArea} />
-      introLink = <CategoryIntroLink subgroupId="tcm-scalp-areas" onSelect={intro => { onAreaChange(null); onPointSelect?.(intro) }} />
       break
     }
     case 'meridians': {
@@ -414,7 +432,6 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
       <div style={{ flex: 1, minHeight: 0 }}>
         {diagram}
       </div>
-      {introLink}
     </div>
   )
 }
@@ -425,6 +442,20 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
   const [activeMeridian, setActiveMeridian] = useState(null)
   const [openMenu,       setOpenMenu]       = useState(null)
   const [searchQuery,    setSearchQuery]    = useState('')
+  const [navMode,        setNavMode]        = useState(null) // null | 'areas' | 'search'
+
+  // Hamburger picks: TCM Areas / Search swap the control beside the
+  // hamburger and open straight away; About shows the intro in the InfoPanel.
+  function selectNav(item) {
+    if (item === 'areas' || item === 'search') {
+      setNavMode(item)
+      setOpenMenu(item)
+    } else if (item === 'about') {
+      setOpenMenu(null)
+      setActiveArea(null)
+      onPointSelect?.(CATEGORY_INTROS['tcm-scalp-areas'])
+    }
+  }
 
   useEffect(() => {
     function onKeyDown(e) {
@@ -455,6 +486,8 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
     onPointSelect,
     searchQuery,
     onSearchQueryChange: setSearchQuery,
+    navMode,
+    onNavSelect: selectNav,
   }
 
   return (

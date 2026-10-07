@@ -6,7 +6,8 @@ import AbdominalRealSvg from '../../assets/diagrams/abdomial-real.svg?react'
 import YNSAYRealSvg from '../../assets/diagrams/YNSA-Y-real.svg?react'
 import HeadYPoints, { Y_REAL_POINTS, Y_REAL_VIEWBOX } from './HeadYPoints'
 import NeckMeridianMap, { REAL_POINTS, ABDOMEN_POINTS, ABDOMEN_REAL_POINTS } from './NeckMeridianMap'
-import CategoryIntroLink from '../ui/CategoryIntroLink'
+import { CATEGORY_INTROS } from '../../data/categoryIntros'
+import { CASE_STUDIES_ITEM } from '../../data/navItems'
 import { yPointForMeridian } from '../../data/points'
 
 // 3x2 grid of neck references, in row-major order. Ids with no case in
@@ -29,6 +30,7 @@ const TILE_LABELS = {
 // matching point on diag and updates the Meridian menu, the same way Basic
 // Points flashes a search hit.
 function renderTileContent(id, { activeMeridian, onMeridianChange, onDiagMeridianChange, onPointSelect }) {
+  const showIntro = subgroupId => { onMeridianChange(null); onPointSelect?.(CATEGORY_INTROS[subgroupId]) }
   switch (id) {
     // YNSA-Y-Side.svg (2026-09-25 re-export) places its own Weak/Strong
     // Yin/Yang labels just above and below the head, so the diagram is shown
@@ -37,17 +39,16 @@ function renderTileContent(id, { activeMeridian, onMeridianChange, onDiagMeridia
     // The SVG labels replace the old plain-HTML corner labels here.
     case 'ynsa-y-side':
       return (
-        <div className="relative w-full h-full">
-          <HeadYPoints
-            activeMeridian={activeMeridian}
-            onMeridianChange={onMeridianChange}
-            onPointSelect={onPointSelect}
-          />
-          <div className="absolute left-3 bottom-2 z-10 flex gap-4">
-            <CategoryIntroLink className="" subgroupId="ynsa-neck" onSelect={intro => { onMeridianChange(null); onPointSelect?.(intro) }} />
-            <CategoryIntroLink className="" subgroupId="ynsa-neck-flow" onSelect={intro => { onMeridianChange(null); onPointSelect?.(intro) }} />
-          </div>
-        </div>
+        <HeadYPoints
+          activeMeridian={activeMeridian}
+          onMeridianChange={onMeridianChange}
+          onPointSelect={onPointSelect}
+          navExtraItems={[
+            { id: 'about', label: 'About Y Points',   onSelect: () => showIntro('ynsa-neck') },
+            { id: 'flow',  label: 'Diagnostic Flow', onSelect: () => showIntro('ynsa-neck-flow') },
+            CASE_STUDIES_ITEM,
+          ]}
+        />
       )
     // Photo-reference companion to 'ynsa-y-side', same relationship as
     // diag/real below — its own SVG shares the ids of

@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { allPoints, yPointForMeridian } from '../../data/points'
 import { MERIDIANS } from '../../data/meridians'
 import InlineSearch from '../ui/InlineSearch'
+import HamburgerMenu from '../ui/HamburgerMenu'
 import YNSAYSideSvg from '../../assets/diagrams/YNSA-Y-Side.svg?react'
 
 const RED  = '#FF0808'
@@ -344,12 +345,34 @@ function searchMeridians(query) {
 // split). showMenu hides the Meridian/Search dropdown chrome for that
 // second tile — it shares activeMeridian with the primary tile instead of
 // duplicating the controls.
-export default function HeadYPoints({ onPointSelect, highlightJsonId = null, activeMeridian: controlledMeridian, onMeridianChange, diagramScale = 1, hideCornerLabels = false, showCornerLabels = false, Background = YNSAYSideSvg, points = POINTS, viewBox = SIDE_VIEWBOX, showMenu = true, showMeridianLabel = false }) {
+// navExtraItems: extra hamburger entries after Meridians / Search, as
+// { id, label, onSelect?, disabled?, note? } — the caller supplies the
+// category intros (About, Diagnostic Flow) and Case Studies.
+export default function HeadYPoints({ onPointSelect, highlightJsonId = null, activeMeridian: controlledMeridian, onMeridianChange, diagramScale = 1, hideCornerLabels = false, showCornerLabels = false, Background = YNSAYSideSvg, points = POINTS, viewBox = SIDE_VIEWBOX, showMenu = true, showMeridianLabel = false, navExtraItems = [] }) {
   const [selectedId,       setSelectedId]       = useState(null)
   const [hoveredId,        setHoveredId]        = useState(null)
   const [internalMeridian, setInternalMeridian] = useState(null)
-  const [openPanel,        setOpenPanel]        = useState(null) // null | 'meridian' | 'search'
+  const [openPanel,        setOpenPanel]        = useState(null) // null | 'nav' | 'meridian' | 'search'
   const [searchQuery,      setSearchQuery]      = useState('')
+  const [navMode,          setNavMode]          = useState(null) // null | 'meridian' | 'search'
+
+  const navItems = [
+    { id: 'meridian', label: 'Meridians' },
+    { id: 'search',   label: 'Search by meridians, indications' },
+    ...navExtraItems,
+  ]
+
+  // Hamburger picks: Meridians / Search swap the control beside the
+  // hamburger and open straight away; extra items run their own onSelect.
+  function selectNav(id) {
+    if (id === 'meridian' || id === 'search') {
+      setNavMode(id)
+      setOpenPanel(id)
+    } else {
+      setOpenPanel(null)
+      navExtraItems.find(item => item.id === id)?.onSelect?.()
+    }
+  }
 
   const activeMeridian = controlledMeridian !== undefined ? controlledMeridian : internalMeridian
 
@@ -432,17 +455,25 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
 
       {showMenu && (
         <div
-          className={`absolute left-3 right-3 z-10 flex items-baseline gap-4 ${showCornerLabels ? 'top-9' : 'top-3'}`}
+          className={`absolute left-3 right-3 z-10 flex items-center gap-2 ${showCornerLabels ? 'top-9' : 'top-3'}`}
           onClick={e => e.stopPropagation()}
         >
-          <MeridianMenu
+          <HamburgerMenu
+            items={navItems}
+            open={openPanel === 'nav'}
+            activeId={navMode}
+            onToggle={() => setOpenPanel(p => p === 'nav' ? null : 'nav')}
+            onSelect={selectNav}
+          />
+          {navMode === 'meridian' && <MeridianMenu
             activeMeridian={activeMeridian}
             menuOpen={openPanel === 'meridian'}
             onToggle={() => setOpenPanel(p => p === 'meridian' ? null : 'meridian')}
             onSelect={handleMeridianSelect}
             onReset={handleReset}
-          />
-          <InlineSearch
+          />}
+          {navMode === 'search' && <InlineSearch
+            autoFocus={openPanel === 'search'}
             query={searchQuery}
             open={openPanel === 'search'}
             matches={searchMeridians(searchQuery)}
@@ -452,7 +483,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
             onQueryChange={setSearchQuery}
             onPick={code => handleMeridianSelect(code, { keepQuery: true })}
             onClear={handleReset}
-          />
+          />}
         </div>
       )}
 
