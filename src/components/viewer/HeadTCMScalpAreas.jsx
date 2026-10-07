@@ -417,13 +417,14 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
     default:
       return null
   }
-  // The menu row floats over the diagram's top edge (as on the YNSA grids)
-  // instead of pushing it down, so every diagram gets the tile's full height
-  // and the heads stay the same size across tiles. The row itself lets
-  // clicks through to the diagram; only the controls catch them.
+  // The menu row floats over the tile; the diagram starts just below it
+  // (top: 40px clears the 26px controls + 12px padding) so the text above
+  // the head is never covered. Every tile uses the same offset, so the heads
+  // stay the same size. The row itself lets clicks through to the diagram;
+  // only the controls catch them.
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <div style={{ position: 'absolute', inset: 0 }}>
+      <div style={{ position: 'absolute', top: 40, left: 0, right: 0, bottom: 0 }}>
         {diagram}
       </div>
       {menu && (
