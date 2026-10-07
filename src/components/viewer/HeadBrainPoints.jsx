@@ -7,6 +7,7 @@ import { allPoints } from '../../data/points'
 import { CATEGORY_INTROS } from '../../data/categoryIntros'
 import InlineSearch from '../ui/InlineSearch'
 import HamburgerMenu from '../ui/HamburgerMenu'
+import TileTitle from '../ui/TileTitle'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
 
 // 2x2 grid, row-major: menu | Lateral / Frontal | Posterior. Same shape and
@@ -30,6 +31,11 @@ const BRAIN_POINT_IDS = [
 // compact next to the Search trigger, matching Basic/Sensory Point's
 // short triggers.
 const shortLabel = name => name?.replace(/ Point\b/, '') ?? ''
+
+// Every tile carries the same bottom title strip (TileTitle); the body
+// above it centres the tile's diagram/menu content.
+const TILE_TITLE = 'Brain Points'
+const TILE_BODY_STYLE = { flex: 1, minHeight: 0, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }
 
 // Scoped so it only affects transitions started while this screen is mounted.
 const TRANSITION_STYLE = `
@@ -331,8 +337,8 @@ export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null,
                 border: expandable ? '1px solid rgba(148, 163, 184, 0.2)' : 'none',
                 borderRadius: 10,
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                flexDirection: 'column',
+                alignItems: 'stretch',
                 background: id === 'menu' ? '#ffffff' : expandable ? '#ffffff' : 'transparent',
                 cursor: expandable ? 'pointer' : 'default',
                 overflow: id === 'menu' ? 'visible' : 'hidden',
@@ -341,7 +347,12 @@ export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null,
               onMouseEnter={e => { if (expandable) { e.currentTarget.style.transform = 'scale(1.015)'; e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.5)' } }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.2)' }}
             >
-              {!isExpanded && content}
+              {!isExpanded && (
+                <>
+                  <div style={TILE_BODY_STYLE}>{content}</div>
+                  <TileTitle className="rounded-b-[9px]">{TILE_TITLE}</TileTitle>
+                </>
+              )}
             </div>
           )
         })}
@@ -370,13 +381,14 @@ export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null,
               background: expandedId === 'menu' ? '#f1f5f9' : '#ffffff',
               borderRadius: 12,
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              flexDirection: 'column',
+              alignItems: 'stretch',
               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
               overflow: expandedId === 'menu' ? 'visible' : 'hidden',
             }}
           >
-            {renderTileContent(expandedId, tileCtx, true)}
+            <div style={TILE_BODY_STYLE}>{renderTileContent(expandedId, tileCtx, true)}</div>
+            <TileTitle className="rounded-b-[11px]">{TILE_TITLE}</TileTitle>
             <button
               onClick={e => { e.stopPropagation(); toggle(expandedId) }}
               aria-label="Close"

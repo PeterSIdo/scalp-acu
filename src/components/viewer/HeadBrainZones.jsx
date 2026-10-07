@@ -4,7 +4,7 @@ import BrainZonesSvg from '../../assets/diagrams/brain-zones.svg?react'
 import BrainZones2Svg from '../../assets/diagrams/brain-zones2.svg?react'
 import InlineSearch from '../ui/InlineSearch'
 import HamburgerMenu from '../ui/HamburgerMenu'
-import { CASE_STUDIES_ITEM } from '../../data/navItems'
+import TileTitle from '../ui/TileTitle'
 
 // 2x2 grid like TCM Scalp Areas, so tiles are the same size there and here.
 // Row 1: brain-zones diagram with clickable zones + motor-strip body parts
@@ -115,7 +115,7 @@ const DROPDOWN_ITEM_CLASS = (active) => `block w-full text-left px-3 py-1.5 text
     : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
 }`
 
-// App-level tile title, rendered above the diagram instead of baked into the
+// App-level tile title, rendered below the diagram instead of baked into the
 // SVG artwork — stays legible at any tile size and doesn't eat into the
 // drawing's own canvas. Only tiles with a real diagram get one.
 const TILE_TITLES = {
@@ -123,7 +123,6 @@ const TILE_TITLES = {
   zones2: 'Brain Zones',
 }
 
-const TILE_TITLE_CLASS = 'text-xs font-medium text-gray-500 text-center px-2 pt-2 pb-1 flex-shrink-0'
 
 // Same pulsing highlight + name label as the Abdominal Diagnostic Map
 // (NeckMeridianMap), but traced around each ellipse instead of a circle.
@@ -339,13 +338,12 @@ function searchBrainZones(query) {
   return [...zones, ...parts]
 }
 
-// Hamburger menu items — same flow as the other grids. No About entry yet:
-// there is no Brain Zones category intro to show.
+// Hamburger menu items — same flow as the other grids. No About entry yet
+// (there is no Brain Zones category intro to show) and no Case Studies.
 const NAV_ITEMS = [
   { id: 'zones',  label: 'Brain Zones' },
   { id: 'parts',  label: 'Body Parts' },
   { id: 'search', label: 'Search by zones, functions' },
-  CASE_STUDIES_ITEM,
 ]
 
 // Same layout as TCM Scalp Areas' tile 1/1: menu row (menus + search) above
@@ -361,7 +359,7 @@ function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartCha
       }
       return (
         <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-          <div className="relative px-3 pb-1 flex-shrink-0 z-20" onClick={e => e.stopPropagation()}>
+          <div className="relative px-3 pt-3 pb-1 flex-shrink-0 z-20" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-2">
               <HamburgerMenu
                 items={NAV_ITEMS}
@@ -522,12 +520,12 @@ export default function HeadBrainZones({ onPointSelect }) {
               onMouseEnter={e => { if (expandable) { e.currentTarget.style.transform = 'scale(1.015)'; e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.5)' } }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.2)' }}
             >
-              {!isExpanded && TILE_TITLES[id] && <div className={TILE_TITLE_CLASS}>{TILE_TITLES[id]}</div>}
               {!isExpanded && (
                 <div style={{ flex: 1, minHeight: 0, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {content}
                 </div>
               )}
+              {!isExpanded && TILE_TITLES[id] && <TileTitle>{TILE_TITLES[id]}</TileTitle>}
             </div>
           )
         })}
@@ -563,10 +561,10 @@ export default function HeadBrainZones({ onPointSelect }) {
               overflow: 'hidden',
             }}
           >
-            {TILE_TITLES[expandedId] && <div className={TILE_TITLE_CLASS}>{TILE_TITLES[expandedId]}</div>}
             <div style={{ flex: 1, minHeight: 0, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {renderTileContent(expandedId, tileCtx, true)}
             </div>
+            {TILE_TITLES[expandedId] && <TileTitle>{TILE_TITLES[expandedId]}</TileTitle>}
             <button
               onClick={e => { e.stopPropagation(); toggle(expandedId) }}
               aria-label="Close"

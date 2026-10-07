@@ -5,6 +5,7 @@ import ScalpMeridiansSvg from '../../assets/diagrams/tcm-scalp-meridians.svg?rea
 import MotorAreaMeasurementSvg from '../../assets/diagrams/motor-area-measurement.svg?react'
 import { CATEGORY_INTROS } from '../../data/categoryIntros'
 import HamburgerMenu from '../ui/HamburgerMenu'
+import TileTitle from '../ui/TileTitle'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
 import InlineSearch from '../ui/InlineSearch'
 import { TCM_AREA_INFO } from '../../data/tcmAreaInfo'
@@ -108,18 +109,15 @@ const DROPDOWN_ITEM_CLASS = (active) => `block w-full text-left px-3 py-1.5 text
     : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
 }`
 
-// App-level tile title, rendered above the diagram instead of baked into the
+// App-level tile title, rendered below the diagram instead of baked into the
 // SVG artwork — stays legible at any tile size and doesn't eat into the
-// drawing's own canvas. Lift TILE_TITLE_CLASS +
-// this row layout into Basic/Sensory/Brain/Y-Points too if/when those get
-// standardized on the same pattern.
+// drawing's own canvas. Shown as a TileTitle strip, as on the YNSA grids.
 const TILE_TITLES = {
   areas: 'Areas in Chinese Scalp Acupuncture',
   motor: 'Motor Area Measurement',
   meridians: 'TCM Meridians on the Head',
 }
 
-const TILE_TITLE_CLASS = 'text-xs font-medium text-gray-500 text-center px-2 pt-2 pb-1 flex-shrink-0'
 
 // Same trigger+dropdown shape as Basic/Sensory/Brain Points' menus, but a
 // plain name list. Shared by the areas and meridians tiles.
@@ -426,7 +424,7 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
   }
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div className="relative px-3 pb-1 flex-shrink-0 z-20" onClick={e => e.stopPropagation()}>
+      <div className="relative px-3 pt-3 pb-1 flex-shrink-0 z-20" onClick={e => e.stopPropagation()}>
         {menu}
       </div>
       <div style={{ flex: 1, minHeight: 0 }}>
@@ -538,12 +536,12 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
               onMouseEnter={e => { if (expandable) { e.currentTarget.style.transform = 'scale(1.015)'; e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.5)' } }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.2)' }}
             >
-              {!isExpanded && TILE_TITLES[id] && <div className={TILE_TITLE_CLASS}>{TILE_TITLES[id]}</div>}
               {!isExpanded && (
                 <div style={{ flex: 1, minHeight: 0, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {content}
                 </div>
               )}
+              {!isExpanded && TILE_TITLES[id] && <TileTitle>{TILE_TITLES[id]}</TileTitle>}
             </div>
           )
         })}
@@ -579,10 +577,10 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
               overflow: 'hidden',
             }}
           >
-            {TILE_TITLES[expandedId] && <div className={TILE_TITLE_CLASS}>{TILE_TITLES[expandedId]}</div>}
             <div style={{ flex: 1, minHeight: 0, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {renderTileContent(expandedId, tileCtx, true)}
             </div>
+            {TILE_TITLES[expandedId] && <TileTitle>{TILE_TITLES[expandedId]}</TileTitle>}
             <button
               onClick={e => { e.stopPropagation(); toggle(expandedId) }}
               aria-label="Close"

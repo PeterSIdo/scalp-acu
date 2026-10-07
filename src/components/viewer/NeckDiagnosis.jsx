@@ -8,6 +8,7 @@ import HeadYPoints, { Y_REAL_POINTS, Y_REAL_VIEWBOX } from './HeadYPoints'
 import NeckMeridianMap, { REAL_POINTS, ABDOMEN_POINTS, ABDOMEN_REAL_POINTS } from './NeckMeridianMap'
 import { CATEGORY_INTROS } from '../../data/categoryIntros'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
+import TileTitle from '../ui/TileTitle'
 import { yPointForMeridian } from '../../data/points'
 
 // 3x2 grid of neck references, in row-major order. Ids with no case in
@@ -22,6 +23,18 @@ const TILE_LABELS = {
   abdomen: 'Abdominal Diagnostic Map',
   'abdomen-real': 'Abdominal Reference Photo',
 }
+
+// Bottom title strip (TileTitle) per grid row: Y-Points head views, then
+// neck, then abdominal diagnosis.
+const TILE_TITLES = {
+  'ynsa-y-side': 'Y-Points',
+  'ynsa-y-real': 'Y-Points',
+  diag: 'Y-Points Neck Diagnosis',
+  real: 'Y-Points Neck Diagnosis',
+  abdomen: 'Y-Points Abdominal Diagnosis',
+  'abdomen-real': 'Y-Points Abdominal Diagnosis',
+}
+const TILE_BODY_STYLE = { flex: 1, minHeight: 0, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }
 
 // ynsa-y-side reuses the full HeadYPoints view (Meridian dropdown + search +
 // points) rather than the bare diagram, so that menu is available from this
@@ -166,8 +179,8 @@ export default function NeckDiagnosis({ onPointSelect }) {
                 border: '1px solid rgba(148, 163, 184, 0.2)',
                 borderRadius: 10,
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                flexDirection: 'column',
+                alignItems: 'stretch',
                 background: '#ffffff',
                 cursor: content ? 'pointer' : 'default',
                 overflow: 'hidden',
@@ -176,9 +189,13 @@ export default function NeckDiagnosis({ onPointSelect }) {
               onMouseEnter={e => { if (content) { e.currentTarget.style.transform = 'scale(1.015)'; e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.5)' } }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.2)' }}
             >
-              {content && !isExpanded && content}
-              {!content && (
-                <span style={{ color: '#6b7280', fontSize: 13, fontWeight: 600 }}>{label}</span>
+              {!isExpanded && (
+                <>
+                  <div style={TILE_BODY_STYLE}>
+                    {content ?? <span style={{ color: '#6b7280', fontSize: 13, fontWeight: 600 }}>{label}</span>}
+                  </div>
+                  <TileTitle>{TILE_TITLES[id]}</TileTitle>
+                </>
               )}
             </div>
           )
@@ -209,13 +226,14 @@ export default function NeckDiagnosis({ onPointSelect }) {
               background: '#ffffff',
               borderRadius: 12,
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              flexDirection: 'column',
+              alignItems: 'stretch',
               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
               overflow: 'hidden',
             }}
           >
-            {renderTileContent(expandedId, { ...tileContentCtx, isExpanded: true })}
+            <div style={TILE_BODY_STYLE}>{renderTileContent(expandedId, { ...tileContentCtx, isExpanded: true })}</div>
+            <TileTitle>{TILE_TITLES[expandedId]}</TileTitle>
             <button
               onClick={e => { e.stopPropagation(); toggle(expandedId) }}
               aria-label="Close"
