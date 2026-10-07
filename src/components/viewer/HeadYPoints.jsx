@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import { allPoints } from '../../data/points'
+import { allPoints, yPointForMeridian } from '../../data/points'
 import { MERIDIANS } from '../../data/meridians'
 import YNSAYSideSvg from '../../assets/diagrams/YNSA-Y-Side.svg?react'
 
@@ -429,7 +429,8 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
     setOpenPanel(null)
     setSearchQuery('')
     setSelectedId(null)
-    onPointSelect?.(null)
+    // No side of the ear is picked here, so show the meridian-level text.
+    onPointSelect?.(yPointForMeridian(code))
     onMeridianChange?.(code)
   }
 

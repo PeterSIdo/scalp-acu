@@ -193,3 +193,45 @@ the app's canonical codes instead:
   Deep layers 6–8 are still omitted.
 - InfoPanel: the zone badge renders only when `point.zone` is set. Brain
   zones have none, so this avoids showing an empty pill.
+
+---
+
+## 2026-10-07 — YNSA category intros + Y point descriptions
+
+### What shipped
+
+- **Category intro texts.** New `src/data/categoryIntros.js` (keyed by
+  subgroup id) holds the intro text for Basic, Sensory, Brain and Y Points.
+  New `CategoryIntroLink.jsx` renders a plain underlined "About … Points"
+  link at the bottom-left of each YNSA grid's tile 1/1 (Basic/Sensory/Brain
+  menu tile, Y-Points "YNSA Y-Side" tile). Clicking it passes the intro to
+  `onPointSelect` like any point, so it shows in the InfoPanel (desktop) /
+  bottom sheet (mobile); `InfoPanel` renders `isCategory` records with
+  their own layout (paragraphs + optional grouped tag list). A category
+  with no entry shows no link.
+- **Y point descriptions.** New `src/data/yPointInfo.js`, one entry per
+  meridian (12; Governing Vessel has none), merged into all four Y point
+  records per meridian in `data/points/index.js`. InfoPanel gained
+  Meridian, Diagnostic Zone and Notes sections (render only when present).
+  `[exact position]` placeholders were dropped and the diagnostic zone
+  reads "Neck / abdominal zone", per the user.
+- **Location follows the clicked side, not the meridian.** Every meridian
+  has a Y point on both the Yin (in front of the ear) and Yang (behind)
+  side of the diagram, so `location` and the yin/yang `side` badge are set
+  per record from its polarity. The meridian line reads e.g. "Bladder (Yang
+  meridian)" — TCM meridian nature, not point position. (First version put
+  location on the meridian, so e.g. BL Yin showed a Yang location.)
+- **Y-Points panel wiring.** `NeckDiagnosis` now takes `onPointSelect`.
+  Head-diagram dots show the side-specific record; the Meridian menu and
+  the neck/abdominal diagnostic maps (one dot per meridian) show a
+  meridian-level record from `yPointForMeridian(code)` — same text minus
+  side/location.
+- **Search** now matches Y point indications; Y points are listed once per
+  meridian (strong yin record only) instead of four duplicates.
+
+### Open content questions (user to decide)
+
+- Y Points intro says Yin points are in front of the ear and Yang points
+  behind it, but the diagram has every meridian on both sides.
+- Sensory intro says "four points", but the tab also shows Extra Ear
+  Yin/Yang.

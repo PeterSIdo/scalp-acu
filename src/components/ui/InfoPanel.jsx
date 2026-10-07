@@ -11,6 +11,42 @@ export default function InfoPanel({ point, isSubscribed }) {
     )
   }
 
+  if (point.isCategory) {
+    return (
+      <div className="p-6">
+        <h2 className="text-xl font-bold text-black dark:text-white leading-tight mb-1">{point.name}</h2>
+        <div className="flex gap-2 mb-4">
+          <span className="bg-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-semibold px-2 py-0.5 rounded">
+            {point.system}
+          </span>
+        </div>
+
+        {point.paragraphs.map((text, i) => (
+          <p key={i} className="text-black dark:text-gray-300 text-sm leading-relaxed mb-4">{text}</p>
+        ))}
+
+        {point.groups?.length > 0 && (
+          <>
+            <Divider />
+            <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{point.listTitle}</h3>
+            {point.groups.map(group => (
+              <div key={group.label} className="mb-3">
+                <p className="text-sm font-semibold text-black dark:text-gray-200 mb-1">{group.label}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {group.items.map(item => (
+                    <span key={item} className="bg-gray-100 dark:bg-gray-800 text-black dark:text-gray-300 text-xs px-2 py-1 rounded">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="p-6">
       <div className="flex items-start justify-between mb-1">
@@ -44,12 +80,32 @@ export default function InfoPanel({ point, isSubscribed }) {
         </>
       )}
 
+      {point.meridian && (
+        <>
+          <Divider />
+          <div className="mb-4">
+            <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Meridian</h3>
+            <p className="text-black dark:text-gray-300 text-sm leading-relaxed">{point.meridian}</p>
+          </div>
+        </>
+      )}
+
       {point.location && (
         <>
           <Divider />
           <div className="mb-4">
             <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Location</h3>
             <p className="text-black dark:text-gray-300 text-sm leading-relaxed">{point.location}</p>
+          </div>
+        </>
+      )}
+
+      {point.diagnosticZone && (
+        <>
+          <Divider />
+          <div className="mb-4">
+            <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Diagnostic Zone</h3>
+            <p className="text-black dark:text-gray-300 text-sm leading-relaxed">{point.diagnosticZone}</p>
           </div>
         </>
       )}
@@ -73,6 +129,16 @@ export default function InfoPanel({ point, isSubscribed }) {
                 </span>
               ))}
             </div>
+          </div>
+        </>
+      )}
+
+      {point.notes && (
+        <>
+          <Divider />
+          <div className="mb-4">
+            <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Notes</h3>
+            <p className="text-black dark:text-gray-300 text-sm leading-relaxed">{point.notes}</p>
           </div>
         </>
       )}

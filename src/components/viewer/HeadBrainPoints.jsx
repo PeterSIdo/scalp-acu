@@ -4,6 +4,7 @@ import HeadLateral from './HeadLateral'
 import HeadFrontal from './HeadFrontal'
 import HeadPosterior from './HeadPosterior'
 import { allPoints } from '../../data/points'
+import CategoryIntroLink from '../ui/CategoryIntroLink'
 
 // 2x2 grid, row-major: menu | Lateral / Frontal | Posterior. Same shape and
 // tile order as Basic/Sensory Points. Brain points aren't visible from the
@@ -247,6 +248,7 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
               }}
             />
           </div>
+          <CategoryIntroLink subgroupId="ynsa-brain" onSelect={intro => { onPointIdChange(null); onPointSelect?.(intro) }} />
         </div>
       )
     // Clicking a point directly on a diagram must also update activePointId

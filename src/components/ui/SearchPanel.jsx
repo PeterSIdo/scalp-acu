@@ -5,12 +5,15 @@ export default function SearchPanel({ query, onSelect }) {
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
     if (!q) return []
+    // Y points have four identical records per meridian (yin/yang ×
+    // strong/soft) — list only the strong yin one so each appears once.
     return allPoints.filter(p =>
+      (!p.id.startsWith('YNSA-Y-') || /-yin$/.test(p.id)) && (
       p.name.toLowerCase().includes(q) ||
       p.meridian?.toLowerCase().includes(q) ||
       p.indications?.some(ind => ind.toLowerCase().includes(q)) ||
       p.tags?.some(tag => tag.toLowerCase().includes(q))
-    )
+    ))
   }, [query])
 
   if (!query.trim()) return null

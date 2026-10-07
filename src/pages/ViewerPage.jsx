@@ -326,7 +326,7 @@ export default function ViewerPage() {
               {activeView === 'Grid'      && <HeadBasicPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-basic']} />}
               {activeView === 'SensoryGrid' && <HeadSensoryPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-sensory']} />}
               {activeView === 'BrainGrid' && <HeadBrainPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-brain']} />}
-              {activeView === 'Neck'      && <NeckDiagnosis />}
+              {activeView === 'Neck'      && <NeckDiagnosis onPointSelect={handlePointSelect} />}
               {activeView === 'TCMGrid'   && <HeadTCMScalpAreas />}
               {activeView === 'BrainZonesGrid' && <HeadBrainZones onPointSelect={handlePointSelect} />}
             </ZoomableView>

@@ -4,6 +4,7 @@ import HeadLateral from './HeadLateral'
 import HeadFrontal from './HeadFrontal'
 import HeadPosterior from './HeadPosterior'
 import { allPoints } from '../../data/points'
+import CategoryIntroLink from '../ui/CategoryIntroLink'
 import { ZONES, ZONE_INFO, zoneOf } from '../../data/basicZones'
 
 // 2x2 grid, row-major: menu (outline head + controls) | Lateral / Frontal | Posterior.
@@ -266,6 +267,7 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
               }}
             />
           </div>
+          <CategoryIntroLink subgroupId="ynsa-basic" onSelect={intro => { onZoneChange(null); onPointSelect?.(intro) }} />
         </div>
       )
     case 'lateral':
