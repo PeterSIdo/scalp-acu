@@ -47,6 +47,44 @@ export default function InfoPanel({ point, isSubscribed }) {
     )
   }
 
+  // Sectioned description (TCM scalp areas): titled sections of paragraphs
+  // and/or a bulleted list, optional closing paragraph per section.
+  if (point.sections) {
+    return (
+      <div className="p-6">
+        <h2 className="text-xl font-bold text-black dark:text-white leading-tight mb-1">{point.name}</h2>
+        <div className="flex gap-2 mb-4">
+          <span className="bg-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-semibold px-2 py-0.5 rounded">
+            {point.system}
+          </span>
+        </div>
+
+        {point.sections.map((section, i) => (
+          <div key={section.title}>
+            {i > 0 && <Divider />}
+            <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{section.title}</h3>
+            {section.paragraphs?.map((text, j) => (
+              <p key={j} className="text-black dark:text-gray-300 text-sm leading-relaxed mb-2">{text}</p>
+            ))}
+            {section.items?.length > 0 && (
+              <ul className="list-disc pl-5 mb-2 space-y-1.5">
+                {section.items.map((item, j) => (
+                  <li key={j} className="text-black dark:text-gray-300 text-sm leading-relaxed">
+                    {item.label && <span className="font-semibold">{item.label}: </span>}
+                    {item.text}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {section.after && (
+              <p className="text-black dark:text-gray-300 text-sm leading-relaxed mb-2">{section.after}</p>
+            )}
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="p-6">
       <div className="flex items-start justify-between mb-1">

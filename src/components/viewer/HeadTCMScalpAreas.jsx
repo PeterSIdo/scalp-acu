@@ -4,6 +4,8 @@ import ScalpAreasSvg from '../../assets/diagrams/tcm-scalp-areas.svg?react'
 import ScalpMeridiansSvg from '../../assets/diagrams/tcm-scalp-meridians.svg?react'
 import MotorAreaMeasurementSvg from '../../assets/diagrams/motor-area-measurement.svg?react'
 import CategoryIntroLink from '../ui/CategoryIntroLink'
+import InlineSearch from '../ui/InlineSearch'
+import { TCM_AREA_INFO } from '../../data/tcmAreaInfo'
 
 // 2x2 grid, row-major: areas diagram (with the TCM Area menu) | motor area
 // measurement diagram (static) / meridians diagram (with the
@@ -16,9 +18,9 @@ const AREAS_VIEWBOX = '54 217 689 719'
 // Only the areas actually drawn on tcm-scalp-areas.svg. The SVG has no ids,
 // so each entry carries the `d` of its coloured line(s) and the bbox of its
 // label text [x, y, w, h], copied from the SVG — re-extract both if the
-// diagram is re-exported. No tcm.json yet, so selection only drives the
-// diagram highlight + menu label (no InfoPanel wiring). The only InfoPanel
-// content is the category intro, via the link in the areas tile.
+// diagram is re-exported. Selecting an area also shows its TCM_AREA_INFO
+// entry in the InfoPanel (cleared for areas without one); the category
+// intro opens via the link in the areas tile.
 const TCM_AREAS = [
   { name: 'Motor Area',                              color: '#A81F88', lines: ['M451 321.5L314 577.5'],  label: [456, 237, 55, 15] },
   { name: 'Sensory Area',                            color: '#FB5762', lines: ['M483 329.5L347 582.5'],  label: [575, 242, 77, 19] },
@@ -32,6 +34,15 @@ const TCM_AREAS = [
 ]
 
 const LABEL_PAD = 6
+
+// The areas drawn on motor-area-measurement.svg (tile 1/2), same shape as
+// TCM_AREAS. That SVG shares tcm-scalp-areas.svg's coordinates, so it's
+// rendered with AREAS_VIEWBOX too. Labels are outlined text paths — bboxes
+// copied from the SVG; re-extract if the diagram is re-exported.
+const MOTOR_DIAGRAM_AREAS = [
+  { name: 'Motor Area',   color: '#A81F88', lines: ['M451 321L321 566'],     label: [481.6, 239.5, 103.8, 14.8] },
+  { name: 'Sensory Area', color: '#FB5762', lines: ['M475 324.5L345.5 573'], label: [547, 287.3, 126, 18.8] },
+]
 
 // tcm-scalp-meridians.svg draws the same head at the same scale as the
 // areas SVG, just shifted (head outline at x+12.83, y-4). Using a same-size
@@ -80,13 +91,13 @@ const TRANSITION_STYLE = `
   animation: tcm-area-pulse 1.4s ease-in-out infinite;
 }`
 
-// Tile 1 (menu) sits back on the theme-aware dark/translucent tile
-// background (matches YNSA's tile 1/1), so its text switches with dark:
-// again. Tile 2 (areas) keeps its own fixed white backing for the SVG.
+// Trigger text matches Basic Points' menu button: black when idle, red when
+// a selection is active or the menu is open. No dark: variants — the cyan
+// button background doesn't change with the theme.
 const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
   active
-    ? 'text-amber-500 dark:text-amber-400'
-    : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
+    ? 'text-red-700'
+    : 'text-black hover:text-red-700'
 }`
 
 const DROPDOWN_ITEM_CLASS = (active) => `block w-full text-left px-3 py-1.5 text-xs font-semibold transition-colors ${
@@ -109,8 +120,7 @@ const TILE_TITLES = {
 const TILE_TITLE_CLASS = 'text-xs font-medium text-gray-500 text-center px-2 pt-2 pb-1 flex-shrink-0'
 
 // Same trigger+dropdown shape as Basic/Sensory/Brain Points' menus, but a
-// plain name list — no Search sibling yet since there's no indications data
-// to search against. Shared by the areas and meridians tiles.
+// plain name list. Shared by the areas and meridians tiles.
 function TCMMenu({ items, placeholder, activeKey, menuOpen, onToggle, onSelect, onReset, compact }) {
   const dropdownRef = useRef(null)
   const activeLabel = items.find(i => i.key === activeKey)?.label
@@ -165,8 +175,36 @@ function TCMMenu({ items, placeholder, activeKey, menuOpen, onToggle, onSelect, 
   )
 }
 
-const AREA_ITEMS     = TCM_AREAS.map(a => ({ key: a.name, label: a.name }))
+// Drawn areas first, then areas that only have a TCM_AREA_INFO entry (not on
+// the diagram yet) — those open their description but highlight nothing.
+const AREA_ITEMS = [
+  ...TCM_AREAS.map(a => a.name),
+  ...Object.keys(TCM_AREA_INFO).filter(name => !TCM_AREAS.some(a => a.name === name)),
+].map(name => ({ key: name, label: name }))
 const MERIDIAN_ITEMS = TCM_MERIDIANS.map(m => ({ key: m.code, label: `${m.name} (${m.code})` }))
+
+// Search entries, one per TCM_AREA_INFO area: its name plus the phrases of
+// its Indications section — list items ("Skin: psoriasis, …") as-is, and
+// paragraphs split at commas/sentence ends so a hit shows just the phrase
+// that matched instead of the whole paragraph.
+const AREA_SEARCH = Object.entries(TCM_AREA_INFO).map(([key, info]) => {
+  const ind = info.sections.find(sec => sec.title === 'Indications')
+  const phrases = [
+    ...(ind?.paragraphs ?? []).flatMap(t => t.split(/(?<=[.:])\s+|,\s+(?:and\s+|or\s+)?|\s+and\s+(?=[^,]*\.$)/)),
+    ...(ind?.items ?? []).map(it => (it.label ? `${it.label}: ${it.text}` : it.text)),
+  ].map(t => t.replace(/[.:]$/, '').trim()).filter(Boolean)
+  return { key, name: info.name, phrases }
+})
+
+function searchAreas(query) {
+  const q = query.trim().toLowerCase()
+  if (!q) return []
+  return AREA_SEARCH.flatMap(({ key, name, phrases }) => {
+    if (name.toLowerCase().includes(q)) return [{ key, name, hit: null }]
+    const hit = phrases.find(t => t.toLowerCase().includes(q))
+    return hit ? [{ key, name, hit }] : []
+  })
+}
 
 // Highlight layer shared by both diagrams: veils everything except `hole`
 // (the selected label, cut out via mask), outlines the hole, and redraws the
@@ -198,19 +236,21 @@ function SelectionHighlight({ viewBox, hole, lines, color, lineWidth, glowWidth 
 const padBox = ([x, y, w, h]) => [x - LABEL_PAD, y - LABEL_PAD, w + LABEL_PAD * 2, h + LABEL_PAD * 2]
 const FILL = { position: 'absolute', inset: 0, width: '100%', height: '100%' }
 
-// The areas SVG with a click/highlight overlay on top, sharing its viewBox.
-function AreasDiagram({ activeArea, onSelect }) {
-  const active = TCM_AREAS.find(a => a.name === activeArea)
+// An areas SVG with a click/highlight overlay on top, sharing its viewBox.
+// Used by tile 1/1 (all drawn areas) and tile 1/2 (Motor + Sensory only);
+// both share activeArea, so a selection in either shows in both.
+function AreasDiagram({ activeArea, onSelect, Svg = ScalpAreasSvg, areas = TCM_AREAS }) {
+  const active = areas.find(a => a.name === activeArea)
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <ScalpAreasSvg style={FILL} />
+      <Svg viewBox={AREAS_VIEWBOX} style={FILL} />
       <svg viewBox={AREAS_VIEWBOX} style={FILL}>
         {active && (
           <SelectionHighlight viewBox={AREAS_VIEWBOX} hole={padBox(active.label)} lines={active.lines} color={active.color} lineWidth={7.5} glowWidth={15} />
         )}
 
-        {TCM_AREAS.map(area => {
+        {areas.map(area => {
           const select = e => { e.stopPropagation(); onSelect(area.name) }
           const [x, y, w, h] = padBox(area.label)
           return (
@@ -297,25 +337,41 @@ function MeridiansDiagram({ activeMeridian, onSelect }) {
 
 // Both diagram tiles use the same layout (menu row above the diagram, same
 // viewBox size), so the heads render at the same size in 1/1 and 1/2.
-function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMeridianChange, openMenu, onMenuToggle, onMenuClose, onPointSelect }, expanded = false) {
+function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMeridianChange, openMenu, onMenuToggle, onMenuOpen, onMenuClose, onPointSelect, searchQuery, onSearchQueryChange }, expanded = false) {
   let menu, diagram, introLink = null
+  const selectArea = area => { onAreaChange(area); onPointSelect?.(area ? TCM_AREA_INFO[area] ?? null : null) }
+  const toggleArea = area => { onMenuClose(); selectArea(activeArea === area ? null : area) }
   switch (id) {
     case 'areas': {
-      const toggleArea = area => { onMenuClose(); onAreaChange(activeArea === area ? null : area) }
       menu = (
-        <TCMMenu
-          items={AREA_ITEMS}
-          placeholder="TCM Area"
-          activeKey={activeArea}
-          menuOpen={openMenu === 'areas'}
-          compact={!expanded}
-          onToggle={() => onMenuToggle('areas')}
-          onSelect={toggleArea}
-          onReset={() => onAreaChange(null)}
-        />
+        <div className="flex items-center gap-2">
+          <TCMMenu
+            items={AREA_ITEMS}
+            placeholder="TCM Area"
+            activeKey={activeArea}
+            menuOpen={openMenu === 'areas'}
+            compact={!expanded}
+            onToggle={() => onMenuToggle('areas')}
+            onSelect={toggleArea}
+            onReset={() => selectArea(null)}
+          />
+          <InlineSearch
+            query={searchQuery}
+            open={openMenu === 'search'}
+            matches={searchAreas(searchQuery)}
+            placeholder="Search by areas, indications"
+            emptyText="No areas or indications found"
+            compact={!expanded}
+            dropdownClassName="left-3 right-3"
+            onOpen={() => onMenuOpen('search')}
+            onQueryChange={onSearchQueryChange}
+            onPick={area => { onMenuClose(); selectArea(area) }}
+            onClear={() => { onSearchQueryChange(''); onMenuClose(); selectArea(null) }}
+          />
+        </div>
       )
       diagram = <AreasDiagram activeArea={activeArea} onSelect={toggleArea} />
-      introLink = <CategoryIntroLink subgroupId="tcm-scalp-areas" onSelect={onPointSelect} />
+      introLink = <CategoryIntroLink subgroupId="tcm-scalp-areas" onSelect={intro => { onAreaChange(null); onPointSelect?.(intro) }} />
       break
     }
     case 'meridians': {
@@ -335,21 +391,17 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
       diagram = <MeridiansDiagram activeMeridian={activeMeridian} onSelect={toggleMeridian} />
       break
     }
-    // Static reference diagram — no menu, no overlay. Its head outline sits
-    // at the same coordinates as tcm-scalp-areas.svg, so sharing
-    // AREAS_VIEWBOX plus an invisible menu-height spacer renders the head at
-    // the same size and position as tile 1/1.
+    // No menu of its own; its Motor and Sensory lines/labels select the same
+    // shared activeArea as tile 1/1. Its head outline sits at the same
+    // coordinates as tcm-scalp-areas.svg, so sharing AREAS_VIEWBOX plus an
+    // invisible spacer as tall as tile 1/1's menu row (the search field box
+    // is the tallest item there) renders the head at the same size and
+    // position as tile 1/1.
     case 'motor':
       menu = (
-        <span aria-hidden="true" className={`${TRIGGER_CLASS(false)} invisible inline-block`}>
-          Spacer<span className="ml-1">▼</span>
-        </span>
+        <span aria-hidden="true" className="invisible inline-block px-2 py-1 border text-xs leading-4">Spacer</span>
       )
-      diagram = (
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-          <MotorAreaMeasurementSvg viewBox={AREAS_VIEWBOX} style={FILL} />
-        </div>
-      )
+      diagram = <AreasDiagram activeArea={activeArea} onSelect={toggleArea} Svg={MotorAreaMeasurementSvg} areas={MOTOR_DIAGRAM_AREAS} />
       break
     default:
       return null
@@ -372,6 +424,7 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
   const [activeArea,     setActiveArea]     = useState(null)
   const [activeMeridian, setActiveMeridian] = useState(null)
   const [openMenu,       setOpenMenu]       = useState(null)
+  const [searchQuery,    setSearchQuery]    = useState('')
 
   useEffect(() => {
     function onKeyDown(e) {
@@ -397,8 +450,11 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
     onMeridianChange: setActiveMeridian,
     openMenu,
     onMenuToggle: id => setOpenMenu(open => (open === id ? null : id)),
+    onMenuOpen: id => setOpenMenu(id),
     onMenuClose: () => setOpenMenu(null),
     onPointSelect,
+    searchQuery,
+    onSearchQueryChange: setSearchQuery,
   }
 
   return (

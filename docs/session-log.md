@@ -259,3 +259,84 @@ the app's canonical codes instead:
   (same head outline coordinates) and a menu-height spacer, so its head
   matches tile 1/1 in size and position.
 - Meridians diagram moved from 1/2 to 2/1. Tile 2/2 is still empty.
+
+## 2026-10-07 — TCM Motor Area description
+
+- New `src/data/tcmAreaInfo.js` (keyed by TCM area name) with the user's
+  Motor Area text: Location, Function, Divisions, Indications, Clinical notes.
+- Selecting an area in the TCM areas tile (diagram or menu) now also sends
+  its entry to the InfoPanel / bottom sheet; deselecting, or picking an
+  area with no entry yet, clears the panel. The "About TCM Scalp
+  Acupuncture" link clears the area selection.
+- `InfoPanel` gained a `sections` layout: titled sections with paragraphs,
+  a bulleted list (bold `label:` prefix) and an optional closing paragraph.
+- Added user text for Sensory, Chorea and Tremor, Vascular Dilation and
+  Constriction, Vertigo and Hearing, Speech I/II/III, Praxis, Vision and
+  Balance Areas. All nine areas on the diagram now open a description.
+  Vision and Balance are not drawn on `tcm-scalp-areas.svg`, so their
+  entries aren't reachable yet.
+- Added FMSA and the six Internal Organ Areas (Head, Stomach, Thoracic
+  Cavity, Liver and Gallbladder, Reproductive, Large Intestine); each organ
+  area ends with the shared "Internal Organ Areas" group note.
+- The TCM Area menu now also lists areas that have text but aren't drawn on
+  the diagram (Vision, Balance, FMSA, organ areas), after the drawn ones.
+  Selecting one opens its text; nothing is highlighted.
+
+## 2026-10-07 — TCM search
+
+- Tile 1/1 menu row: always-visible search field (magnifier icon + input,
+  no trigger button) beside the TCM Area menu, placeholder "Search by
+  areas, indications". Matches area names and the phrases of each area's
+  Indications section; results show the area plus the matching phrase.
+  Clicking a result (or Enter for the first) selects the area like the
+  menu does; the field then shows the selected result's full text (matched
+  condition, or area name) and the results list closes.
+  Escape clears the text; the × clears the text and the area selection
+  (diagram highlight + panel). Focusing the field selects its text so
+  typing starts a new search. Query state lives in HeadTCMScalpAreas so it
+  carries over to the expanded tile.
+- Search field is now an auto-growing textarea: it widens with its text
+  (placeholder width minimum) up to the row's free space, then wraps onto
+  more lines, so a picked condition is shown in full. Enter still picks the
+  first result (no newline).
+- TCM menu buttons (TCM Area, Meridian) now use Basic Points' trigger
+  colours: black text idle, red (text-red-700) when selected/open or on hover.
+
+## 2026-10-07 — TCM search flow applied to YNSA grids
+
+- New shared `src/components/ui/InlineSearch.jsx` (extracted from the TCM
+  search): magnifier + auto-growing field, results dropdown, full picked
+  text kept in the field, select-on-focus, × clears text + selection.
+- Used by TCM Scalp Areas and by Basic, Sensory, Brain and Y-Points; their
+  old Search trigger buttons / dropdown-input components were removed.
+- Matching per grid:
+  - Basic: indications only, one result per zone ("Search by indications").
+  - Sensory / Brain: point names + indications (new: name match).
+  - Y-Points: meridian names + Y point indications (new: indications).
+- Y-Points menu row now has right-3 so the search field can't grow past the
+  tile edge.
+
+## 2026-10-07 — TCM tile 1/2: Motor + Sensory wired
+
+- `motor-area-measurement.svg` (user added the Sensory Area line + label)
+  now has the same click/highlight overlay as tile 1/1, for Motor Area and
+  Sensory Area (`MOTOR_DIAGRAM_AREAS`: line paths + label bboxes from the
+  SVG). `AreasDiagram` takes `Svg`/`areas` props so both tiles share it.
+- Both tiles share `activeArea`: picking Motor/Sensory in either tile, the
+  TCM Area menu or search highlights it in both and opens its text. Other
+  areas highlight only in 1/1.
+- Tile 1/2's spacer now matches 1/1's menu row height incl. the search
+  field box, keeping the heads the same size.
+
+- Brain Zones grid is now 2x2 like TCM Scalp Areas (row 2 empty), so its
+  two tiles are the same size as the Scalp Areas tiles.
+
+## 2026-10-07 — Brain Zones menus match Scalp Areas
+
+- Brain Zones tile 1/1 now uses Scalp Areas' layout: menu row above the
+  diagram (was floating over it), menu dropdowns span the row, trigger
+  text black/red.
+- Added the shared InlineSearch ("Search by zones, functions"): matches zone
+  names, functions phrases and TCM uses, plus body-part names. Picking a
+  zone selects it (panel opens); picking a body part selects it on the
+  motor strip. × clears text, zone and body part.

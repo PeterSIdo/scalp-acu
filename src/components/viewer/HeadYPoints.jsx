@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { allPoints, yPointForMeridian } from '../../data/points'
 import { MERIDIANS } from '../../data/meridians'
+import InlineSearch from '../ui/InlineSearch'
 import YNSAYSideSvg from '../../assets/diagrams/YNSA-Y-Side.svg?react'
 
 const RED  = '#FF0808'
@@ -313,53 +314,16 @@ function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset })
   )
 }
 
-// Quick meridian-name search, next to the Meridian dropdown. Matches meridian names only
-// for now — Y-Points has no authored JSON/indications yet to search against (see
-// project memory); once that content exists, extend the `matches` filter below to also
-// pull in points whose indications/tags match `query`, mapped back to their meridian.
-function MeridianSearch({ open, query, onToggle, onQueryChange, onSelect }) {
+// Search matches meridian names and each meridian's Y point indications
+// (yPointForMeridian), one result per meridian.
+function searchMeridians(query) {
   const q = query.trim().toLowerCase()
-  const matches = q ? Y_MERIDIANS.filter(m => m.name.toLowerCase().includes(q)) : []
-
-  function handleKeyDown(e) {
-    if (e.key === 'Enter' && matches.length > 0) onSelect(matches[0].code)
-    else if (e.key === 'Escape') onToggle(false)
-  }
-
-  return (
-    <div className="relative">
-      <button type="button" onClick={() => onToggle()} className={TRIGGER_CLASS(open)}>
-        <span className="flex-1 text-center">Search</span>
-      </button>
-
-      {open && (
-        <div className="absolute top-full left-0 mt-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[10rem] z-20">
-          <input
-            type="text"
-            autoFocus
-            value={query}
-            onChange={e => onQueryChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Meridian…"
-            className="w-full px-3 py-1.5 text-xs font-semibold bg-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none border-b border-gray-200 dark:border-gray-700"
-          />
-          {q && (
-            matches.length > 0 ? (
-              <div className="py-1">
-                {matches.map(({ code, name }) => (
-                  <button key={code} type="button" onClick={() => onSelect(code)} className={DROPDOWN_ITEM_CLASS(false)}>
-                    {name}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <p className="px-3 py-1.5 text-xs text-gray-400 dark:text-gray-600">No meridian found</p>
-            )
-          )}
-        </div>
-      )}
-    </div>
-  )
+  if (!q) return []
+  return Y_MERIDIANS.flatMap(({ code, name }) => {
+    if (name.toLowerCase().includes(q)) return [{ key: code, name, hit: null }]
+    const hit = yPointForMeridian(code)?.indications?.find(ind => ind.toLowerCase().includes(q))
+    return hit ? [{ key: code, name, hit }] : []
+  })
 }
 
 // activeMeridian/onMeridianChange are optional — pass both to make the Meridian
@@ -424,10 +388,11 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
     onMeridianChange?.(code)
   }
 
-  function handleMeridianSelect(code) {
+  // keepQuery: a search pick leaves its text in the search field.
+  function handleMeridianSelect(code, { keepQuery = false } = {}) {
     setInternalMeridian(code)
     setOpenPanel(null)
-    setSearchQuery('')
+    if (!keepQuery) setSearchQuery('')
     setSelectedId(null)
     // No side of the ear is picked here, so show the meridian-level text.
     onPointSelect?.(yPointForMeridian(code))
@@ -467,7 +432,7 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
 
       {showMenu && (
         <div
-          className={`absolute left-3 z-10 flex items-baseline gap-4 ${showCornerLabels ? 'top-9' : 'top-3'}`}
+          className={`absolute left-3 right-3 z-10 flex items-baseline gap-4 ${showCornerLabels ? 'top-9' : 'top-3'}`}
           onClick={e => e.stopPropagation()}
         >
           <MeridianMenu
@@ -477,12 +442,16 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
             onSelect={handleMeridianSelect}
             onReset={handleReset}
           />
-          <MeridianSearch
-            open={openPanel === 'search'}
+          <InlineSearch
             query={searchQuery}
-            onToggle={() => setOpenPanel(p => p === 'search' ? null : 'search')}
+            open={openPanel === 'search'}
+            matches={searchMeridians(searchQuery)}
+            placeholder="Search by meridians, indications"
+            emptyText="No meridians or indications found"
+            onOpen={() => setOpenPanel('search')}
             onQueryChange={setSearchQuery}
-            onSelect={handleMeridianSelect}
+            onPick={code => handleMeridianSelect(code, { keepQuery: true })}
+            onClear={handleReset}
           />
         </div>
       )}

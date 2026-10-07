@@ -5,6 +5,7 @@ import HeadFrontal from './HeadFrontal'
 import HeadPosterior from './HeadPosterior'
 import { allPoints } from '../../data/points'
 import CategoryIntroLink from '../ui/CategoryIntroLink'
+import InlineSearch from '../ui/InlineSearch'
 
 // 2x2 grid, row-major: menu | Lateral / Frontal | Posterior. Same shape and
 // tile order as Basic/Sensory Points. Brain points aren't visible from the
@@ -128,82 +129,19 @@ function BrainPointMenu({ activePointId, menuOpen, onToggle, onSelect, onReset, 
   )
 }
 
-// Search by indication text (e.g. "vertigo", "dementia") instead of by point
-// name — same trigger+dropdown shape as Sensory Points' SensoryPointSearch.
-// No dedup needed: each of the six brain points is already its own distinct
-// yin/yang record.
-function BrainPointSearch({ open, query, onToggle, onQueryChange, onSelect, compact }) {
-  const containerRef = useRef(null)
-  const listRef = useRef(null)
+// Search matches point names and indication text; each point is its own
+// record, so no dedup.
+function searchPoints(query) {
   const q = query.trim().toLowerCase()
-  const matches = q
-    ? BRAIN_POINT_IDS
-        .map(id => allPoints.find(p => p.id === id))
-        .filter(Boolean)
-        .flatMap(point => {
-          const indication = point.indications?.find(ind => ind.toLowerCase().includes(q))
-          return indication ? [{ id: point.id, name: point.name, indication }] : []
-        })
-    : []
-
-  // Same wheel-stop treatment as BrainPointMenu above, attached to the
-  // outer container (not just the results list) — see Basic/Sensory Points'
-  // search dropdowns for why a listener on the list alone leaves the input
-  // box and empty-state text uncovered, making the scroll feel intermittent.
-  useEffect(() => {
-    const el = containerRef.current
-    if (!open || !el) return
-    function onWheel(e) {
-      e.preventDefault()
-      e.stopPropagation()
-      if (listRef.current) listRef.current.scrollTop += e.deltaY
-    }
-    el.addEventListener('wheel', onWheel, { passive: false })
-    return () => el.removeEventListener('wheel', onWheel)
-  }, [open])
-
-  function handleKeyDown(e) {
-    if (e.key === 'Enter' && matches.length > 0) onSelect(matches[0].id)
-    else if (e.key === 'Escape') onToggle(false)
-  }
-
-  return (
-    <div>
-      <button type="button" onClick={() => onToggle()} className={TRIGGER_CLASS(open)}>
-        <span className="flex-1 text-center">Search</span>
-      </button>
-
-      {open && (
-        <div ref={containerRef} className="absolute top-full left-0 right-0 mt-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 z-20">
-          <input
-            type="text"
-            autoFocus
-            value={query}
-            onChange={e => onQueryChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Indications…"
-            className="w-full px-3 py-1.5 text-xs font-semibold bg-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none border-b border-gray-200 dark:border-gray-700"
-          />
-          {q && (
-            matches.length > 0 ? (
-              <div ref={listRef} className={`brain-dropdown-scroll py-1 overflow-y-auto ${compact ? 'max-h-40' : 'max-h-96'}`}>
-                {matches.map(({ id, name, indication }) => (
-                  <button key={id} type="button" onClick={() => onSelect(id)} className={DROPDOWN_ITEM_CLASS(false)}>
-                    <span className="text-xs font-semibold">{name}</span>
-                    <span className="block text-[11px] font-normal leading-snug text-gray-500 dark:text-gray-400">
-                      {indication}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <p className="px-3 py-1.5 text-xs text-gray-400 dark:text-gray-600">No indications found</p>
-            )
-          )}
-        </div>
-      )}
-    </div>
-  )
+  if (!q) return []
+  return BRAIN_POINT_IDS
+    .map(id => allPoints.find(p => p.id === id))
+    .filter(Boolean)
+    .flatMap(point => {
+      if (point.name.toLowerCase().includes(q)) return [{ key: point.id, name: point.name, hit: null }]
+      const hit = point.indications?.find(ind => ind.toLowerCase().includes(q))
+      return hit ? [{ key: point.id, name: point.name, hit }] : []
+    })
 }
 
 // highlightJsonId is shared across both diagram tiles — selecting a point
@@ -211,7 +149,7 @@ function BrainPointSearch({ open, query, onToggle, onQueryChange, onSelect, comp
 // matching point on the other tile too (when it has a matching coordinate —
 // yin/yang are separate records, so a given point usually only lights up
 // on one of Frontal/Posterior, not both).
-function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, searchQuery, onSearchQueryChange }, expanded = false) {
+function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, onPanelOpen, onPanelClose, searchQuery, onSearchQueryChange }, expanded = false) {
   switch (id) {
     case 'menu':
       return (
@@ -234,17 +172,25 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
               }}
               onReset={() => { onPointIdChange(null); onPointSelect?.(null) }}
             />
-            <BrainPointSearch
-              open={openPanel === 'search'}
+            <InlineSearch
               query={searchQuery}
+              open={openPanel === 'search'}
+              matches={searchPoints(searchQuery)}
+              placeholder="Search by points, indications"
+              emptyText="No points or indications found"
               compact={!expanded}
-              onToggle={() => onPanelToggle('search')}
+              onOpen={() => onPanelOpen('search')}
               onQueryChange={onSearchQueryChange}
-              onSelect={pointId => {
+              onPick={pointId => {
+                onPanelClose()
                 onPointIdChange(pointId)
                 onPointSelect?.(allPoints.find(p => p.id === pointId) ?? null)
-                onPanelToggle('search')
+              }}
+              onClear={() => {
                 onSearchQueryChange('')
+                onPanelClose()
+                onPointIdChange(null)
+                onPointSelect?.(null)
               }}
             />
           </div>
@@ -305,6 +251,8 @@ export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null,
     pointFilter,
     openPanel,
     onPanelToggle: panel => setOpenPanel(p => p === panel ? null : panel),
+    onPanelOpen: panel => setOpenPanel(panel),
+    onPanelClose: () => setOpenPanel(null),
     searchQuery,
     onSearchQueryChange: setSearchQuery,
   }

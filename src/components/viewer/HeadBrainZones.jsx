@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import BrainZonesSvg from '../../assets/diagrams/brain-zones.svg?react'
 import BrainZones2Svg from '../../assets/diagrams/brain-zones2.svg?react'
+import InlineSearch from '../ui/InlineSearch'
 
-// Single row for now: brain-zones diagram with clickable zones + motor-strip
-// body parts (Brain Zone and Body Part menus in its top-left corner) |
-// brain-zones2 photo for reference. Add a second row to TILE_IDS +
-// gridTemplateRows when more content arrives.
+// 2x2 grid like TCM Scalp Areas, so tiles are the same size there and here.
+// Row 1: brain-zones diagram with clickable zones + motor-strip body parts
+// (Brain Zone and Body Part menus in its top-left corner) | brain-zones2
+// photo for reference. Row 2 is left empty until more content arrives —
+// add ids to TILE_IDS to fill it.
 const TILE_IDS = ['zones', 'zones2']
 
 // `num` is the conventional zone number (not shown in the menu). Zones 6–8
@@ -97,12 +99,12 @@ const TRANSITION_STYLE = `
   display: none;
 }`
 
-// Both tiles keep a fixed white backing for the SVGs; each menu trigger
-// floats over its tile on its own cyan pill.
+// Same trigger colours as TCM Scalp Areas / Basic Points: black when idle,
+// red when a selection is active or the menu is open.
 const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
   active
-    ? 'text-amber-500 dark:text-amber-400'
-    : 'text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
+    ? 'text-red-700'
+    : 'text-black hover:text-red-700'
 }`
 
 const DROPDOWN_ITEM_CLASS = (active) => `block w-full text-left px-3 py-1.5 text-xs font-semibold transition-colors ${
@@ -248,9 +250,9 @@ function BrainZonesMap({ activeZone, onZoneChange, activePart, onPartChange }) {
   )
 }
 
-// Same trigger+dropdown shape as Basic/Sensory/Brain Points' menus, but a
-// plain name list. Shared by the Brain Zone menu (tile 1) and the Body Part
-// menu (tile 2); `items` are { key, label }.
+// Same trigger+dropdown shape as TCM Scalp Areas' TCMMenu: the dropdown
+// spans the whole menu row above the diagram. Used by the Brain Zone and
+// Body Part menus; `items` are { key, label }.
 function DropdownMenu({ items, placeholder, activeKey, menuOpen, onToggle, onSelect, onReset, compact }) {
   const dropdownRef = useRef(null)
 
@@ -293,7 +295,7 @@ function DropdownMenu({ items, placeholder, activeKey, menuOpen, onToggle, onSel
       {menuOpen && (
         <div
           ref={dropdownRef}
-          className={`brain-dropdown-scroll absolute top-full left-0 min-w-full w-max mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
+          className={`brain-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
         >
           {items.map(item => (
             <button key={item.key} type="button" onClick={() => onSelect(item.key)} className={DROPDOWN_ITEM_CLASS(activeKey === item.key)}>
@@ -309,14 +311,47 @@ function DropdownMenu({ items, placeholder, activeKey, menuOpen, onToggle, onSel
 const ZONE_ITEMS = BRAIN_ZONES.map(z => ({ key: z.num, label: z.name }))
 const PART_ITEMS = BODY_PARTS.map(p => ({ key: p.name, label: p.name }))
 
-function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartChange, openMenu, onMenuToggle }, expanded = false) {
+// Search entries: each zone's name + phrases from its functions and TCM uses,
+// then the motor-strip body parts by name. Keys are prefixed so a pick knows
+// which selection to set.
+const ZONE_SEARCH = BRAIN_ZONES.map(z => ({
+  key: `zone:${z.num}`,
+  name: z.name,
+  phrases: [
+    ...(z.functions ?? '').split(/,\s*/),
+    ...(BRAIN_ZONE_TCM[z.num]?.uses ?? []),
+  ].map(t => t.trim()).filter(Boolean),
+}))
+
+function searchBrainZones(query) {
+  const q = query.trim().toLowerCase()
+  if (!q) return []
+  const zones = ZONE_SEARCH.flatMap(({ key, name, phrases }) => {
+    if (name.toLowerCase().includes(q)) return [{ key, name, hit: null }]
+    const hit = phrases.find(t => t.toLowerCase().includes(q))
+    return hit ? [{ key, name, hit }] : []
+  })
+  const parts = BODY_PARTS
+    .filter(p => p.name.toLowerCase().includes(q))
+    .map(p => ({ key: `part:${p.name}`, name: p.name, hit: 'Body part (motor strip)' }))
+  return [...zones, ...parts]
+}
+
+// Same layout as TCM Scalp Areas' tile 1/1: menu row (menus + search) above
+// the diagram rather than floating over it.
+function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartChange, openMenu, onMenuToggle, onMenuOpen, onMenuClose, searchQuery, onSearchQueryChange }, expanded = false) {
   switch (id) {
-    case 'zones':
+    case 'zones': {
+      const pick = key => {
+        onMenuClose()
+        const [kind, value] = key.split(/:(.*)/)
+        if (kind === 'zone') onZoneChange(Number(value))
+        else onPartChange(value)
+      }
       return (
-        <div className="relative w-full h-full">
-          <BrainZonesMap activeZone={activeZone} onZoneChange={onZoneChange} activePart={activePart} onPartChange={onPartChange} />
-          <div className="absolute left-3 top-3 right-3 z-10 flex flex-wrap items-start gap-3 pointer-events-none">
-            <div className="relative pointer-events-auto" onClick={e => e.stopPropagation()}>
+        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <div className="relative px-3 pb-1 flex-shrink-0 z-20" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-2">
               <DropdownMenu
                 items={ZONE_ITEMS}
                 placeholder="Brain Zone"
@@ -324,11 +359,9 @@ function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartCha
                 menuOpen={openMenu === 'zones'}
                 compact={!expanded}
                 onToggle={() => onMenuToggle('zones')}
-                onSelect={num => onZoneChange(activeZone === num ? null : num)}
+                onSelect={num => { onMenuClose(); onZoneChange(activeZone === num ? null : num) }}
                 onReset={() => onZoneChange(null)}
               />
-            </div>
-            <div className="relative pointer-events-auto" onClick={e => e.stopPropagation()}>
               <DropdownMenu
                 items={PART_ITEMS}
                 placeholder="Body Part"
@@ -336,13 +369,30 @@ function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartCha
                 menuOpen={openMenu === 'parts'}
                 compact={!expanded}
                 onToggle={() => onMenuToggle('parts')}
-                onSelect={name => onPartChange(activePart === name ? null : name)}
+                onSelect={name => { onMenuClose(); onPartChange(activePart === name ? null : name) }}
                 onReset={() => onPartChange(null)}
+              />
+              <InlineSearch
+                query={searchQuery}
+                open={openMenu === 'search'}
+                matches={searchBrainZones(searchQuery)}
+                placeholder="Search by zones, functions"
+                emptyText="No zones or functions found"
+                compact={!expanded}
+                dropdownClassName="left-3 right-3"
+                onOpen={() => onMenuOpen('search')}
+                onQueryChange={onSearchQueryChange}
+                onPick={pick}
+                onClear={() => { onSearchQueryChange(''); onMenuClose(); onZoneChange(null); onPartChange(null) }}
               />
             </div>
           </div>
+          <div style={{ flex: 1, minHeight: 0 }}>
+            <BrainZonesMap activeZone={activeZone} onZoneChange={onZoneChange} activePart={activePart} onPartChange={onPartChange} />
+          </div>
         </div>
       )
+    }
     case 'zones2':
       return <BrainZones2Svg style={{ width: '100%', height: '100%' }} />
     default:
@@ -355,6 +405,7 @@ export default function HeadBrainZones({ onPointSelect }) {
   const [activeZone, setActiveZone] = useState(null)
   const [activePart, setActivePart] = useState(null)
   const [openMenu,   setOpenMenu]   = useState(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     function onKeyDown(e) {
@@ -388,6 +439,10 @@ export default function HeadBrainZones({ onPointSelect }) {
     onPartChange: setActivePart,
     openMenu,
     onMenuToggle: menu => setOpenMenu(open => (open === menu ? null : menu)),
+    onMenuOpen: menu => setOpenMenu(menu),
+    onMenuClose: () => setOpenMenu(null),
+    searchQuery,
+    onSearchQueryChange: setSearchQuery,
   }
 
   return (
@@ -401,7 +456,7 @@ export default function HeadBrainZones({ onPointSelect }) {
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
-          gridTemplateRows: '1fr',
+          gridTemplateRows: 'repeat(2, 1fr)',
           gap: '1rem',
           width: '100%',
           height: '100%',
