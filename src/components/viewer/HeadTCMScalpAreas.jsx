@@ -2,12 +2,13 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import ScalpAreasSvg from '../../assets/diagrams/tcm-scalp-areas.svg?react'
 import ScalpMeridiansSvg from '../../assets/diagrams/tcm-scalp-meridians.svg?react'
+import MotorAreaMeasurementSvg from '../../assets/diagrams/motor-area-measurement.svg?react'
 import CategoryIntroLink from '../ui/CategoryIntroLink'
 
-// 2x2 grid, row-major: areas diagram (with the TCM Area menu) | meridians
-// diagram, then 2 tiles reserved for future content (photo reference, other
-// angle, etc.).
-const TILE_IDS = ['areas', 'meridians', 'empty1', 'empty2']
+// 2x2 grid, row-major: areas diagram (with the TCM Area menu) | motor area
+// measurement diagram (static) / meridians diagram (with the
+// Meridian menu) | 1 tile reserved for future content.
+const TILE_IDS = ['areas', 'motor', 'meridians', 'empty2']
 
 // Must match tcm-scalp-areas.svg's own viewBox so the overlay lines up.
 const AREAS_VIEWBOX = '54 217 689 719'
@@ -101,6 +102,7 @@ const DROPDOWN_ITEM_CLASS = (active) => `block w-full text-left px-3 py-1.5 text
 // standardized on the same pattern.
 const TILE_TITLES = {
   areas: 'Areas in Chinese Scalp Acupuncture',
+  motor: 'Motor Area Measurement',
   meridians: 'TCM Meridians on the Head',
 }
 
@@ -333,6 +335,22 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
       diagram = <MeridiansDiagram activeMeridian={activeMeridian} onSelect={toggleMeridian} />
       break
     }
+    // Static reference diagram — no menu, no overlay. Its head outline sits
+    // at the same coordinates as tcm-scalp-areas.svg, so sharing
+    // AREAS_VIEWBOX plus an invisible menu-height spacer renders the head at
+    // the same size and position as tile 1/1.
+    case 'motor':
+      menu = (
+        <span aria-hidden="true" className={`${TRIGGER_CLASS(false)} invisible inline-block`}>
+          Spacer<span className="ml-1">▼</span>
+        </span>
+      )
+      diagram = (
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <MotorAreaMeasurementSvg viewBox={AREAS_VIEWBOX} style={FILL} />
+        </div>
+      )
+      break
     default:
       return null
   }
@@ -401,7 +419,7 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
         }}
       >
         {TILE_IDS.map(id => {
-          const expandable = id === 'areas' || id === 'meridians'
+          const expandable = id === 'areas' || id === 'motor' || id === 'meridians'
           const isExpanded = expandedId === id
           const content = renderTileContent(id, tileCtx, false)
           return (

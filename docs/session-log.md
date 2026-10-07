@@ -250,3 +250,12 @@ the app's canonical codes instead:
   ("Scalp Areas" | "Brain Zones"); the separate top-level "Brain Zones"
   system was removed from `SYSTEMS` in `ViewerPage.jsx`.
 - Top menu order is now YNSA, TCM, Zhu's, Ear.
+
+## 2026-10-07 — TCM grid: Motor Area Measurement diagram
+
+- New `motor-area-measurement.svg` placed in TCM Scalp Areas tile 1/2 as a
+  static diagram (no menu, no overlay), titled "Motor Area Measurement";
+  tile is expandable like the others. Rendered with the areas SVG's viewBox
+  (same head outline coordinates) and a menu-height spacer, so its head
+  matches tile 1/1 in size and position.
+- Meridians diagram moved from 1/2 to 2/1. Tile 2/2 is still empty.
