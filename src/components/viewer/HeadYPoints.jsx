@@ -4,6 +4,7 @@ import { MERIDIANS } from '../../data/meridians'
 import InlineSearch from '../ui/InlineSearch'
 import HamburgerMenu from '../ui/HamburgerMenu'
 import YNSAYSideSvg from '../../assets/diagrams/YNSA-Y-Side.svg?react'
+import CrossIcon from '../ui/CrossIcon'
 
 const RED  = '#FF0808'
 const BLUE = '#5392F6'
@@ -291,9 +292,9 @@ function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset })
               type="button"
               onClick={onReset}
               aria-label="Clear meridian filter"
-              className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs leading-none font-bold shadow-sm transition-colors"
+              className="flex items-center justify-center w-5 h-5 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm transition duration-150 ease-out hover:scale-110 active:scale-90"
             >
-              ×
+              <CrossIcon size={10} strokeWidth={4} />
             </button>
           )}
         </span>

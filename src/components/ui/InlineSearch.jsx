@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef } from 'react'
+import CrossIcon from './CrossIcon'
 
 const ITEM_CLASS = 'block w-full text-left px-3 py-1.5 text-xs font-semibold transition-colors text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
 
@@ -93,9 +94,9 @@ export default function InlineSearch({
             type="button"
             onClick={e => { e.preventDefault(); onClear() }}
             aria-label="Clear search"
-            className="flex-shrink-0 mt-px text-xs font-semibold leading-none text-gray-400 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+            className="flex-shrink-0 w-4 h-4 flex items-center justify-center rounded-full bg-orange-500 hover:bg-orange-600 text-white transition duration-150 ease-out hover:scale-110 active:scale-90"
           >
-            ×
+            <CrossIcon size={8} strokeWidth={4.5} />
           </button>
         )}
       </label>

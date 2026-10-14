@@ -348,3 +348,47 @@ the app's canonical codes instead:
   tile 1/1; same link style and InfoPanel category layout. InfoPanel
   category layout gained an optional numbered `steps` list (bold label +
   text); `CategoryIntroLink` takes an optional `className` to sit in a row.
+
+## 2026-10-14 — TCM front diagram detail, full-size cards, orange close buttons
+
+### TCM tile 2/2: Front Stimulation Areas
+- New static tile `front` ("Front Stimulation Areas") in `HeadTCMScalpAreas.jsx`
+  rendering `front-anthony-shaded.svg` (no clickable areas yet). A second
+  shading variant (`front-anthony-shaded 1.svg`) was tried and rejected —
+  kept the original shading; that file is not committed.
+- Added detail on top of the existing shading in `front-anthony-shaded.svg`,
+  each in its own group so it can be tuned or removed separately:
+  - `nose-detail`: bridge side walls, nasion dip, ridge highlight, rounded
+    tip, alar grooves/wings, cheek contact shadow, columella, philtrum.
+  - `eye-detail`: sclera with upper-lid shadow, iris tone + limbal ring +
+    radial fibres, tear duct, lash line, lower-lid rim, lid crease, inner
+    corner hollow, tear trough. Drawn once for the left eye and mirrored with
+    `<use transform="matrix(-1 0 0 1 505.4 -0.38)">`.
+  - `mouth-detail` (end of file, over the lips): vermilion border, parting
+    line, mouth corners, lower-lip highlight + shadow beneath, side hollows.
+  - Lip/chin outline blur reduced (filters 10–12, 15: stdDeviation → 0.6;
+    13–14: → 1) — they read as too blurred.
+- Note: svgr runs with `svgo: false`, so `<use href>` and the ids survive.
+
+### Expanded cards
+- All grid views (Basic, TCM, Brain Zones, Brain Points, Sensory, Neck/Y)
+  now open a card at 100% of the grid area instead of 90%; the top menu bars
+  are outside the overlay and untouched.
+- Backdrop click-to-close and the `zoom-out` cursor removed: with the card
+  filling the area, every tap on the white diagram closed it. Cards now close
+  only with the close button (or Esc, kept on purpose).
+
+### Close / clear buttons
+- Card close button: orange (`#f97316`) 44px circle, white border + shadow,
+  hover grows/brightens, press shrinks.
+- All `×` text glyphs replaced by a new `ui/CrossIcon.jsx` SVG cross — the
+  glyph sat off-centre in the round buttons depending on the font.
+- Menu-row "clear selection" buttons (were emerald) and the InlineSearch
+  clear button are orange with the same hover/press effect; the side-panel
+  and mobile search clear buttons and the mobile sheet close button in
+  `ViewerPage.jsx` are orange too (no hover effect there yet).
+
+### Incident
+- `HeadTCMScalpAreas.jsx` was briefly mojibaked (`×` → `Ã—`) by a PowerShell
+  `Get-Content`/`Set-Content` round-trip (read as ANSI, written UTF-8+BOM).
+  It was restored to clean UTF-8; edit source files with encoding-safe tools.

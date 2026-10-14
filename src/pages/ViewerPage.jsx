@@ -12,6 +12,7 @@ import HeadBrainZones from '../components/viewer/HeadBrainZones'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
 import SearchPanel from '../components/ui/SearchPanel'
+import CrossIcon from '../components/ui/CrossIcon'
 
 const SYSTEMS = [
   {
@@ -371,9 +372,9 @@ export default function ViewerPage() {
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow"
                       aria-label="Clear"
-                    >×</button>
+                    ><CrossIcon size={10} strokeWidth={4} /></button>
                   )}
                 </div>
               </div>
@@ -424,9 +425,9 @@ export default function ViewerPage() {
             <span className="text-sm font-semibold text-gray-900 dark:text-gray-200">{selectedPoint.name}</span>
             <button
               onClick={closeSheet}
-              className="text-gray-400 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white text-2xl leading-none ml-3"
+              className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full border-2 border-white bg-orange-500 hover:bg-orange-600 text-white shadow-md ml-3"
               aria-label="Close"
-            >×</button>
+            ><CrossIcon size={18} strokeWidth={3.5} /></button>
           </div>
           <div className="overflow-y-auto flex-1 min-h-0 scroll-touch">
             <InfoPanel point={selectedPoint} isSubscribed={isActive} />
@@ -453,8 +454,8 @@ export default function ViewerPage() {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-lg leading-none"
-                >×</button>
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow"
+                ><CrossIcon size={12} strokeWidth={4} /></button>
               )}
             </div>
             <button

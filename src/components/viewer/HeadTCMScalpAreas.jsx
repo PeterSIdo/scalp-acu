@@ -3,17 +3,19 @@ import { flushSync } from 'react-dom'
 import ScalpAreasSvg from '../../assets/diagrams/tcm-scalp-areas.svg?react'
 import ScalpMeridiansSvg from '../../assets/diagrams/tcm-scalp-meridians.svg?react'
 import MotorAreaMeasurementSvg from '../../assets/diagrams/motor-area-measurement.svg?react'
+import FrontAnthonySvg from '../../assets/diagrams/front-anthony-shaded.svg?react'
 import { CATEGORY_INTROS } from '../../data/categoryIntros'
 import HamburgerMenu from '../ui/HamburgerMenu'
 import TileTitle from '../ui/TileTitle'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
 import InlineSearch from '../ui/InlineSearch'
 import { TCM_AREA_INFO } from '../../data/tcmAreaInfo'
+import CrossIcon from '../ui/CrossIcon'
 
 // 2x2 grid, row-major: areas diagram (with the TCM Area menu) | motor area
 // measurement diagram (static) / meridians diagram (with the
-// Meridian menu) | 1 tile reserved for future content.
-const TILE_IDS = ['areas', 'motor', 'meridians', 'empty2']
+// Meridian menu) | front stimulation areas diagram (static, no links yet).
+const TILE_IDS = ['areas', 'motor', 'meridians', 'front']
 
 // Must match tcm-scalp-areas.svg's own viewBox so the overlay lines up.
 const AREAS_VIEWBOX = '54 217 689 719'
@@ -116,6 +118,7 @@ const TILE_TITLES = {
   areas: 'Areas in Chinese Scalp Acupuncture',
   motor: 'Motor Area Measurement',
   meridians: 'TCM Meridians on the Head',
+  front: 'Front Stimulation Areas',
 }
 
 
@@ -152,9 +155,9 @@ function TCMMenu({ items, placeholder, activeKey, menuOpen, onToggle, onSelect, 
             type="button"
             onClick={onReset}
             aria-label="Clear selection"
-            className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs leading-none font-bold shadow-sm transition-colors"
+            className="flex items-center justify-center w-5 h-5 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm transition duration-150 ease-out hover:scale-110 active:scale-90"
           >
-            ×
+            <CrossIcon size={10} strokeWidth={4} />
           </button>
         )}
       </div>
@@ -414,6 +417,10 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
     case 'motor':
       diagram = <AreasDiagram activeArea={activeArea} onSelect={toggleArea} Svg={MotorAreaMeasurementSvg} areas={MOTOR_DIAGRAM_AREAS} />
       break
+    // Static for now — no clickable areas yet. Uses the SVG's own viewBox.
+    case 'front':
+      diagram = <FrontAnthonySvg viewBox="0 0 550 700" style={FILL} />
+      break
     default:
       return null
   }
@@ -510,7 +517,7 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
         }}
       >
         {TILE_IDS.map(id => {
-          const expandable = id === 'areas' || id === 'motor' || id === 'meridians'
+          const expandable = id === 'areas' || id === 'motor' || id === 'meridians' || id === 'front'
           const isExpanded = expandedId === id
           const content = renderTileContent(id, tileCtx, false)
           return (
@@ -553,7 +560,6 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
 
       {expandedId && (
         <div
-          onClick={() => toggle(expandedId)}
           style={{
             position: 'absolute',
             inset: 0,
@@ -561,7 +567,6 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
             alignItems: 'center',
             justifyContent: 'center',
             background: 'rgba(99, 236, 225, 0.6)',
-            cursor: 'zoom-out',
             zIndex: 20,
           }}
         >
@@ -569,8 +574,8 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
             style={{
               viewTransitionName: `tcm-tile-${expandedId}`,
               position: 'relative',
-              width: '90%',
-              height: '90%',
+              width: '100%',
+              height: '100%',
               background: '#ffffff',
               borderRadius: 12,
               display: 'flex',
@@ -588,21 +593,26 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
             <button
               onClick={e => { e.stopPropagation(); toggle(expandedId) }}
               aria-label="Close"
+              className="transition duration-150 ease-out hover:scale-110 active:scale-90 hover:brightness-110"
               style={{
                 position: 'absolute',
                 top: 10,
                 right: 10,
-                width: 32,
-                height: 32,
+                width: 44,
+                height: 44,
                 borderRadius: '50%',
-                border: '1px solid rgba(255,255,255,0.2)',
-                background: 'rgba(0,0,0,0.5)',
-                color: '#e5e7eb',
-                fontSize: 18,
-                lineHeight: 1,
+                border: '2px solid #ffffff',
+                background: '#f97316',
+                color: '#ffffff',
+                padding: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.35)',
                 cursor: 'pointer',
+                zIndex: 1,
               }}
-            >×</button>
+            ><CrossIcon size={22} strokeWidth={3.5} /></button>
           </div>
         </div>
       )}

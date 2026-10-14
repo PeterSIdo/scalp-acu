@@ -9,6 +9,7 @@ import InlineSearch from '../ui/InlineSearch'
 import HamburgerMenu from '../ui/HamburgerMenu'
 import TileTitle from '../ui/TileTitle'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
+import CrossIcon from '../ui/CrossIcon'
 
 // 2x2 grid, row-major: menu | Lateral / Frontal | Posterior. Same shape and
 // tile order as HeadBasicPoints.
@@ -102,9 +103,9 @@ function SensoryPointMenu({ activePointId, menuOpen, onToggle, onSelect, onReset
               type="button"
               onClick={onReset}
               aria-label="Clear point filter"
-              className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs leading-none font-bold shadow-sm transition-colors"
+              className="flex items-center justify-center w-5 h-5 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm transition duration-150 ease-out hover:scale-110 active:scale-90"
             >
-              ×
+              <CrossIcon size={10} strokeWidth={4} />
             </button>
           )}
         </span>
@@ -360,7 +361,6 @@ export default function HeadSensoryPoints({ onPointSelect, highlightJsonId = nul
 
       {expandedId && (
         <div
-          onClick={() => toggle(expandedId)}
           style={{
             position: 'absolute',
             inset: 0,
@@ -368,7 +368,6 @@ export default function HeadSensoryPoints({ onPointSelect, highlightJsonId = nul
             alignItems: 'center',
             justifyContent: 'center',
             background: 'rgba(99, 236, 225, 0.6)',
-            cursor: 'zoom-out',
             zIndex: 20,
           }}
         >
@@ -376,8 +375,8 @@ export default function HeadSensoryPoints({ onPointSelect, highlightJsonId = nul
             style={{
               viewTransitionName: `sensory-tile-${expandedId}`,
               position: 'relative',
-              width: '90%',
-              height: '90%',
+              width: '100%',
+              height: '100%',
               background: expandedId === 'menu' ? '#f1f5f9' : '#ffffff',
               borderRadius: 12,
               display: 'flex',
@@ -392,21 +391,26 @@ export default function HeadSensoryPoints({ onPointSelect, highlightJsonId = nul
             <button
               onClick={e => { e.stopPropagation(); toggle(expandedId) }}
               aria-label="Close"
+              className="transition duration-150 ease-out hover:scale-110 active:scale-90 hover:brightness-110"
               style={{
                 position: 'absolute',
                 top: 10,
                 right: 10,
-                width: 32,
-                height: 32,
+                width: 44,
+                height: 44,
                 borderRadius: '50%',
-                border: '1px solid rgba(255,255,255,0.2)',
-                background: 'rgba(0,0,0,0.5)',
-                color: '#e5e7eb',
-                fontSize: 18,
-                lineHeight: 1,
+                border: '2px solid #ffffff',
+                background: '#f97316',
+                color: '#ffffff',
+                padding: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.35)',
                 cursor: 'pointer',
+                zIndex: 1,
               }}
-            >×</button>
+            ><CrossIcon size={22} strokeWidth={3.5} /></button>
           </div>
         </div>
       )}
