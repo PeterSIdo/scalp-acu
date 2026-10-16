@@ -55,6 +55,23 @@ const MOTOR_DIAGRAM_AREAS = [
 // (y nudged 2 up so the legend text at y≈212 isn't clipped).
 const MERIDIANS_VIEWBOX = '66.83 211 689 719'
 
+// Same-size viewBox for front-anthony-shaded.svg (tile 2/2), see 'front' tile.
+const FRONT_VIEWBOX = '46 162 689 719'
+
+// The organ areas drawn on front-anthony-shaded.svg (tile 2/2), same shape
+// as TCM_AREAS (`name` is the TCM_AREA_INFO key) plus `menuLabel` = the
+// diagram's own label text. `lines` run down the centre of each 5-unit-wide
+// coloured strip; bilateral areas have a strip on each side, only one of
+// them labelled. Copied from the SVG — re-extract if it's re-exported.
+const FRONT_AREAS = [
+  { name: 'Head Area',                  menuLabel: 'Head',                   color: '#1E39EE', lines: ['M392.5 366V416'],                   label: [369.6, 212.5, 47.3, 14.8] },
+  { name: 'Thoracic Cavity Area',       menuLabel: 'Thoracic',               color: '#EE0307', lines: ['M349.5 366V416', 'M433.5 366V416'], label: [171.9, 211.9, 141.1, 19.2] },
+  { name: 'Stomach Area',               menuLabel: 'Stomach',                color: '#E29134', lines: ['M317.5 359V384', 'M468.5 359V384'], label: [559, 212.3, 82.3, 15] },
+  { name: 'Liver and Gallbladder Area', menuLabel: 'Liver and gall bladder', color: '#0AC000', lines: ['M317.5 384V409', 'M468.5 384V409'], label: [107.1, 249.9, 114, 39.4] },
+  { name: 'Reproductive Area',          menuLabel: 'Reproductive',           color: '#000000', lines: ['M272.5 358V383', 'M509.5 358V383'], label: [591.6, 315.9, 124.5, 19.2] },
+  { name: 'Large Intestine Area',       menuLabel: 'Intestines',             color: '#EE1E7B', lines: ['M272.5 383V408', 'M509.5 383V408'], label: [84.6, 320.9, 91.5, 15.3] },
+]
+
 // `color` = legend circle fill, `lineColor` = the meridian's line stroke on
 // the head. They match except TB, whose line is drawn in blue-violet
 // (confirmed with user).
@@ -185,6 +202,7 @@ const AREA_ITEMS = [
   ...Object.keys(TCM_AREA_INFO).filter(name => !TCM_AREAS.some(a => a.name === name)),
 ].map(name => ({ key: name, label: name }))
 const MERIDIAN_ITEMS = TCM_MERIDIANS.map(m => ({ key: m.code, label: `${m.name} (${m.code})` }))
+const FRONT_ITEMS = FRONT_AREAS.map(a => ({ key: a.name, label: a.menuLabel }))
 
 // Search entries, one per TCM_AREA_INFO area: its name plus the phrases of
 // its Indications section — list items ("Skin: psoriasis, …") as-is, and
@@ -240,17 +258,18 @@ const padBox = ([x, y, w, h]) => [x - LABEL_PAD, y - LABEL_PAD, w + LABEL_PAD * 
 const FILL = { position: 'absolute', inset: 0, width: '100%', height: '100%' }
 
 // An areas SVG with a click/highlight overlay on top, sharing its viewBox.
-// Used by tile 1/1 (all drawn areas) and tile 1/2 (Motor + Sensory only);
-// both share activeArea, so a selection in either shows in both.
-function AreasDiagram({ activeArea, onSelect, Svg = ScalpAreasSvg, areas = TCM_AREAS }) {
+// Used by tile 1/1 (all drawn areas), tile 1/2 (Motor + Sensory only) and
+// tile 2/2 (front organ areas); all share activeArea, so a selection in one
+// shows in the others.
+function AreasDiagram({ activeArea, onSelect, Svg = ScalpAreasSvg, areas = TCM_AREAS, viewBox = AREAS_VIEWBOX, lineWidth = 7.5 }) {
   const active = areas.find(a => a.name === activeArea)
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <Svg viewBox={AREAS_VIEWBOX} style={FILL} />
-      <svg viewBox={AREAS_VIEWBOX} style={FILL}>
+      <Svg viewBox={viewBox} style={FILL} />
+      <svg viewBox={viewBox} style={FILL}>
         {active && (
-          <SelectionHighlight viewBox={AREAS_VIEWBOX} hole={padBox(active.label)} lines={active.lines} color={active.color} lineWidth={7.5} glowWidth={15} />
+          <SelectionHighlight viewBox={viewBox} hole={padBox(active.label)} lines={active.lines} color={active.color} lineWidth={lineWidth} glowWidth={lineWidth * 2} />
         )}
 
         {areas.map(area => {
@@ -417,9 +436,26 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
     case 'motor':
       diagram = <AreasDiagram activeArea={activeArea} onSelect={toggleArea} Svg={MotorAreaMeasurementSvg} areas={MOTOR_DIAGRAM_AREAS} />
       break
-    // Static for now — no clickable areas yet. Uses the SVG's own viewBox.
+    // Organ-area menu, like the meridians tile, but selecting the shared
+    // activeArea (so the InfoPanel and tile 1/1's TCM Areas menu follow).
+    // front-anthony-shaded.svg draws the head at the same scale as
+    // tcm-scalp-areas.svg (crown→chin ≈ 530 units in both), so a same-size
+    // viewBox renders the head at tile 1/1's size; the offset puts the
+    // crown/chin at the same height and centres it.
     case 'front':
-      diagram = <FrontAnthonySvg viewBox="0 0 550 700" style={FILL} />
+      menu = (
+        <TCMMenu
+          items={FRONT_ITEMS}
+          placeholder="Organ Area"
+          activeKey={FRONT_AREAS.some(a => a.name === activeArea) ? activeArea : null}
+          menuOpen={openMenu === 'front'}
+          compact={!expanded}
+          onToggle={() => onMenuToggle('front')}
+          onSelect={toggleArea}
+          onReset={() => selectArea(null)}
+        />
+      )
+      diagram = <AreasDiagram activeArea={activeArea} onSelect={toggleArea} Svg={FrontAnthonySvg} areas={FRONT_AREAS} viewBox={FRONT_VIEWBOX} lineWidth={6} />
       break
     default:
       return null
