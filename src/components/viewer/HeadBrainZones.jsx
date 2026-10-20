@@ -14,6 +14,13 @@ import CrossIcon from '../ui/CrossIcon'
 // add ids to TILE_IDS to fill it.
 const TILE_IDS = ['zones', 'zones2']
 
+// Both SVGs sit on 900x700 canvases with wide margins; crop each to its
+// drawing's visible bounds (+~16px padding) so it fills the tile. The
+// overlay shares ZONES_VIEWBOX, and zoneAt maps clicks via getScreenCTM, so
+// coordinates stay in the SVG's own units.
+const ZONES_VIEWBOX = '65 50 766 659'
+const ZONES2_VIEWBOX = '99 52 681 594'
+
 // `num` is the conventional zone number (not shown in the menu). Zones 6–8
 // are deep-layer zones and are intentionally left off the menu for now.
 // `fill` identifies the zone's <path> in brain-zones.svg — the Figma export
@@ -198,12 +205,13 @@ function BrainZonesMap({ activeZone, onZoneChange, activePart, onPartChange }) {
       style={{ position: 'relative', width: '100%', height: '100%', cursor: zoneCursor ? 'pointer' : undefined }}
     >
       <BrainZonesSvg
+        viewBox={ZONES_VIEWBOX}
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
         preserveAspectRatio="xMidYMid meet"
       />
 
       <svg
-        viewBox="0 0 900 700"
+        viewBox={ZONES_VIEWBOX}
         preserveAspectRatio="xMidYMid meet"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
       >
@@ -413,7 +421,7 @@ function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartCha
       )
     }
     case 'zones2':
-      return <BrainZones2Svg style={{ width: '100%', height: '100%' }} />
+      return <BrainZones2Svg viewBox={ZONES2_VIEWBOX} style={{ width: '100%', height: '100%' }} />
     default:
       return null
   }
