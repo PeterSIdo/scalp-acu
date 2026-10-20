@@ -84,4 +84,20 @@ export const CATEGORY_INTROS = {
       'By bringing together classical Chinese needling with Western understanding of the nervous system, scalp acupuncture is used particularly for conditions affecting the brain and nervous system, including paralysis and speech difficulties after stroke.',
     ],
   },
+  // Paraphrased from "Characteristics of Zhu's Scalp Acupuncture" in the
+  // Color Atlas (see SOURCES).
+  'zsa-zones': {
+    isCategory: true,
+    linkLabel: "About Zhu's Scalp Acupuncture",
+    name: "Zhu's Scalp Acupuncture",
+    system: 'ZSA',
+    source: 'zhu-color-atlas',
+    paragraphs: [
+      "Zhu's Scalp Acupuncture is grounded in Chinese medical theory, including Yin-Yang, the Five Elements, Zang-Fu, and Qi and Blood, and above all the theory of the meridians. It also draws on Western anatomy, physiology, pathology, immunology and diagnosis. Its zones are not a projection of the brain's functional areas onto the scalp.",
+      "Very short, fine needles are inserted just under the skin, into the layer beneath the scalp's tendon sheet (the subaponeurotic layer). They cannot reach the skull or the brain, so treatment is painless and carries less risk than body acupuncture. Nothing is needed beyond the needles, and treatment can be given anywhere, at any time, to patients of any age and in any position.",
+      'Needle technique matters. Zhu uses two specific methods, Chou Qi to reduce and Jin Qi to tonify, and guides the qi during treatment with Dao-yin and Tu-na (guided movement and breathing).',
+      'Like body acupuncture, it aims to unblock the channels, harmonise the Nutritive (Ying) and Defensive (Wei) qi, balance yin and yang, and strengthen healthy qi while expelling pathogenic qi. In Western terms this covers reducing inflammation and pain, fighting infection, stopping bleeding, improving circulation, and regulating the nervous, hormonal and immune systems.',
+      "Illness is seen as starting with a disturbance of qi, and this method works mainly by adjusting qi, so symptoms often ease quickly. That makes it useful for everyday complaints and also for acute conditions and emergencies, where the effect tends to be strongest. Treating the main complaint often eases long-standing problems as well. It also combines well with other treatments: alongside medication it can strengthen the drug's effect and reduce side effects, so a lower dose may be enough.",
+    ],
+  },
 }

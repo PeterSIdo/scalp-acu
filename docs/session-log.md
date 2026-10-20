@@ -392,3 +392,54 @@ the app's canonical codes instead:
 - `HeadTCMScalpAreas.jsx` was briefly mojibaked (`×` → `Ã—`) by a PowerShell
   `Get-Content`/`Set-Content` round-trip (read as ANSI, written UTF-8+BOM).
   It was restored to clean UTF-8; edit source files with encoding-safe tools.
+
+## 2026-10-20 — ZSA areas wired up, source credit
+
+### Text (paraphrased from Zhu's Color Atlas)
+- `src/data/sources.js` (new): `SOURCES` reference list. `zhu-color-atlas`
+  has the full citation from the book's copyright page (2007, ISBN
+  978-0-9747178-0-7, Zhu's Neuro-Acupuncture Center, Inc.) plus a
+  trademark / non-affiliation `notice`.
+- `src/data/zsaAreaInfo.js` (new): `ZSA_AREA_INFO`, all 18 treatment areas
+  keyed by Zhu's code, same `sections` shape as `TCM_AREA_INFO`, with the
+  book's `plates` per area. Written in our own words, not quoted.
+- `categoryIntros.js`: new `zsa-zones` intro ("About Zhu's Scalp Acupuncture").
+
+### ZSA grid (`HeadZSAPoints.jsx`)
+- Takes `onPointSelect` (passed from ViewerPage) like the TCM grid.
+- Tile 1/1 has a menu row: hamburger (ZSA Areas / About / Case Studies)
+  and a ZSA Area dropdown (all 18 areas, same look as the TCM menus).
+- Area shapes on Zones 1/2/3 are clickable via `TILE_AREAS` (SVG id → area
+  code); both Occipital Temporal shapes map to OT. Label/arrow groups are
+  click-through. The selected area gets an amber outline and the others
+  fade; the selection is shared across tiles and the expanded card.
+- Auricle-Temporal (AT) isn't drawn on any diagram yet, so it's menu-only.
+
+### InfoPanel source credit
+- Entries with a `source` (category intros and sectioned entries) end with
+  a "Source" block: book, edition, author, publisher, year, plates and the
+  source's notice.
+
+### Copyright note
+- The book's copyright page forbids reproducing it without permission, and
+  "Zhu's Scalp Acupuncture" is a trademark. Text is paraphrased and the
+  diagrams are our own drawings. Before launch, consider asking
+  info@scalpacupuncture.org for permission and getting IP advice.
+
+### ZSA search (same day)
+- Hamburger gained "Search by areas, indications": the shared InlineSearch,
+  matching area names and Indications phrases (same splitting as the TCM
+  search). Picking a result selects that area; × clears text and selection.
+
+### About AcuMap (same day)
+- `src/data/aboutApp.js` (new): `ABOUT_APP` text (pocket reference, focus on
+  scalp/ear, gratitude, work in progress, disclaimer), `sections` shape.
+- Viewer header: "About" link before Account opens it in the InfoPanel /
+  mobile sheet. Landing page: "About AcuMap" section above Pricing, from
+  the same data.
+- Landing page hero/features/pricing still describe the old 3D YNSA-only
+  app; not changed yet.
+- Landing page rewritten for the current app: hero "Scalp and Ear
+  Acupuncture in Your Pocket", four feature cards (four systems, interactive
+  diagrams, search by indication, made for the clinic), pricing list updated.
+  Price, trial length and "no credit card" line unchanged.

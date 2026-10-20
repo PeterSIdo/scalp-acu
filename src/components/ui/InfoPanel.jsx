@@ -1,4 +1,28 @@
+import { SOURCES } from '../../data/sources'
+
 const Divider = () => <hr className="border-gray-200 dark:border-gray-700/60 my-4" />
+
+// Credit line for entries paraphrased from a reference book (`point.source`
+// → SOURCES), with the book's plate references and any trademark notice.
+function SourceCredit({ point }) {
+  const src = SOURCES[point.source]
+  if (!src) return null
+  return (
+    <>
+      <Divider />
+      <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Source</h3>
+      <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed mb-1">
+        Summarised in our own words from <span className="italic">{src.title}</span>
+        {src.edition && ` (${src.edition})`} by {src.author}
+        {src.publisher && `, ${src.publisher}`}{src.year && `, ${src.year}`}.
+        {point.plates?.length > 0 && ` See plates ${point.plates.join(', ')}.`}
+      </p>
+      {src.notice && (
+        <p className="text-gray-500 dark:text-gray-500 text-[11px] italic leading-relaxed">{src.notice}</p>
+      )}
+    </>
+  )
+}
 
 export default function InfoPanel({ point, isSubscribed }) {
   if (!point) {
@@ -53,6 +77,8 @@ export default function InfoPanel({ point, isSubscribed }) {
             ))}
           </>
         )}
+
+        <SourceCredit point={point} />
       </div>
     )
   }
@@ -91,6 +117,8 @@ export default function InfoPanel({ point, isSubscribed }) {
             )}
           </div>
         ))}
+
+        <SourceCredit point={point} />
       </div>
     )
   }

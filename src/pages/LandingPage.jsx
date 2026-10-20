@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { ABOUT_APP } from '../data/aboutApp'
 
 export default function LandingPage() {
   return (
@@ -17,13 +18,13 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="max-w-4xl mx-auto px-8 py-24 text-center">
         <h1 className="text-5xl font-bold mb-6 leading-tight">
-          Learn Scalp Acupuncture<br />
-          <span className="text-amber-500 dark:text-amber-400">Interactively in 3D</span>
+          Scalp and Ear Acupuncture<br />
+          <span className="text-amber-500 dark:text-amber-400">in Your Pocket</span>
         </h1>
         <p className="text-xl text-gray-500 dark:text-gray-400 mb-10 max-w-2xl mx-auto">
-          An educational tool for acupuncture therapists. Explore YNSA points on a
-          3D rotatable head model. Click any point to see its name, clinical description,
-          and indications.
+          A quick reference for acupuncture students and practitioners. Explore
+          interactive diagrams of the main scalp and ear systems, and tap any point or
+          area to see its location, functions and indications.
         </p>
         <Link
           to="/register"
@@ -36,15 +37,31 @@ export default function LandingPage() {
 
       {/* Features */}
       <section className="max-w-5xl mx-auto px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {[
-            { title: '3D Interactive Model', desc: 'Rotate and zoom a realistic head bust. Explore points from any angle.' },
-            { title: 'YNSA System', desc: 'Full Yamamoto New Scalp Acupuncture point set with clinical descriptions.' },
-            { title: 'Built for Therapists', desc: 'Concise indications, needling depth, and zone information for every point.' },
+            { title: 'Four Systems in One Place', desc: "Yamamoto New Scalp Acupuncture (YNSA), TCM scalp areas, Zhu's Scalp Acupuncture (ZSA) and ear acupuncture." },
+            { title: 'Interactive Diagrams', desc: 'Clear diagrams from the side, front, back and top. Tap a point or area to highlight it and read its details.' },
+            { title: 'Search by Indication', desc: 'Find points and areas by name or by the condition you want to treat.' },
+            { title: 'Made for the Clinic', desc: 'Works on phone, tablet and laptop, so the reference is always at hand.' },
           ].map(f => (
             <div key={f.title} className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
               <h3 className="text-lg font-semibold text-amber-500 dark:text-amber-400 mb-2">{f.title}</h3>
               <p className="text-gray-500 dark:text-gray-400">{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* About */}
+      <section className="max-w-3xl mx-auto px-8 py-16">
+        <h2 className="text-3xl font-bold mb-8 text-center">{ABOUT_APP.name}</h2>
+        <div className="space-y-6">
+          {ABOUT_APP.sections.map(section => (
+            <div key={section.title}>
+              <h3 className="text-lg font-semibold text-amber-500 dark:text-amber-400 mb-2">{section.title}</h3>
+              {section.paragraphs.map((text, i) => (
+                <p key={i} className="text-gray-600 dark:text-gray-400 leading-relaxed">{text}</p>
+              ))}
             </div>
           ))}
         </div>
@@ -57,7 +74,7 @@ export default function LandingPage() {
           <div className="text-4xl font-bold text-amber-500 dark:text-amber-400 mb-1">£14.99<span className="text-xl font-normal text-gray-400">/mo</span></div>
           <p className="text-gray-500 dark:text-gray-400 mb-6">14-day free trial included</p>
           <ul className="text-left space-y-3 mb-8 text-gray-700 dark:text-gray-300">
-            {['All YNSA scalp points', 'Full clinical descriptions', '3D interactive viewer', 'New content as it is added'].map(item => (
+            {['YNSA, TCM, ZSA and ear systems', 'Locations, functions and indications', 'Interactive diagrams and search', 'New content as it is added'].map(item => (
               <li key={item} className="flex gap-2">
                 <span className="text-amber-500 dark:text-amber-400">✓</span> {item}
               </li>

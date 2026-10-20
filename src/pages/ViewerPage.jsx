@@ -11,6 +11,7 @@ import NeckDiagnosis   from '../components/viewer/NeckDiagnosis'
 import HeadBrainZones from '../components/viewer/HeadBrainZones'
 import HeadEarPoints from '../components/viewer/HeadEarPoints'
 import HeadZSAPoints from '../components/viewer/HeadZSAPoints'
+import { ABOUT_APP } from '../data/aboutApp'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
 import SearchPanel from '../components/ui/SearchPanel'
@@ -330,6 +331,7 @@ export default function ViewerPage() {
           >
             {dark ? <SunIcon /> : <MoonIcon />}
           </button>
+          <button onClick={() => handlePointSelect(ABOUT_APP)} className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">About</button>
           <Link to="/account" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Account</Link>
           <button onClick={logout} className="text-gray-600 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">Sign out</button>
         </div>
@@ -358,7 +360,7 @@ export default function ViewerPage() {
               {activeView === 'TCMGrid'   && <HeadTCMScalpAreas onPointSelect={handlePointSelect} />}
               {activeView === 'BrainZonesGrid' && <HeadBrainZones onPointSelect={handlePointSelect} />}
               {activeView === 'EarGrid'   && <HeadEarPoints />}
-              {activeView === 'ZSAGrid'   && <HeadZSAPoints />}
+              {activeView === 'ZSAGrid'   && <HeadZSAPoints onPointSelect={handlePointSelect} />}
             </ZoomableView>
           ) : (
             <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
