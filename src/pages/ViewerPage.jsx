@@ -9,6 +9,8 @@ import HeadBrainPoints from '../components/viewer/HeadBrainPoints'
 import HeadTCMScalpAreas from '../components/viewer/HeadTCMScalpAreas'
 import NeckDiagnosis   from '../components/viewer/NeckDiagnosis'
 import HeadBrainZones from '../components/viewer/HeadBrainZones'
+import HeadEarPoints from '../components/viewer/HeadEarPoints'
+import HeadZSAPoints from '../components/viewer/HeadZSAPoints'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
 import SearchPanel from '../components/ui/SearchPanel'
@@ -35,8 +37,22 @@ const SYSTEMS = [
       { id: 'brain-zones',     label: 'Brain Zones', views: ['BrainZonesGrid'], available: true },
     ],
   },
-  { id: 'zhus', label: "Zhu's", fullName: "Zhu's Scalp Acupuncture", subgroups: null, available: false },
-  { id: 'ear',  label: 'Ear',   fullName: 'Ear Acupuncture',         subgroups: null, available: false },
+  {
+    id: 'zsa',
+    label: 'ZSA',
+    fullName: "Zhu's Scalp Acupuncture",
+    subgroups: [
+      { id: 'zsa-zones', label: 'Zones', views: ['ZSAGrid'], available: true },
+    ],
+  },
+  {
+    id: 'ear',
+    label: 'Ear',
+    fullName: 'Ear Acupuncture',
+    subgroups: [
+      { id: 'ear-points', label: 'Ear Points', views: ['EarGrid'], available: true },
+    ],
+  },
 ]
 
 // Which JSON point IDs belong to each subgroup — used to filter diagram dots
@@ -192,6 +208,8 @@ export default function ViewerPage() {
   const currentViews = subgroup?.views ?? []
   const isAvailable = subgroup ? subgroup.available : (system.available ?? false)
   const isNeck = activeSubgroup === 'ynsa-neck'
+  // The ZSA grid scrolls like Y-Points, so the wheel scrolls instead of zooming.
+  const isZsa = activeSubgroup === 'zsa-zones'
 
   function handleSystemChange(systemId) {
     const sys = SYSTEMS.find(s => s.id === systemId)
@@ -332,13 +350,15 @@ export default function ViewerPage() {
         {/* Diagram */}
         <div className="flex-1 min-h-0 bg-gray-300 dark:bg-gray-900 overflow-hidden p-4" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
           {isAvailable ? (
-            <ZoomableView hideControls={isNeck} wheelZoom={!isNeck}>
+            <ZoomableView hideControls={isNeck || isZsa} wheelZoom={!isNeck && !isZsa}>
               {activeView === 'Grid'      && <HeadBasicPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-basic']} />}
               {activeView === 'SensoryGrid' && <HeadSensoryPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-sensory']} />}
               {activeView === 'BrainGrid' && <HeadBrainPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-brain']} />}
               {activeView === 'Neck'      && <NeckDiagnosis onPointSelect={handlePointSelect} />}
               {activeView === 'TCMGrid'   && <HeadTCMScalpAreas onPointSelect={handlePointSelect} />}
               {activeView === 'BrainZonesGrid' && <HeadBrainZones onPointSelect={handlePointSelect} />}
+              {activeView === 'EarGrid'   && <HeadEarPoints />}
+              {activeView === 'ZSAGrid'   && <HeadZSAPoints />}
             </ZoomableView>
           ) : (
             <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
