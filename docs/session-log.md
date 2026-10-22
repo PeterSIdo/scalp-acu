@@ -443,3 +443,39 @@ the app's canonical codes instead:
   Acupuncture in Your Pocket", four feature cards (four systems, interactive
   diagrams, search by indication, made for the clinic), pricing list updated.
   Price, trial length and "no credit card" line unchanged.
+
+## 2026-10-22 — Ear points rewired, glass menus
+
+### Ear: Musculoskeletal (`HeadEarPoints.jsx`)
+- Rewired to the new `ear-musculoskeletal.svg`. Ankle (E) and Fingers (a
+  group of five fingertip dots) now have their own ids.
+- Checked against the source chart (`musculoskeletal organs.jpg`): the two
+  Inner Ear ids are swapped in Figma, so the code maps the boxed square
+  `Inner Ear (C)` to Inner Ear (E) and the lobe dot `Inner Ear` to
+  Inner Ear (C).
+- Skin Disorder (C)/(E) moved to Other Ear Points in `ear-acupoints.txt`
+  and dropped from the dropdown.
+- Cervical Spine (the spine segment) and Cervical Spine Point (the dot) are
+  now separate entries. 42 points, all drawn.
+
+### Ear: Internal Organs
+- Tile 2/1 shows `ear-internal-organs.svg` (new) with clickable points and
+  a grouped dropdown (Digestive, Cardiorespiratory, Urogenital).
+- List fixes in `ear-acupoints.txt`: count was 30, really 24; "Internal
+  Genitals (C)" is External Genitals (C) (helix rim). San Jiao moved to
+  Other Ear Points. Small/Large Intestine are singular. 23 points, all drawn.
+- The Musculoskeletal menu/diagram became `PointMenu`/`PointDiagram`, driven
+  by `POINT_TILES`. Selection and open dropdown are kept per tile.
+
+### Glass menus (all grids)
+- `src/components/ui/menuStyles.js` (new): `GLASS_TRIGGER` (frosted acrylic
+  teal button), `GLASS_STRIP` (same finish for tile titles), `GLASS_DROPDOWN`
+  (60% see-through, blurred panel).
+- Used by the menu buttons and dropdowns in the YNSA, TCM, ZSA and Ear grids,
+  the hamburger button and its dropdown, the search results dropdown and
+  `TileTitle`.
+- `src/components/ui/MenuSizer.jsx` (new): invisible copy of a menu's labels
+  that makes the button (and dropdown) as wide as the longest label. Name-only
+  menus share one width for button and dropdown; Basic/Sensory/Brain Points
+  keep a row-wide dropdown for their descriptions. YNSA buttons lost their
+  fixed `w-28`, so long names are no longer cut off.

@@ -6,6 +6,8 @@ import InlineSearch from '../ui/InlineSearch'
 import HamburgerMenu from '../ui/HamburgerMenu'
 import TileTitle from '../ui/TileTitle'
 import CrossIcon from '../ui/CrossIcon'
+import MenuSizer from '../ui/MenuSizer'
+import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 
 // 2x2 grid like TCM Scalp Areas, so tiles are the same size there and here.
 // Row 1: brain-zones diagram with clickable zones + motor-strip body parts
@@ -111,7 +113,7 @@ const TRANSITION_STYLE = `
 
 // Same trigger colours as TCM Scalp Areas / Basic Points: black when idle,
 // red when a selection is active or the menu is open.
-const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
+const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} transition-colors ${
   active
     ? 'text-red-700'
     : 'text-black hover:text-red-700'
@@ -286,10 +288,28 @@ function DropdownMenu({ items, placeholder, activeKey, menuOpen, onToggle, onSel
   return (
     <div onClick={e => e.stopPropagation()}>
       <div className="flex items-center gap-1.5">
-        <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!active || menuOpen)}>
-          {active ? active.label : placeholder}
-          <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
-        </button>
+        {/* Button and dropdown share one grid column, sized by MenuSizer,
+            so both are as wide as the longest label. */}
+        <div className="relative grid">
+          <button type="button" onClick={onToggle} className={`${TRIGGER_CLASS(!!active || menuOpen)} flex justify-between text-left`}>
+            {active ? active.label : placeholder}
+            <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
+          </button>
+          <MenuSizer labels={[placeholder, ...items.map(i => i.label)]} />
+
+          {menuOpen && (
+            <div
+              ref={dropdownRef}
+              className={`brain-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 ${GLASS_DROPDOWN} overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
+            >
+              {items.map(item => (
+                <button key={item.key} type="button" onClick={() => onSelect(item.key)} className={DROPDOWN_ITEM_CLASS(activeKey === item.key)}>
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         {active && (
           <button
             type="button"
@@ -301,19 +321,6 @@ function DropdownMenu({ items, placeholder, activeKey, menuOpen, onToggle, onSel
           </button>
         )}
       </div>
-
-      {menuOpen && (
-        <div
-          ref={dropdownRef}
-          className={`brain-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
-        >
-          {items.map(item => (
-            <button key={item.key} type="button" onClick={() => onSelect(item.key)} className={DROPDOWN_ITEM_CLASS(activeKey === item.key)}>
-              {item.label}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

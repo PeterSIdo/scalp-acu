@@ -11,6 +11,8 @@ import TileTitle from '../ui/TileTitle'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
 import { ZONES, ZONE_INFO, zoneOf } from '../../data/basicZones'
 import CrossIcon from '../ui/CrossIcon'
+import MenuSizer from '../ui/MenuSizer'
+import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 
 // 2x2 grid, row-major: menu (outline head + controls) | Lateral / Frontal | Posterior.
 const TILE_IDS = ['menu', 'lateral', 'frontal', 'posterior']
@@ -39,7 +41,7 @@ const TRANSITION_STYLE = `
   display: none;
 }`
 
-const TRIGGER_CLASS = (active) => `inline-flex items-center gap-1 w-28 text-xs font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
+const TRIGGER_CLASS = (active) => `inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} transition-colors ${
   active
     ? 'text-red-700'
     : 'text-black hover:text-red-700'
@@ -84,10 +86,15 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset, com
     // full width the way an earlier version did.
     <div onClick={e => e.stopPropagation()}>
       <div className="flex items-center gap-1.5">
-        <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activeZone || menuOpen)}>
-          <span className="flex-1 min-w-0 truncate text-left">{activeZone ?? 'Basic Point'}</span>
-          <span>{menuOpen ? '▲' : '▼'}</span>
-        </button>
+        {/* Button sized by MenuSizer to the longest point name. The dropdown
+            stays row-wide (below) so the descriptions have room. */}
+        <div className="grid">
+          <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activeZone || menuOpen)}>
+            <span className="flex-1 min-w-0 truncate text-left">{activeZone ?? 'Basic Point'}</span>
+            <span>{menuOpen ? '▲' : '▼'}</span>
+          </button>
+          <MenuSizer labels={['Basic Point', ...ZONES]} />
+        </div>
         {/* Fixed-size slot so the clear button appearing doesn't shift Search sideways. */}
         <span className="w-5 h-5 flex-shrink-0">
           {activeZone && (
@@ -113,7 +120,7 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset, com
         // higher up so the trigger itself can shrink to content width.
         <div
           ref={dropdownRef}
-          className={`zone-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
+          className={`zone-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 ${GLASS_DROPDOWN} overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
         >
           {ZONES.map(z => (
             <button key={z} type="button" onClick={() => onSelect(z)} className={DROPDOWN_ITEM_CLASS(activeZone === z)}>

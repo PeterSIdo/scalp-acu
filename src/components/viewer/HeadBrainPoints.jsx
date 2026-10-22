@@ -10,6 +10,8 @@ import HamburgerMenu from '../ui/HamburgerMenu'
 import TileTitle from '../ui/TileTitle'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
 import CrossIcon from '../ui/CrossIcon'
+import MenuSizer from '../ui/MenuSizer'
+import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 
 // 2x2 grid, row-major: menu | Lateral / Frontal | Posterior. Same shape and
 // tile order as Basic/Sensory Points. Brain points aren't visible from the
@@ -57,7 +59,7 @@ const TRANSITION_STYLE = `
   display: none;
 }`
 
-const TRIGGER_CLASS = (active) => `inline-flex items-center gap-1 w-28 text-xs font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
+const TRIGGER_CLASS = (active) => `inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} transition-colors ${
   active
     ? 'text-red-700'
     : 'text-black hover:text-red-700'
@@ -93,10 +95,15 @@ function BrainPointMenu({ activePointId, menuOpen, onToggle, onSelect, onReset, 
   return (
     <div onClick={e => e.stopPropagation()}>
       <div className="flex items-center gap-1.5">
-        <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activePointId || menuOpen)}>
-          <span className="flex-1 min-w-0 truncate text-left">{activePoint ? shortLabel(activePoint.name) : 'Brain Point'}</span>
-          <span>{menuOpen ? '▲' : '▼'}</span>
-        </button>
+        {/* Button sized by MenuSizer to the longest point name. The dropdown
+            stays row-wide (below) so the descriptions have room. */}
+        <div className="grid">
+          <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activePointId || menuOpen)}>
+            <span className="flex-1 min-w-0 truncate text-left">{activePoint ? shortLabel(activePoint.name) : 'Brain Point'}</span>
+            <span>{menuOpen ? '▲' : '▼'}</span>
+          </button>
+          <MenuSizer labels={['Brain Point', ...BRAIN_POINT_IDS.map(id => shortLabel(allPoints.find(p => p.id === id)?.name))]} />
+        </div>
         {/* Fixed-size slot so the clear button appearing doesn't shift Search sideways. */}
         <span className="w-5 h-5 flex-shrink-0">
           {activePointId && (
@@ -118,7 +125,7 @@ function BrainPointMenu({ activePointId, menuOpen, onToggle, onSelect, onReset, 
         // anchored one level up so the trigger can shrink to content width.
         <div
           ref={dropdownRef}
-          className={`brain-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
+          className={`brain-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 ${GLASS_DROPDOWN} overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
         >
           {BRAIN_POINT_IDS.map(id => {
             const point = allPoints.find(p => p.id === id)

@@ -7,6 +7,8 @@ import ZsaBackMeridiansSvg from '../../assets/diagrams/ZSA-back-meridians.svg?re
 import ZsaTopMeridiansSvg from '../../assets/diagrams/ZSA-top-meridians.svg?react'
 import TileTitle from '../ui/TileTitle'
 import CrossIcon from '../ui/CrossIcon'
+import MenuSizer from '../ui/MenuSizer'
+import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 import HamburgerMenu from '../ui/HamburgerMenu'
 import InlineSearch from '../ui/InlineSearch'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
@@ -125,7 +127,7 @@ const NAV_ITEMS = [
 ]
 
 // Same trigger/dropdown classes as the TCM grid's menus.
-const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
+const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} transition-colors ${
   active
     ? 'text-red-700'
     : 'text-black hover:text-red-700'
@@ -158,10 +160,28 @@ function AreaMenu({ activeKey, menuOpen, compact, onToggle, onSelect, onReset })
   return (
     <div onClick={e => e.stopPropagation()}>
       <div className="flex items-center gap-1.5">
-        <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activeKey || menuOpen)}>
-          {activeLabel ?? 'ZSA Area'}
-          <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
-        </button>
+        {/* Button and dropdown share one grid column, sized by MenuSizer,
+            so both are as wide as the longest label. */}
+        <div className="relative grid">
+          <button type="button" onClick={onToggle} className={`${TRIGGER_CLASS(!!activeKey || menuOpen)} flex justify-between text-left`}>
+            {activeLabel ?? 'ZSA Area'}
+            <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
+          </button>
+          <MenuSizer labels={['ZSA Area', ...AREA_ITEMS.map(i => i.label)]} />
+
+          {menuOpen && (
+            <div
+              ref={dropdownRef}
+              className={`scroll-touch absolute top-full left-0 right-0 mt-1 py-1 ${GLASS_DROPDOWN} overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
+            >
+              {AREA_ITEMS.map(({ key, label }) => (
+                <button key={key} type="button" onClick={() => onSelect(key)} className={DROPDOWN_ITEM_CLASS(activeKey === key)}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         {activeKey && (
           <button
             type="button"
@@ -173,19 +193,6 @@ function AreaMenu({ activeKey, menuOpen, compact, onToggle, onSelect, onReset })
           </button>
         )}
       </div>
-
-      {menuOpen && (
-        <div
-          ref={dropdownRef}
-          className={`scroll-touch absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
-        >
-          {AREA_ITEMS.map(({ key, label }) => (
-            <button key={key} type="button" onClick={() => onSelect(key)} className={DROPDOWN_ITEM_CLASS(activeKey === key)}>
-              {label}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

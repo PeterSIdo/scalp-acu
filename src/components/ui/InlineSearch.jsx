@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef } from 'react'
 import CrossIcon from './CrossIcon'
+import { GLASS_DROPDOWN } from './menuStyles'
 
 const ITEM_CLASS = 'block w-full text-left px-3 py-1.5 text-xs font-semibold transition-colors text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
 
@@ -104,7 +105,7 @@ export default function InlineSearch({
       {showResults && (
         <div
           ref={listRef}
-          className={`inline-search-scroll absolute top-full ${dropdownClassName} mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
+          className={`inline-search-scroll absolute top-full ${dropdownClassName} mt-1 py-1 ${GLASS_DROPDOWN} overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
         >
           {matches.length > 0 ? matches.map(match => (
             <button key={match.key} type="button" onClick={() => pick(match)} className={ITEM_CLASS}>

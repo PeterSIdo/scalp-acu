@@ -11,6 +11,8 @@ import { CASE_STUDIES_ITEM } from '../../data/navItems'
 import InlineSearch from '../ui/InlineSearch'
 import { TCM_AREA_INFO } from '../../data/tcmAreaInfo'
 import CrossIcon from '../ui/CrossIcon'
+import MenuSizer from '../ui/MenuSizer'
+import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 
 // 2x2 grid, row-major: areas diagram (with the TCM Area menu) | motor area
 // measurement diagram (static) / meridians diagram (with the
@@ -116,7 +118,7 @@ const TRANSITION_STYLE = `
 // Trigger text matches Basic Points' menu button: black when idle, red when
 // a selection is active or the menu is open. No dark: variants — the cyan
 // button background doesn't change with the theme.
-const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
+const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} transition-colors ${
   active
     ? 'text-red-700'
     : 'text-black hover:text-red-700'
@@ -163,10 +165,28 @@ function TCMMenu({ items, placeholder, activeKey, menuOpen, onToggle, onSelect, 
   return (
     <div onClick={e => e.stopPropagation()}>
       <div className="flex items-center gap-1.5">
-        <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activeKey || menuOpen)}>
-          {activeLabel ?? placeholder}
-          <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
-        </button>
+        {/* Button and dropdown share one grid column, sized by MenuSizer,
+            so both are as wide as the longest label. */}
+        <div className="relative grid">
+          <button type="button" onClick={onToggle} className={`${TRIGGER_CLASS(!!activeKey || menuOpen)} flex justify-between text-left`}>
+            {activeLabel ?? placeholder}
+            <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
+          </button>
+          <MenuSizer labels={[placeholder, ...items.map(i => i.label)]} />
+
+          {menuOpen && (
+            <div
+              ref={dropdownRef}
+              className={`tcm-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 ${GLASS_DROPDOWN} overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
+            >
+              {items.map(({ key, label }) => (
+                <button key={key} type="button" onClick={() => onSelect(key)} className={DROPDOWN_ITEM_CLASS(activeKey === key)}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         {activeKey && (
           <button
             type="button"
@@ -178,19 +198,6 @@ function TCMMenu({ items, placeholder, activeKey, menuOpen, onToggle, onSelect, 
           </button>
         )}
       </div>
-
-      {menuOpen && (
-        <div
-          ref={dropdownRef}
-          className={`tcm-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
-        >
-          {items.map(({ key, label }) => (
-            <button key={key} type="button" onClick={() => onSelect(key)} className={DROPDOWN_ITEM_CLASS(activeKey === key)}>
-              {label}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

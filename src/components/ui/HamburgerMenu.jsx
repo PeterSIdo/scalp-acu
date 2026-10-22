@@ -1,3 +1,5 @@
+import { GLASS_TRIGGER, GLASS_DROPDOWN } from './menuStyles'
+
 // Hamburger (three-line) navigation menu shared by the YNSA and TCM grids'
 // menu tiles. Each item either switches which control sits beside the
 // hamburger (a dropdown, the search field) or acts directly (e.g. opens a
@@ -24,7 +26,7 @@ export default function HamburgerMenu({ items, activeId, open, onToggle, onSelec
         onClick={onToggle}
         aria-label="Menu"
         aria-expanded={open}
-        className={`flex flex-col justify-center gap-[3px] w-7 h-[26px] px-1.5 rounded bg-[#63ECE1] transition-colors ${open ? 'text-red-700' : 'text-black hover:text-red-700'}`}
+        className={`flex flex-col justify-center gap-[3px] w-7 h-[26px] px-1.5 ${GLASS_TRIGGER} transition-colors ${open ? 'text-red-700' : 'text-black hover:text-red-700'}`}
       >
         <span className="block h-0.5 w-full rounded bg-current" />
         <span className="block h-0.5 w-full rounded bg-current" />
@@ -32,7 +34,7 @@ export default function HamburgerMenu({ items, activeId, open, onToggle, onSelec
       </button>
 
       {open && (
-        <div className={`absolute top-full ${dropdownClassName} w-56 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 z-30`}>
+        <div className={`absolute top-full ${dropdownClassName} w-56 mt-1 py-1 ${GLASS_DROPDOWN} z-30`}>
           {items.map(item => (
             <button
               key={item.id}

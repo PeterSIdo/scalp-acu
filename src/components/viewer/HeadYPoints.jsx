@@ -5,6 +5,8 @@ import InlineSearch from '../ui/InlineSearch'
 import HamburgerMenu from '../ui/HamburgerMenu'
 import YNSAYSideSvg from '../../assets/diagrams/YNSA-Y-Side.svg?react'
 import CrossIcon from '../ui/CrossIcon'
+import MenuSizer from '../ui/MenuSizer'
+import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 
 const RED  = '#FF0808'
 const BLUE = '#5392F6'
@@ -241,7 +243,7 @@ function buildPointStyle(activeMeridian) {
 
 // Shared text style for both the Meridian and Search triggers — plain text, no button
 // chrome, matching the SubgroupTabs font/weight elsewhere in the viewer.
-const TRIGGER_CLASS = (active) => `inline-flex items-center gap-1 w-28 text-xs font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
+const TRIGGER_CLASS = (active) => `inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} transition-colors ${
   active
     ? 'text-red-700'
     : 'text-black hover:text-red-700'
@@ -281,10 +283,28 @@ function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset })
   return (
     <div className="relative">
       <div className="flex items-center gap-1.5">
-        <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activeMeridian || menuOpen)}>
-          <span className="flex-1 min-w-0 truncate text-left">{activeName ?? 'Meridian'}</span>
-          <span>{menuOpen ? '▲' : '▼'}</span>
-        </button>
+        {/* Button and dropdown share one grid column, sized by MenuSizer,
+            so both are as wide as the longest label. */}
+        <div className="relative grid">
+          <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activeMeridian || menuOpen)}>
+            <span className="flex-1 min-w-0 truncate text-left">{activeName ?? 'Meridian'}</span>
+            <span>{menuOpen ? '▲' : '▼'}</span>
+          </button>
+          <MenuSizer labels={['Meridian', ...Y_MERIDIANS.map(m => m.name)]} />
+
+          {menuOpen && (
+            <div
+              ref={dropdownRef}
+              className={`scroll-touch absolute top-full left-0 right-0 mt-1 py-1 ${GLASS_DROPDOWN} max-h-96 overflow-y-auto z-20`}
+            >
+              {Y_MERIDIANS.map(({ code, name }) => (
+                <button key={code} type="button" onClick={() => onSelect(code)} className={DROPDOWN_ITEM_CLASS(activeMeridian === code)}>
+                  {name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         {/* Fixed-size slot so the clear button appearing doesn't shift Search sideways. */}
         <span className="w-5 h-5 flex-shrink-0">
           {activeMeridian && (
@@ -299,19 +319,6 @@ function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset })
           )}
         </span>
       </div>
-
-      {menuOpen && (
-        <div
-          ref={dropdownRef}
-          className="scroll-touch absolute top-full left-0 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 min-w-[9.5rem] max-h-96 overflow-y-auto z-20"
-        >
-          {Y_MERIDIANS.map(({ code, name }) => (
-            <button key={code} type="button" onClick={() => onSelect(code)} className={DROPDOWN_ITEM_CLASS(activeMeridian === code)}>
-              {name}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

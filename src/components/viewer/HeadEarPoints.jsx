@@ -2,8 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import EarBasicSvg from '../../assets/diagrams/ear-basic.svg?react'
 import EarMusculoskeletalSvg from '../../assets/diagrams/ear-musculoskeletal.svg?react'
+import EarInternalOrgansSvg from '../../assets/diagrams/ear-internal-organs.svg?react'
 import TileTitle from '../ui/TileTitle'
 import CrossIcon from '../ui/CrossIcon'
+import MenuSizer from '../ui/MenuSizer'
+import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 
 // 2x2 grid, row-major (same layout as Basic Points):
 // Master | Musculoskeletal / Internal Organs | Neuroendocrine.
@@ -20,38 +23,62 @@ const TILE_TITLES = {
 const MSK_GROUPS = [
   { label: 'Lower limb', points: ['Toes (C)', 'Toes (E)', 'Heel (C)', 'Heel (E)', 'Ankle (C)', 'Ankle (E)', 'Knee (C)', 'Knee (E)', 'Hip (C)', 'Hip (E)'] },
   { label: 'Upper limb', points: ['Fingers', 'Hand', 'Wrist', 'Elbow', 'Arm', 'Shoulder', 'Master Shoulder'] },
-  { label: 'Spine and trunk', points: ['Cervical Spine', 'Thoracic Spine', 'Lumbar Spine', 'Sacral Spine', 'Lumbago', 'Neck', 'Chest', 'Abdomen'] },
+  { label: 'Spine and trunk', points: ['Cervical Spine', 'Cervical Spine Point', 'Thoracic Spine', 'Lumbar Spine', 'Sacral Spine', 'Lumbago', 'Neck', 'Chest', 'Abdomen'] },
   { label: 'Head and face', points: ['Occiput', 'Temples', 'Forehead', 'Face', 'Eye', 'Eye Disorder 1', 'Eye Disorder 2', 'Upper Jaw', 'Lower Jaw', 'TMJ', 'Dental Analgesia', 'Inner Ear (C)', 'Inner Ear (E)', 'Inner Nose (C)', 'External Ear (C)'] },
-  { label: 'Other points on this chart', points: ['Muscle Relaxation', 'Skin Disorder (C)', 'Skin Disorder (E)'] },
+  { label: 'Other points on this chart', points: ['Muscle Relaxation'] },
 ]
 
 // ear-musculoskeletal.svg element id -> point name. Most ids equal the
 // point name; the rest are Figma renames/typos. The left leg figure is the
-// European one (Toes (E), Heel (E), Hip (E)), so its "Ankle (C)" and
-// "Knee (C)_2" are read as Ankle (E) and Knee (E).
+// European one (Toes (E), Heel (E), Hip (E)), so its "Knee (C)_2" is Knee (E).
+// The two Inner Ear ids are swapped against the source chart: the boxed
+// square under Inner Nose (C) is Inner Ear (E), the lobe dot is Inner Ear (C).
+// "Fingers" is a group of five fingertip dots.
 const MSK_RENAMES = {
-  'Ankle (C)': 'Ankle (E)',
   'Knee (C)_2': 'Knee (E)',
-  'Cervical Spine_2': 'Cervical Spine',
-  'Inner Ear': 'Inner Ear (E)',
+  'Inner Ear (C)': 'Inner Ear (E)',
+  'Inner Ear': 'Inner Ear (C)',
   'External Ear': 'External Ear (C)',
   'Muscle Rekaxation': 'Muscle Relaxation',
 }
 const MSK_SVG_IDS = Object.fromEntries([
-  'Toes (C)', 'Toes (E)', 'Heel (C)', 'Heel (E)', 'Ankle (C)', 'Knee (C)', 'Knee (C)_2', 'Hip (C)', 'Hip (E)',
+  'Toes (C)', 'Toes (E)', 'Heel (C)', 'Heel (E)', 'Ankle (C)', 'Ankle (E)', 'Knee (C)', 'Knee (C)_2', 'Hip (C)', 'Hip (E)',
   'Fingers', 'Hand', 'Wrist', 'Elbow', 'Arm', 'Shoulder', 'Master Shoulder',
-  'Cervical Spine', 'Cervical Spine_2', 'Thoracic Spine', 'Lumbar Spine', 'Sacral Spine', 'Lumbago', 'Neck', 'Chest', 'Abdomen',
+  'Cervical Spine', 'Cervical Spine Point', 'Thoracic Spine', 'Lumbar Spine', 'Sacral Spine', 'Lumbago', 'Neck', 'Chest', 'Abdomen',
   'Occiput', 'Temples', 'Forehead', 'Face', 'Eye', 'Eye Disorder 1', 'Eye Disorder 2', 'Upper Jaw', 'Lower Jaw', 'TMJ',
   'Dental Analgesia', 'Inner Ear (C)', 'Inner Ear', 'Inner Nose (C)', 'External Ear', 'Muscle Rekaxation',
 ].map(id => [id, MSK_RENAMES[id] ?? id]))
 
-const MSK_DRAWN = new Set(Object.values(MSK_SVG_IDS))
-
 // Spine segments are stroked lines, not dots, so they're thickened rather than outlined.
 const MSK_LINE_IDS = new Set(['Cervical Spine', 'Thoracic Spine', 'Lumbar Spine', 'Sacral Spine'])
 
+// Internal organ points from ear-acupoints.txt, in its groups and order.
+const ORG_GROUPS = [
+  { label: 'Digestive', points: ['Mouth', 'Stomach', 'Small Intestine', 'Large Intestine', 'Liver', 'Pancreas', 'Spleen (C)', 'Spleen (E)'] },
+  { label: 'Cardiorespiratory', points: ['Heart (C)', 'Heart (E)', 'Lung 1', 'Lung 2', 'Throat (C)', 'Throat (E)', 'Diaphragm (C)'] },
+  { label: 'Urogenital', points: ['Kidney (C)', 'Kidney (E)', 'Bladder', 'Prostate (C)', 'Uterus (C)', 'Uterus (E)', 'External Genitals (C)', 'External Genitals (E)'] },
+]
+
+// ear-internal-organs.svg element id -> point name (the intestine ids are lower-case in Figma).
+const ORG_RENAMES = {
+  'Small intestine': 'Small Intestine',
+  'Large intestine': 'Large Intestine',
+}
+const ORG_SVG_IDS = Object.fromEntries([
+  'Mouth', 'Stomach', 'Small intestine', 'Large intestine', 'Liver', 'Pancreas', 'Spleen (C)', 'Spleen (E)',
+  'Heart (C)', 'Heart (E)', 'Lung 1', 'Lung 2', 'Throat (C)', 'Throat (E)', 'Diaphragm (C)',
+  'Kidney (C)', 'Kidney (E)', 'Bladder', 'Prostate (C)', 'Uterus (C)', 'Uterus (E)', 'External Genitals (C)', 'External Genitals (E)',
+].map(id => [id, ORG_RENAMES[id] ?? id]))
+
+// Tiles whose diagram has clickable points, with their dropdown groups.
+const POINT_TILES = {
+  musculoskeletal: { Svg: EarMusculoskeletalSvg, groups: MSK_GROUPS, svgIds: MSK_SVG_IDS, lineIds: MSK_LINE_IDS },
+  internal: { Svg: EarInternalOrgansSvg, groups: ORG_GROUPS, svgIds: ORG_SVG_IDS, lineIds: new Set() },
+}
+for (const tile of Object.values(POINT_TILES)) tile.drawn = new Set(Object.values(tile.svgIds))
+
 // Same trigger/dropdown classes as the ZSA and TCM grids' menus.
-const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 rounded bg-[#63ECE1] transition-colors ${
+const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} transition-colors ${
   active
     ? 'text-red-700'
     : 'text-black hover:text-red-700'
@@ -74,7 +101,7 @@ const FILL = { position: 'absolute', inset: 0, width: '100%', height: '100%' }
 
 // Point dropdown, same shape as AreaMenu in HeadZSAPoints.jsx, with the
 // txt file's groups as headings. Points not drawn yet are listed but greyed.
-function MusculoskeletalMenu({ activePoint, menuOpen, compact, onToggle, onSelect, onReset }) {
+function PointMenu({ tile, title, activePoint, menuOpen, compact, onToggle, onSelect, onReset }) {
   const dropdownRef = useRef(null)
 
   // Native wheel-stop so the page doesn't scroll under the dropdown.
@@ -93,10 +120,45 @@ function MusculoskeletalMenu({ activePoint, menuOpen, compact, onToggle, onSelec
   return (
     <div onClick={e => e.stopPropagation()}>
       <div className="flex items-center gap-1.5">
-        <button type="button" onClick={onToggle} className={TRIGGER_CLASS(!!activePoint || menuOpen)}>
-          {activePoint ?? 'Musculoskeletal Points'}
-          <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
-        </button>
+        {/* Button and dropdown share one grid column, sized by MenuSizer,
+            so both are as wide as the longest point name. */}
+        <div className="relative grid">
+          <button type="button" onClick={onToggle} className={`${TRIGGER_CLASS(!!activePoint || menuOpen)} flex justify-between text-left`}>
+            {activePoint ?? title}
+            <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
+          </button>
+          <MenuSizer labels={[
+            title,
+            ...tile.groups.flatMap(group => [
+              <span className="text-[10px] font-bold uppercase tracking-wide">{group.label}</span>,
+              ...group.points.map(name => tile.drawn.has(name) ? name : `${name} (not on diagram)`),
+            ]),
+          ]} />
+
+          {menuOpen && (
+            <div
+              ref={dropdownRef}
+              className={`scroll-touch absolute top-full left-0 right-0 mt-1 py-1 ${GLASS_DROPDOWN} overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
+            >
+              {tile.groups.map(group => (
+                <div key={group.label}>
+                  <div className="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wide text-gray-400">{group.label}</div>
+                  {group.points.map(name => (
+                    tile.drawn.has(name) ? (
+                      <button key={name} type="button" onClick={() => onSelect(name)} className={DROPDOWN_ITEM_CLASS(activePoint === name)}>
+                        {name}
+                      </button>
+                    ) : (
+                      <div key={name} className="px-3 py-1.5 text-xs font-semibold text-gray-300 dark:text-gray-600 cursor-default">
+                        {name} <span className="font-normal italic">(not on diagram)</span>
+                      </div>
+                    )
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         {activePoint && (
           <button
             type="button"
@@ -108,95 +170,123 @@ function MusculoskeletalMenu({ activePoint, menuOpen, compact, onToggle, onSelec
           </button>
         )}
       </div>
-
-      {menuOpen && (
-        <div
-          ref={dropdownRef}
-          className={`scroll-touch absolute top-full left-3 right-3 mt-1 py-1 rounded shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
-        >
-          {MSK_GROUPS.map(group => (
-            <div key={group.label}>
-              <div className="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wide text-gray-400">{group.label}</div>
-              {group.points.map(name => (
-                MSK_DRAWN.has(name) ? (
-                  <button key={name} type="button" onClick={() => onSelect(name)} className={DROPDOWN_ITEM_CLASS(activePoint === name)}>
-                    {name}
-                  </button>
-                ) : (
-                  <div key={name} className="px-3 py-1.5 text-xs font-semibold text-gray-300 dark:text-gray-600 cursor-default">
-                    {name} <span className="font-normal italic">(not on diagram)</span>
-                  </div>
-                )
-              ))}
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   )
 }
 
-// ear-musculoskeletal.svg with its points clickable. The Figma ids are on
-// the rendered elements, so they're found and styled in place: the selected
-// point gets an amber outline, the others fade back.
-function MusculoskeletalDiagram({ activePoint, onSelect }) {
+// Cropped from the 794x1123 A4 page to the ear itself (same page for every ear diagram).
+const MSK_VIEWBOX = { x: 70, y: 50, w: 660, h: 1030 }
+
+// Pulsing ring + name label sizes, in ear diagram units. Their dots
+// are r=15 (vs r~7 on the Basic Points heads), so HeadLateral's ring/label
+// numbers are scaled up 2x to look the same on screen.
+const MARK = { ring: 22, pulse: 44, stroke: 3, gap: 32, pad: 12, font: 22, charW: 12.4 }
+
+// Centre of a point element in the SVG's own (viewBox) units. Spine segments
+// are curves, so their midpoint along the path is used rather than the bbox
+// centre, which can fall off the line.
+function pointCentre(svg, el, lineIds) {
+  const m = svg.getScreenCTM().inverse().multiply(el.getScreenCTM())
+  let p
+  if (lineIds.has(el.id) && el.getTotalLength) {
+    p = el.getPointAtLength(el.getTotalLength() / 2)
+  } else {
+    const b = el.getBBox()
+    p = { x: b.x + b.width / 2, y: b.y + b.height / 2 }
+  }
+  return new DOMPoint(p.x, p.y).matrixTransform(m)
+}
+
+// An ear diagram with its points clickable. The Figma ids are on
+// the rendered elements, so they're found and styled in place: the others
+// fade back, and the selected point gets the same pulsing ring + name label
+// as the Basic Points heads (HeadLateral), drawn on an overlay SVG with the
+// same viewBox.
+function PointDiagram({ tile, activePoint, onSelect }) {
   const hostRef = useRef(null)
+  const [marker, setMarker] = useState(null)
 
   useEffect(() => {
     const svg = hostRef.current?.querySelector('svg')
     if (!svg) return
-    for (const [elId, name] of Object.entries(MSK_SVG_IDS)) {
+    let selectedEl = null
+    for (const [elId, name] of Object.entries(tile.svgIds)) {
       const el = svg.querySelector(`[id="${elId}"]`)
       if (!el) continue
-      const isLine = MSK_LINE_IDS.has(elId)
-      el.dataset.mskPoint = name
+      const isLine = tile.lineIds.has(elId)
+      el.dataset.earPoint = name
       el.style.cursor = 'pointer'
       el.style.transition = 'opacity 150ms ease'
       if (!activePoint) {
         el.style.opacity = ''
-        el.style.stroke = ''
         el.style.strokeWidth = ''
       } else if (name === activePoint) {
         el.style.opacity = ''
-        el.style.stroke = isLine ? '' : '#F59E0B'
-        el.style.strokeWidth = isLine ? '16' : '8'
+        el.style.strokeWidth = isLine ? '16' : ''
+        // If a point has several elements, the first one found carries the marker.
+        selectedEl ??= el
       } else {
         el.style.opacity = '0.3'
-        el.style.stroke = ''
         el.style.strokeWidth = ''
       }
     }
-  }, [activePoint])
+    setMarker(selectedEl ? pointCentre(svg, selectedEl, tile.lineIds) : null)
+  }, [tile, activePoint])
 
   function handleClick(e) {
-    const name = e.target.closest?.('[data-msk-point]')?.dataset.mskPoint
+    const name = e.target.closest?.('[data-ear-point]')?.dataset.earPoint
     if (!name) return
     e.stopPropagation()
     onSelect(name)
   }
 
+  let label = null
+  if (marker && activePoint) {
+    const { gap, pad, font, charW } = MARK
+    const w = activePoint.length * charW + pad * 2
+    const h = font + pad * 2
+    // Label to the right of the point, flipped left if it would leave the crop.
+    const tx = marker.x + gap + w > MSK_VIEWBOX.x + MSK_VIEWBOX.w ? marker.x - w - gap : marker.x + gap
+    const ty = Math.min(Math.max(marker.y - h / 2, MSK_VIEWBOX.y), MSK_VIEWBOX.y + MSK_VIEWBOX.h - h)
+    label = { tx, ty, w, h }
+  }
+
   return (
     <div ref={hostRef} onClick={handleClick} style={{ position: 'relative', width: '100%', height: '100%' }}>
-      {/* Cropped from the 794x1123 A4 page to the ear itself. */}
-      <EarMusculoskeletalSvg viewBox="70 50 660 1030" style={FILL} />
+      <tile.Svg viewBox={`${MSK_VIEWBOX.x} ${MSK_VIEWBOX.y} ${MSK_VIEWBOX.w} ${MSK_VIEWBOX.h}`} style={FILL} />
+      {label && (
+        <svg
+          viewBox={`${MSK_VIEWBOX.x} ${MSK_VIEWBOX.y} ${MSK_VIEWBOX.w} ${MSK_VIEWBOX.h}`}
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ ...FILL, pointerEvents: 'none' }}
+        >
+          <circle cx={marker.x} cy={marker.y} r={MARK.ring} fill="none" stroke="#000000" strokeWidth={MARK.stroke * 0.75} opacity="0.9" />
+          <circle cx={marker.x} cy={marker.y} r={MARK.ring} fill="none" stroke="#000000" strokeWidth={MARK.stroke}>
+            <animate attributeName="r"       values={`${MARK.ring};${MARK.pulse};${MARK.ring}`} dur="1.6s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
+          </circle>
+          <rect x={label.tx} y={label.ty} width={label.w} height={label.h} rx={8} fill="rgba(0,0,0,0.72)" />
+          <text x={label.tx + MARK.pad} y={label.ty + MARK.font + MARK.pad * 0.6} fontSize={MARK.font} fill="white" fontFamily="system-ui, sans-serif">
+            {activePoint}
+          </text>
+        </svg>
+      )}
     </div>
   )
 }
 
-function renderTileContent(id, { activePoint, onPointSelect, onPointClear, menuOpen, onMenuToggle }, expanded = false) {
+function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menuOpenId, onMenuToggle }, expanded = false) {
+  const tile = POINT_TILES[id]
+  const activePoint = activePoints[id] ?? null
   let diagram
-  switch (id) {
-    case 'musculoskeletal':
-      diagram = <MusculoskeletalDiagram activePoint={activePoint} onSelect={onPointSelect} />
-      break
-    // Internal organ / neuroendocrine tiles reuse the base ear until their own diagrams exist.
-    case 'master':
-    case 'internal':
-    case 'neuroendocrine':
-      diagram = <EarBasicSvg style={FILL} />
-      break
-    default:
-      return null
+  if (tile) {
+    diagram = <PointDiagram tile={tile} activePoint={activePoint} onSelect={name => onPointSelect(id, name)} />
+  } else if (TILE_IDS.includes(id)) {
+    // Master / neuroendocrine tiles reuse the base ear until their own diagrams exist.
+    diagram = <EarBasicSvg style={FILL} />
+  } else {
+    return null
   }
   // Same 40px top offset as the other grids, leaving room for a menu row later.
   return (
@@ -204,16 +294,18 @@ function renderTileContent(id, { activePoint, onPointSelect, onPointClear, menuO
       <div style={{ position: 'absolute', top: 40, left: 0, right: 0, bottom: 0 }}>
         {diagram}
       </div>
-      {id === 'musculoskeletal' && (
+      {tile && (
         <div className="absolute left-0 right-0 top-0 px-3 pt-3 z-20 pointer-events-none">
           <div className="w-fit pointer-events-auto" onClick={e => e.stopPropagation()}>
-            <MusculoskeletalMenu
+            <PointMenu
+              tile={tile}
+              title={TILE_TITLES[id]}
               activePoint={activePoint}
-              menuOpen={menuOpen}
+              menuOpen={menuOpenId === id}
               compact={!expanded}
-              onToggle={onMenuToggle}
-              onSelect={onPointSelect}
-              onReset={onPointClear}
+              onToggle={() => onMenuToggle(id)}
+              onSelect={name => onPointSelect(id, name)}
+              onReset={() => onPointClear(id)}
             />
           </div>
         </div>
@@ -224,16 +316,17 @@ function renderTileContent(id, { activePoint, onPointSelect, onPointClear, menuO
 
 export default function HeadEarPoints() {
   const [expandedId, setExpandedId] = useState(null)
-  const [activePoint, setActivePoint] = useState(null)
-  const [menuOpen, setMenuOpen] = useState(false)
+  // Selected point and open dropdown are kept per tile.
+  const [activePoints, setActivePoints] = useState({})
+  const [menuOpenId, setMenuOpenId] = useState(null)
 
   const tileCtx = {
-    activePoint,
+    activePoints,
     // Picking the selected point again clears it, same as the ZSA areas.
-    onPointSelect: name => { setMenuOpen(false); setActivePoint(p => (p === name ? null : name)) },
-    onPointClear: () => setActivePoint(null),
-    menuOpen,
-    onMenuToggle: () => setMenuOpen(o => !o),
+    onPointSelect: (id, name) => { setMenuOpenId(null); setActivePoints(p => ({ ...p, [id]: p[id] === name ? null : name })) },
+    onPointClear: id => setActivePoints(p => ({ ...p, [id]: null })),
+    menuOpenId,
+    onMenuToggle: id => setMenuOpenId(o => (o === id ? null : id)),
   }
 
   useEffect(() => {
@@ -256,7 +349,7 @@ export default function HeadEarPoints() {
   return (
     <div
       style={{ position: 'relative', width: '100%', height: '100%' }}
-      onClick={() => menuOpen && setMenuOpen(false)}
+      onClick={() => menuOpenId && setMenuOpenId(null)}
     >
       <style>{TRANSITION_STYLE}</style>
 
