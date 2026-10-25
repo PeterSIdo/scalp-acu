@@ -3,6 +3,7 @@ import { flushSync } from 'react-dom'
 import EarBasicSvg from '../../assets/diagrams/ear-basic.svg?react'
 import EarMusculoskeletalSvg from '../../assets/diagrams/ear-musculoskeletal.svg?react'
 import EarInternalOrgansSvg from '../../assets/diagrams/ear-internal-organs.svg?react'
+import EarTcmSvg from '../../assets/diagrams/ear-tcm.svg?react'
 import TileTitle from '../ui/TileTitle'
 import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
@@ -201,8 +202,9 @@ function pointCentre(svg, el, lineIds) {
 // the rendered elements, so they're found and styled in place: the others
 // fade back, and the selected point gets the same pulsing ring + name label
 // as the Basic Points heads (HeadLateral), drawn on an overlay SVG with the
-// same viewBox.
-function PointDiagram({ tile, activePoint, onSelect }) {
+// same viewBox. `rect` is the visible (possibly magnified) window; the ring
+// and label are divided by `zoom` so they stay the same size on screen.
+function PointDiagram({ tile, activePoint, onSelect, rect, zoom }) {
   const hostRef = useRef(null)
   const [marker, setMarker] = useState(null)
 
@@ -240,34 +242,36 @@ function PointDiagram({ tile, activePoint, onSelect }) {
     onSelect(name)
   }
 
+  const mark = Object.fromEntries(Object.entries(MARK).map(([k, v]) => [k, v / zoom]))
   let label = null
   if (marker && activePoint) {
-    const { gap, pad, font, charW } = MARK
+    const { gap, pad, font, charW } = mark
     const w = activePoint.length * charW + pad * 2
     const h = font + pad * 2
-    // Label to the right of the point, flipped left if it would leave the crop.
-    const tx = marker.x + gap + w > MSK_VIEWBOX.x + MSK_VIEWBOX.w ? marker.x - w - gap : marker.x + gap
-    const ty = Math.min(Math.max(marker.y - h / 2, MSK_VIEWBOX.y), MSK_VIEWBOX.y + MSK_VIEWBOX.h - h)
+    // Label to the right of the point, flipped left if it would leave the window.
+    const tx = marker.x + gap + w > rect.x + rect.w ? marker.x - w - gap : marker.x + gap
+    const ty = Math.min(Math.max(marker.y - h / 2, rect.y), rect.y + rect.h - h)
     label = { tx, ty, w, h }
   }
+  const viewBox = `${rect.x} ${rect.y} ${rect.w} ${rect.h}`
 
   return (
     <div ref={hostRef} onClick={handleClick} style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <tile.Svg viewBox={`${MSK_VIEWBOX.x} ${MSK_VIEWBOX.y} ${MSK_VIEWBOX.w} ${MSK_VIEWBOX.h}`} style={FILL} />
+      <tile.Svg viewBox={viewBox} style={FILL} />
       {label && (
         <svg
-          viewBox={`${MSK_VIEWBOX.x} ${MSK_VIEWBOX.y} ${MSK_VIEWBOX.w} ${MSK_VIEWBOX.h}`}
+          viewBox={viewBox}
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           style={{ ...FILL, pointerEvents: 'none' }}
         >
-          <circle cx={marker.x} cy={marker.y} r={MARK.ring} fill="none" stroke="#000000" strokeWidth={MARK.stroke * 0.75} opacity="0.9" />
-          <circle cx={marker.x} cy={marker.y} r={MARK.ring} fill="none" stroke="#000000" strokeWidth={MARK.stroke}>
-            <animate attributeName="r"       values={`${MARK.ring};${MARK.pulse};${MARK.ring}`} dur="1.6s" repeatCount="indefinite" />
+          <circle cx={marker.x} cy={marker.y} r={mark.ring} fill="none" stroke="#000000" strokeWidth={mark.stroke * 0.75} opacity="0.9" />
+          <circle cx={marker.x} cy={marker.y} r={mark.ring} fill="none" stroke="#000000" strokeWidth={mark.stroke}>
+            <animate attributeName="r"       values={`${mark.ring};${mark.pulse};${mark.ring}`} dur="1.6s" repeatCount="indefinite" />
             <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
           </circle>
-          <rect x={label.tx} y={label.ty} width={label.w} height={label.h} rx={8} fill="rgba(0,0,0,0.72)" />
-          <text x={label.tx + MARK.pad} y={label.ty + MARK.font + MARK.pad * 0.6} fontSize={MARK.font} fill="white" fontFamily="system-ui, sans-serif">
+          <rect x={label.tx} y={label.ty} width={label.w} height={label.h} rx={8 / zoom} fill="rgba(0,0,0,0.72)" />
+          <text x={label.tx + mark.pad} y={label.ty + mark.font + mark.pad * 0.6} fontSize={mark.font} fill="white" fontFamily="system-ui, sans-serif">
             {activePoint}
           </text>
         </svg>
@@ -276,18 +280,145 @@ function PointDiagram({ tile, activePoint, onSelect }) {
   )
 }
 
-function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menuOpenId, onMenuToggle }, expanded = false) {
+// ear-tcm.svg is an 800x1100 page, cropped to the ear.
+const TCM_VIEWBOX = { x: 40, y: 40, w: 660, h: 1030 }
+// ear-basic.svg (Inkscape, mm units) is shown whole.
+const BASIC_VIEWBOX = { x: 0, y: 0, w: 170.46902, h: 283.32684 }
+
+// Unmagnified crop of each tile's diagram.
+const TILE_BOXES = {
+  master: TCM_VIEWBOX,
+  musculoskeletal: MSK_VIEWBOX,
+  internal: MSK_VIEWBOX,
+  neuroendocrine: BASIC_VIEWBOX,
+}
+
+const MAX_ZOOM = 5
+
+function defaultView(box) {
+  return { zoom: 1, cx: box.x + box.w / 2, cy: box.y + box.h / 2 }
+}
+
+// Clamp the view centre so the zoomed window stays inside the crop.
+function clampView(box, { zoom, cx, cy }) {
+  const w = box.w / zoom
+  const h = box.h / zoom
+  return {
+    zoom,
+    cx: Math.min(Math.max(cx, box.x + w / 2), box.x + box.w - w / 2),
+    cy: Math.min(Math.max(cy, box.y + h / 2), box.y + box.h - h / 2),
+  }
+}
+
+// A diagram with its own magnification: the slider shrinks the viewBox
+// around the view centre, and dragging pans it while zoomed in. Mouse-downs
+// are stopped while zoomed so ZoomableView doesn't pan the whole grid too,
+// and a click after a drag is swallowed so it doesn't toggle the tile or
+// select a point. `children` renders the diagram for the visible window.
+function MagnifiedDiagram({ box, view, onViewChange, children }) {
+  const hostRef = useRef(null)
+  const drag = useRef(null)
+  const dragged = useRef(false)
+  const w = box.w / view.zoom
+  const h = box.h / view.zoom
+  const zoomed = view.zoom > 1
+
+  function onPointerDown(e) {
+    if (!zoomed || e.button !== 0) return
+    drag.current = { x: e.clientX, y: e.clientY }
+    dragged.current = false
+  }
+
+  function onPointerMove(e) {
+    if (!drag.current) return
+    const dx = e.clientX - drag.current.x
+    const dy = e.clientY - drag.current.y
+    // Capture only once it's really a drag: capturing on pointer-down would
+    // retarget the click to this wrapper, so points couldn't be selected.
+    if (!dragged.current) {
+      if (Math.abs(dx) <= 3 && Math.abs(dy) <= 3) return
+      dragged.current = true
+      e.currentTarget.setPointerCapture(e.pointerId)
+    }
+    const rect = hostRef.current.getBoundingClientRect()
+    // Pixels per SVG unit under preserveAspectRatio="xMidYMid meet".
+    const scale = Math.min(rect.width / w, rect.height / h)
+    drag.current = { x: e.clientX, y: e.clientY }
+    onViewChange(v => clampView(box, { ...v, cx: v.cx - dx / scale, cy: v.cy - dy / scale }))
+  }
+
+  function onPointerUp() {
+    drag.current = null
+  }
+
+  return (
+    <div
+      ref={hostRef}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onMouseDown={e => { if (zoomed) e.stopPropagation() }}
+      onClickCapture={e => { if (dragged.current) { e.stopPropagation(); dragged.current = false } }}
+      style={{ position: 'relative', width: '100%', height: '100%', cursor: zoomed ? 'grab' : undefined, touchAction: zoomed ? 'none' : undefined }}
+    >
+      {children({ x: view.cx - w / 2, y: view.cy - h / 2, w, h })}
+    </div>
+  )
+}
+
+// Magnification slider, styled like the point menus' trigger.
+function ZoomSlider({ box, view, compact, onViewChange }) {
+  return (
+    <div
+      className={`flex items-center gap-2 text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} text-black`}
+      onClick={e => e.stopPropagation()}
+      onMouseDown={e => e.stopPropagation()}
+      onPointerDown={e => e.stopPropagation()}
+    >
+      <span aria-hidden="true">−</span>
+      <input
+        type="range"
+        min={1}
+        max={MAX_ZOOM}
+        step={0.1}
+        value={view.zoom}
+        onChange={e => { const zoom = Number(e.target.value); onViewChange(v => clampView(box, { ...v, zoom })) }}
+        aria-label="Magnification"
+        className={`${compact ? 'w-16' : 'w-28'} accent-amber-500 cursor-pointer`}
+      />
+      <span aria-hidden="true">+</span>
+      <span className="font-mono w-9 text-right">{Math.round(view.zoom * 100)}%</span>
+      {view.zoom > 1 && (
+        <button
+          type="button"
+          onClick={() => onViewChange(defaultView(box))}
+          aria-label="Reset magnification"
+          className="flex items-center justify-center w-5 h-5 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm transition duration-150 ease-out hover:scale-110 active:scale-90"
+        >
+          <CrossIcon size={10} strokeWidth={4} />
+        </button>
+      )}
+    </div>
+  )
+}
+
+function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menuOpenId, onMenuToggle, views, onViewChange }, expanded = false) {
+  if (!TILE_IDS.includes(id)) return null
   const tile = POINT_TILES[id]
   const activePoint = activePoints[id] ?? null
-  let diagram
+  const box = TILE_BOXES[id]
+  const view = views[id] ?? defaultView(box)
+  const setView = update => onViewChange(id, update)
+  let renderDiagram
   if (tile) {
-    diagram = <PointDiagram tile={tile} activePoint={activePoint} onSelect={name => onPointSelect(id, name)} />
-  } else if (TILE_IDS.includes(id)) {
-    // Master / neuroendocrine tiles reuse the base ear until their own diagrams exist.
-    diagram = <EarBasicSvg style={FILL} />
+    renderDiagram = rect => <PointDiagram tile={tile} activePoint={activePoint} onSelect={name => onPointSelect(id, name)} rect={rect} zoom={view.zoom} />
   } else {
-    return null
+    // The neuroendocrine tile reuses the base ear until its own diagram exists.
+    const Svg = id === 'master' ? EarTcmSvg : EarBasicSvg
+    renderDiagram = rect => <Svg viewBox={`${rect.x} ${rect.y} ${rect.w} ${rect.h}`} style={FILL} />
   }
+  const diagram = <MagnifiedDiagram box={box} view={view} onViewChange={setView}>{renderDiagram}</MagnifiedDiagram>
   // Same 40px top offset as the other grids, leaving room for a menu row later.
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -310,6 +441,11 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
           </div>
         </div>
       )}
+      {/* Top right, left of the expanded view's close button; below the
+          menu's z-20 so an open dropdown covers it. */}
+      <div className={`absolute top-0 pt-3 z-10 ${expanded ? 'right-16' : 'right-3'}`}>
+        <ZoomSlider box={box} view={view} compact={!expanded} onViewChange={setView} />
+      </div>
     </div>
   )
 }
@@ -319,6 +455,8 @@ export default function HeadEarPoints() {
   // Selected point and open dropdown are kept per tile.
   const [activePoints, setActivePoints] = useState({})
   const [menuOpenId, setMenuOpenId] = useState(null)
+  // Magnification per tile, shared by the tile and its expanded view.
+  const [views, setViews] = useState({})
 
   const tileCtx = {
     activePoints,
@@ -327,6 +465,11 @@ export default function HeadEarPoints() {
     onPointClear: id => setActivePoints(p => ({ ...p, [id]: null })),
     menuOpenId,
     onMenuToggle: id => setMenuOpenId(o => (o === id ? null : id)),
+    views,
+    onViewChange: (id, update) => setViews(vs => {
+      const current = vs[id] ?? defaultView(TILE_BOXES[id])
+      return { ...vs, [id]: typeof update === 'function' ? update(current) : update }
+    }),
   }
 
   useEffect(() => {
