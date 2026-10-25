@@ -441,9 +441,9 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
           </div>
         </div>
       )}
-      {/* Top right, left of the expanded view's close button; below the
-          menu's z-20 so an open dropdown covers it. */}
-      <div className={`absolute top-0 pt-3 z-10 ${expanded ? 'right-16' : 'right-3'}`}>
+      {/* Bottom left, lined up with the menu above it; below the menu's
+          z-20 so an open dropdown covers it. */}
+      <div className="absolute left-0 bottom-0 px-3 pb-3 z-10">
         <ZoomSlider box={box} view={view} compact={!expanded} onViewChange={setView} />
       </div>
     </div>
