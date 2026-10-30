@@ -3,7 +3,7 @@ import { flushSync } from 'react-dom'
 import EarBasicSvg from '../../assets/diagrams/ear-basic.svg?react'
 import EarMusculoskeletalSvg from '../../assets/diagrams/ear-musculoskeletal.svg?react'
 import EarInternalOrgansSvg from '../../assets/diagrams/ear-internal-organs.svg?react'
-import EarTcmSvg from '../../assets/diagrams/ear-tcm.svg?react'
+import EarTcmSvg from '../../assets/diagrams/ear-tcm-2.svg?react'
 import TileTitle from '../ui/TileTitle'
 import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
@@ -71,9 +71,20 @@ const ORG_SVG_IDS = Object.fromEntries([
   'Kidney (C)', 'Kidney (E)', 'Bladder', 'Prostate (C)', 'Uterus (C)', 'Uterus (E)', 'External Genitals (C)', 'External Genitals (E)',
 ].map(id => [id, ORG_RENAMES[id] ?? id]))
 
+// Master points, as named in ear-tcm-2.svg (they aren't in ear-acupoints.txt).
+const MASTER_GROUPS = [
+  { label: 'Points', points: ['Anxious Point', 'Brain Point', 'Brain Stem', 'Eye', 'Internal Ear', 'Lower Jaw', 'Lower Palate', 'Neurasthenia', 'Raise Blood Pressure', 'Tongue', 'Tonsil', 'Tooth', 'Upper Jaw', 'Upper Palate', 'Vision 2', 'Wisdom Teeth'] },
+  { label: 'Grooves', points: ['Groove of Coronary Heart Disease', 'Groove of Hypertension', 'Groove of Missing Teeth', 'Groove of Tinnitus'] },
+  { label: 'Areas', points: ['Cheek'] },
+]
+const MASTER_SVG_IDS = Object.fromEntries(MASTER_GROUPS.flatMap(group => group.points).map(id => [id, id]))
+const MASTER_LINE_IDS = new Set(MASTER_GROUPS[1].points)
+
 // Tiles whose diagram has clickable points, with their dropdown groups.
+// lineWidth/lineStroke style a selected line; hitWidth widens lines too thin to click.
 const POINT_TILES = {
-  musculoskeletal: { Svg: EarMusculoskeletalSvg, groups: MSK_GROUPS, svgIds: MSK_SVG_IDS, lineIds: MSK_LINE_IDS },
+  master: { Svg: EarTcmSvg, groups: MASTER_GROUPS, svgIds: MASTER_SVG_IDS, lineIds: MASTER_LINE_IDS, lineWidth: '5', lineStroke: '#000000', hitWidth: 20 },
+  musculoskeletal: { Svg: EarMusculoskeletalSvg, groups: MSK_GROUPS, svgIds: MSK_SVG_IDS, lineIds: MSK_LINE_IDS, lineWidth: '16' },
   internal: { Svg: EarInternalOrgansSvg, groups: ORG_GROUPS, svgIds: ORG_SVG_IDS, lineIds: new Set() },
 }
 for (const tile of Object.values(POINT_TILES)) tile.drawn = new Set(Object.values(tile.svgIds))
@@ -208,6 +219,23 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom }) {
   const hostRef = useRef(null)
   const [marker, setMarker] = useState(null)
 
+  // Invisible wide copies of thin lines, so they're easy to click.
+  useEffect(() => {
+    const svg = hostRef.current?.querySelector('svg')
+    if (!svg || !tile.hitWidth) return
+    const hits = [...tile.lineIds].flatMap(id => {
+      const el = svg.querySelector(`[id="${id}"]`)
+      if (!el) return []
+      const hit = el.cloneNode()
+      hit.removeAttribute('id')
+      hit.dataset.earPoint = tile.svgIds[id]
+      hit.style.cssText = `stroke: transparent; stroke-width: ${tile.hitWidth}; stroke-linecap: round; cursor: pointer`
+      el.after(hit)
+      return [hit]
+    })
+    return () => hits.forEach(hit => hit.remove())
+  }, [tile])
+
   useEffect(() => {
     const svg = hostRef.current?.querySelector('svg')
     if (!svg) return
@@ -222,21 +250,28 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom }) {
       if (!activePoint) {
         el.style.opacity = ''
         el.style.strokeWidth = ''
+        el.style.stroke = ''
       } else if (name === activePoint) {
         el.style.opacity = ''
-        el.style.strokeWidth = isLine ? '16' : ''
+        el.style.strokeWidth = isLine ? tile.lineWidth : ''
+        el.style.stroke = (isLine && tile.lineStroke) || ''
         // If a point has several elements, the first one found carries the marker.
         selectedEl ??= el
       } else {
         el.style.opacity = '0.3'
         el.style.strokeWidth = ''
+        el.style.stroke = ''
       }
     }
     setMarker(selectedEl ? pointCentre(svg, selectedEl, tile.lineIds) : null)
   }, [tile, activePoint])
 
   function handleClick(e) {
-    const name = e.target.closest?.('[data-ear-point]')?.dataset.earPoint
+    // Lines and areas can overlap dots, so a dot under the cursor wins.
+    const hits = document.elementsFromPoint(e.clientX, e.clientY)
+      .map(el => el.closest('[data-ear-point]'))
+      .filter(Boolean)
+    const name = (hits.find(el => el.tagName === 'circle') ?? hits[0])?.dataset.earPoint
     if (!name) return
     e.stopPropagation()
     onSelect(name)
@@ -280,8 +315,8 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom }) {
   )
 }
 
-// ear-tcm.svg is an 800x1100 page, cropped to the ear.
-const TCM_VIEWBOX = { x: 40, y: 40, w: 660, h: 1030 }
+// ear-tcm-2.svg is a 1207x1249 page, cropped to the ear.
+const TCM_VIEWBOX = { x: 285, y: 30, w: 737, h: 1160 }
 // ear-basic.svg (Inkscape, mm units) is shown whole.
 const BASIC_VIEWBOX = { x: 0, y: 0, w: 170.46902, h: 283.32684 }
 
@@ -415,8 +450,7 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
     renderDiagram = rect => <PointDiagram tile={tile} activePoint={activePoint} onSelect={name => onPointSelect(id, name)} rect={rect} zoom={view.zoom} />
   } else {
     // The neuroendocrine tile reuses the base ear until its own diagram exists.
-    const Svg = id === 'master' ? EarTcmSvg : EarBasicSvg
-    renderDiagram = rect => <Svg viewBox={`${rect.x} ${rect.y} ${rect.w} ${rect.h}`} style={FILL} />
+    renderDiagram = rect => <EarBasicSvg viewBox={`${rect.x} ${rect.y} ${rect.w} ${rect.h}`} style={FILL} />
   }
   const diagram = <MagnifiedDiagram box={box} view={view} onViewChange={setView}>{renderDiagram}</MagnifiedDiagram>
   // Same 40px top offset as the other grids, leaving room for a menu row later.
