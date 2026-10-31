@@ -79,7 +79,7 @@
 <circle id="Anxious Point" cx="418.5" cy="1104.5" r="7.5" fill="black"/>
 <circle id="Raise Blood Pressure" cx="394.5" cy="942.5" r="7.5" fill="black"/>
 <circle id="Tooth" cx="394.5" cy="988.5" r="7.5" fill="black"/>
-<circle id="Neurasthenia" cx="409.5" cy="1052.5" r="7.5" fill="black"/>
+<circle id="Neurasthenia Point" cx="409.5" cy="1052.5" r="7.5" fill="black"/>
 <g id="Grooves">
 <path id="Groove of Hypertension" d="M395.495 949.93L395.77 951.867M417.495 1104.93L417.22 1102.99M396.32 955.742L396.87 959.617M397.42 963.492L397.97 967.367M398.52 971.242L399.07 975.117M399.62 978.992L400.17 982.867M400.72 986.742L401.27 990.617M401.82 994.492L402.37 998.367M402.92 1002.24L403.47 1006.12M404.02 1009.99L404.57 1013.87M405.12 1017.74L405.67 1021.62M406.22 1025.49L406.77 1029.37M407.32 1033.24L407.87 1037.12M408.42 1040.99L408.97 1044.87M409.52 1048.74L410.07 1052.62M410.62 1056.49L411.17 1060.37M411.72 1064.24L412.27 1068.12M412.82 1071.99L413.37 1075.87M413.92 1079.74L414.47 1083.62M415.02 1087.49L415.57 1091.37M416.12 1095.24L416.67 1099.12" stroke="black"/>
 <path id="Groove of Coronary Heart Disease" d="M395.495 949.93L396.683 951.522M519 1115.5L517.812 1113.91M399.058 954.706L401.433 957.89M403.808 961.074L406.183 964.258M408.558 967.442L410.933 970.626M413.308 973.81L415.683 976.994M418.058 980.178L420.434 983.362M422.809 986.546L425.184 989.73M427.559 992.914L429.934 996.098M432.309 999.282L434.684 1002.47M437.059 1005.65L439.434 1008.83M441.809 1012.02L444.184 1015.2M446.56 1018.39L448.935 1021.57M451.31 1024.75L453.685 1027.94M456.06 1031.12L458.435 1034.31M460.81 1037.49L463.185 1040.67M465.56 1043.86L467.935 1047.04M470.31 1050.23L472.686 1053.41M475.061 1056.6L477.436 1059.78M479.811 1062.96L482.186 1066.15M484.561 1069.33L486.936 1072.52M489.311 1075.7L491.686 1078.88M494.061 1082.07L496.437 1085.25M498.812 1088.44L501.187 1091.62M503.562 1094.8L505.937 1097.99M508.312 1101.17L510.687 1104.36M513.062 1107.54L515.437 1110.72" stroke="black"/>
@@ -103,7 +103,7 @@
 </g>
 </g>
 <defs>
-<filter id="filter0_f_5_3" x="515.805" y="139.824" width="329.905" height="291.85" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter0_f_5_3" x="515.805" y="139.824" width="329.906" height="291.85" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feGaussianBlur stdDeviation="6.1" result="effect1_foregroundBlur_5_3"/>
@@ -128,7 +128,7 @@
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feGaussianBlur stdDeviation="5.8" result="effect1_foregroundBlur_5_3"/>
 </filter>
-<filter id="filter5_f_5_3" x="346.328" y="501.592" width="413.686" height="422.887" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter5_f_5_3" x="346.328" y="501.592" width="413.685" height="422.887" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_5_3"/>
@@ -148,7 +148,7 @@
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feGaussianBlur stdDeviation="9.65" result="effect1_foregroundBlur_5_3"/>
 </filter>
-<filter id="filter9_f_5_3" x="340.803" y="525.744" width="87.3095" height="280.196" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter9_f_5_3" x="340.803" y="525.744" width="87.3094" height="280.196" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
 <feGaussianBlur stdDeviation="4.15" result="effect1_foregroundBlur_5_3"/>

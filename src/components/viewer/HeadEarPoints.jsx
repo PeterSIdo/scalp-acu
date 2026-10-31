@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import EarBasicSvg from '../../assets/diagrams/ear-basic.svg?react'
 import EarMusculoskeletalSvg from '../../assets/diagrams/ear-musculoskeletal.svg?react'
@@ -8,13 +8,14 @@ import TileTitle from '../ui/TileTitle'
 import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
+import { AURICULOTHERAPY_CATEGORIES, AURICULOTHERAPY_POINTS } from '../../data/earAuriculotherapy'
 
 // 2x2 grid, row-major (same layout as Basic Points):
 // Master | Musculoskeletal / Internal Organs | Neuroendocrine.
 const TILE_IDS = ['master', 'musculoskeletal', 'internal', 'neuroendocrine']
 
 const TILE_TITLES = {
-  master: 'Master Points',
+  master: 'Chinese Auriculotherapy',
   musculoskeletal: 'Musculoskeletal Points',
   internal: 'Internal Organ Points',
   neuroendocrine: 'Neuroendocrine Points',
@@ -71,19 +72,27 @@ const ORG_SVG_IDS = Object.fromEntries([
   'Kidney (C)', 'Kidney (E)', 'Bladder', 'Prostate (C)', 'Uterus (C)', 'Uterus (E)', 'External Genitals (C)', 'External Genitals (E)',
 ].map(id => [id, ORG_RENAMES[id] ?? id]))
 
-// Master points, as named in ear-tcm-2.svg (they aren't in ear-acupoints.txt).
-const MASTER_GROUPS = [
-  { label: 'Points', points: ['Anxious Point', 'Brain Point', 'Brain Stem', 'Eye', 'Internal Ear', 'Lower Jaw', 'Lower Palate', 'Neurasthenia', 'Raise Blood Pressure', 'Tongue', 'Tonsil', 'Tooth', 'Upper Jaw', 'Upper Palate', 'Vision 2', 'Wisdom Teeth'] },
-  { label: 'Grooves', points: ['Groove of Coronary Heart Disease', 'Groove of Hypertension', 'Groove of Missing Teeth', 'Groove of Tinnitus'] },
-  { label: 'Areas', points: ['Cheek'] },
-]
-const MASTER_SVG_IDS = Object.fromEntries(MASTER_GROUPS.flatMap(group => group.points).map(id => [id, id]))
-const MASTER_LINE_IDS = new Set(MASTER_GROUPS[1].points)
+// ear-tcm-2.svg element id -> Chinese Auriculotherapy point name, where they
+// differ. Most ids equal the name.
+const MASTER_RENAMES = {
+  'Raise Blood Pressure': 'Raising Blood Pressure Point',
+  'Vision 2': 'Vision II',
+  'Groove of Coronary Heart Disease': 'Coronary Heart Disease Groove',
+  'Groove of Missing Teeth': 'Missing Teeth Groove',
+  'Cheek': 'Face & Cheek Area',
+}
+const MASTER_LINE_IDS = new Set(['Groove of Coronary Heart Disease', 'Groove of Hypertension', 'Groove of Missing Teeth', 'Groove of Tinnitus'])
+const MASTER_SVG_IDS = Object.fromEntries([
+  'Anxious Point', 'Brain Point', 'Brain Stem', 'Eye', 'Internal Ear', 'Lower Jaw', 'Lower Palate', 'Neurasthenia Point',
+  'Raise Blood Pressure', 'Tongue', 'Tonsil', 'Tooth', 'Upper Jaw', 'Upper Palate', 'Vision 2', 'Wisdom Teeth',
+  ...MASTER_LINE_IDS, 'Cheek',
+].map(id => [id, MASTER_RENAMES[id] ?? id]))
 
 // Tiles whose diagram has clickable points, with their dropdown groups.
-// lineWidth/lineStroke style a selected line; hitWidth widens lines too thin to click.
+// lineWidth/lineStroke style a selected line; hitWidth widens lines too thin to
+// click. `searchable` tiles use SearchablePointMenu instead of groups.
 const POINT_TILES = {
-  master: { Svg: EarTcmSvg, groups: MASTER_GROUPS, svgIds: MASTER_SVG_IDS, lineIds: MASTER_LINE_IDS, lineWidth: '5', lineStroke: '#000000', hitWidth: 20 },
+  master: { Svg: EarTcmSvg, searchable: true, svgIds: MASTER_SVG_IDS, lineIds: MASTER_LINE_IDS, lineWidth: '5', lineStroke: '#000000', hitWidth: 20 },
   musculoskeletal: { Svg: EarMusculoskeletalSvg, groups: MSK_GROUPS, svgIds: MSK_SVG_IDS, lineIds: MSK_LINE_IDS, lineWidth: '16' },
   internal: { Svg: EarInternalOrgansSvg, groups: ORG_GROUPS, svgIds: ORG_SVG_IDS, lineIds: new Set() },
 }
@@ -177,6 +186,177 @@ function PointMenu({ tile, title, activePoint, menuOpen, compact, onToggle, onSe
             onClick={onReset}
             aria-label="Clear selection"
             className="flex items-center justify-center w-5 h-5 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm transition duration-150 ease-out hover:scale-110 active:scale-90"
+          >
+            <CrossIcon size={10} strokeWidth={4} />
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+const CATEGORY_BUTTONS = [{ label: 'All', short: 'All' }, ...AURICULOTHERAPY_CATEGORIES]
+
+// A point name with the searched letters highlighted.
+function MatchedName({ name, query }) {
+  const start = query ? name.toLowerCase().indexOf(query) : -1
+  if (start < 0) return name
+  const end = start + query.length
+  return <>{name.slice(0, start)}<span className="text-red-700 dark:text-amber-300">{name.slice(start, end)}</span>{name.slice(end)}</>
+}
+
+// The open dropdown of SearchablePointMenu: search field and category buttons
+// stay fixed and only the list scrolls. Search always covers every point, so a
+// point is never missed because of the selected category; results show their
+// category instead. The list's height is measured so the panel stays inside
+// the tile, whose overflow would clip it.
+function SearchablePanel({ tile, activePoint, category, onCategoryChange, onSelect, onClose }) {
+  const panelRef = useRef(null)
+  const fieldRef = useRef(null)
+  const listRef = useRef(null)
+  const [query, setQuery] = useState('')
+  const [listHeight, setListHeight] = useState(160)
+  const search = query.trim().toLowerCase()
+  const points = search
+    ? AURICULOTHERAPY_POINTS.filter(point => point.name.toLowerCase().includes(search))
+    : AURICULOTHERAPY_POINTS.filter(point => category === 'All' || point.categories.includes(category))
+
+  useLayoutEffect(() => {
+    const body = panelRef.current.closest('[data-tile-body]')
+    const bodyRect = body.getBoundingClientRect()
+    // Rects include ZoomableView's scale; max-height doesn't.
+    const zoom = bodyRect.height / body.offsetHeight
+    const free = (bodyRect.bottom - listRef.current.getBoundingClientRect().top) / zoom - 16
+    setListHeight(Math.min(384, Math.max(96, free)))
+  }, [])
+
+  // On phones focusing would raise the keyboard over the list.
+  useEffect(() => {
+    if (window.matchMedia('(pointer: fine)').matches) fieldRef.current.focus({ preventScroll: true })
+  }, [])
+
+  // Native wheel-stop so ZoomableView doesn't zoom under the dropdown.
+  useEffect(() => {
+    const el = panelRef.current
+    function onWheel(e) {
+      e.preventDefault()
+      e.stopPropagation()
+      listRef.current.scrollTop += e.deltaY
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => el.removeEventListener('wheel', onWheel)
+  }, [])
+
+  // Kept from the tile, which treats Enter/Space as "expand", and from the
+  // page's Escape, which would close the expanded card.
+  function handleKeyDown(e) {
+    e.stopPropagation()
+    if (e.key !== 'Escape') return
+    if (query) setQuery('')
+    else onClose()
+  }
+
+  function handleFieldKeyDown(e) {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    const first = points.find(point => tile.drawn.has(point.name))
+    if (first) onSelect(first.name)
+  }
+
+  return (
+    <div
+      ref={panelRef}
+      onKeyDown={handleKeyDown}
+      onMouseDown={e => e.stopPropagation()}
+      className={`absolute top-full left-0 right-0 mt-1 ${GLASS_DROPDOWN} z-20`}
+    >
+      <div className="p-2 pb-1">
+        <input
+          ref={fieldRef}
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          onKeyDown={handleFieldKeyDown}
+          placeholder="Search all points"
+          aria-label="Search all points"
+          className="w-full px-2 py-1 rounded bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 focus:border-amber-500 focus:outline-none text-base md:text-xs font-semibold text-gray-900 dark:text-gray-100 placeholder:font-normal placeholder:text-gray-400 dark:placeholder:text-gray-500"
+        />
+      </div>
+      <div className="flex flex-wrap gap-1 px-2 pb-2">
+        {CATEGORY_BUTTONS.map(({ label, short }) => (
+          <button
+            key={label}
+            type="button"
+            title={label}
+            aria-pressed={!search && category === label}
+            onClick={() => { setQuery(''); onCategoryChange(label) }}
+            className={`px-1.5 py-0.5 rounded-full text-[11px] font-semibold transition-colors ${
+              !search && category === label
+                ? 'bg-orange-500 text-white'
+                : 'bg-gray-200/70 dark:bg-gray-700/70 text-gray-700 dark:text-gray-200 hover:text-amber-600 dark:hover:text-amber-400'
+            }`}
+          >
+            {short}
+          </button>
+        ))}
+      </div>
+      <div
+        ref={listRef}
+        style={{ maxHeight: listHeight }}
+        className="scroll-touch overflow-y-auto py-1 border-t border-gray-300/60 dark:border-gray-700/60"
+      >
+        {points.map(({ name, categories }) => {
+          const tag = search && categories.length > 0 && (
+            <span className="block text-[11px] font-normal leading-snug text-gray-500 dark:text-gray-400">{categories.join(' · ')}</span>
+          )
+          return tile.drawn.has(name) ? (
+            <button key={name} type="button" onClick={() => onSelect(name)} className={DROPDOWN_ITEM_CLASS(activePoint === name)}>
+              <MatchedName name={name} query={search} />
+              {tag}
+            </button>
+          ) : (
+            <div key={name} className="px-3 py-1.5 text-xs font-semibold text-gray-300 dark:text-gray-600 cursor-default">
+              <MatchedName name={name} query={search} /> <span className="font-normal italic">(not on diagram)</span>
+              {tag}
+            </div>
+          )
+        })}
+        {points.length === 0 && <p className="px-3 py-1.5 text-xs text-gray-400 dark:text-gray-500">No points found</p>}
+      </div>
+    </div>
+  )
+}
+
+// Point dropdown for long lists: closed, it's one line like PointMenu; open,
+// it adds search and category buttons. The column can shrink below its
+// longest label, so on phones the panel stays inside the tile.
+function SearchablePointMenu({ tile, title, activePoint, menuOpen, category, onCategoryChange, onToggle, onSelect, onReset }) {
+  return (
+    <div onClick={e => e.stopPropagation()}>
+      <div className="flex items-center gap-1.5">
+        <div className="relative grid min-w-0" style={{ gridTemplateColumns: 'minmax(0, max-content)' }}>
+          <button type="button" onClick={onToggle} className={`${TRIGGER_CLASS(!!activePoint || menuOpen)} flex justify-between text-left`}>
+            {activePoint ?? title}
+            <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
+          </button>
+          <MenuSizer labels={[title, ...AURICULOTHERAPY_POINTS.map(({ name }) => tile.drawn.has(name) ? name : `${name} (not on diagram)`)]} />
+          {menuOpen && (
+            <SearchablePanel
+              tile={tile}
+              activePoint={activePoint}
+              category={category}
+              onCategoryChange={onCategoryChange}
+              onSelect={onSelect}
+              onClose={onToggle}
+            />
+          )}
+        </div>
+        {activePoint && (
+          <button
+            type="button"
+            onClick={onReset}
+            aria-label="Clear selection"
+            className="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm transition duration-150 ease-out hover:scale-110 active:scale-90"
           >
             <CrossIcon size={10} strokeWidth={4} />
           </button>
@@ -328,7 +508,7 @@ const TILE_BOXES = {
   neuroendocrine: BASIC_VIEWBOX,
 }
 
-const MAX_ZOOM = 5
+const MAX_ZOOM = 2
 
 function defaultView(box) {
   return { zoom: 1, cx: box.x + box.w / 2, cy: box.y + box.h / 2 }
@@ -423,7 +603,6 @@ function ZoomSlider({ box, view, compact, onViewChange }) {
         className={`${compact ? 'w-16' : 'w-28'} accent-amber-500 cursor-pointer`}
       />
       <span aria-hidden="true">+</span>
-      <span className="font-mono w-9 text-right">{Math.round(view.zoom * 100)}%</span>
       {view.zoom > 1 && (
         <button
           type="button"
@@ -438,7 +617,7 @@ function ZoomSlider({ box, view, compact, onViewChange }) {
   )
 }
 
-function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menuOpenId, onMenuToggle, views, onViewChange }, expanded = false) {
+function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menuOpenId, onMenuToggle, views, onViewChange, category, onCategoryChange }, expanded = false) {
   if (!TILE_IDS.includes(id)) return null
   const tile = POINT_TILES[id]
   const activePoint = activePoints[id] ?? null
@@ -455,23 +634,37 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
   const diagram = <MagnifiedDiagram box={box} view={view} onViewChange={setView}>{renderDiagram}</MagnifiedDiagram>
   // Same 40px top offset as the other grids, leaving room for a menu row later.
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div data-tile-body style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div style={{ position: 'absolute', top: 40, left: 0, right: 0, bottom: 0 }}>
         {diagram}
       </div>
       {tile && (
         <div className="absolute left-0 right-0 top-0 px-3 pt-3 z-20 pointer-events-none">
-          <div className="w-fit pointer-events-auto" onClick={e => e.stopPropagation()}>
-            <PointMenu
-              tile={tile}
-              title={TILE_TITLES[id]}
-              activePoint={activePoint}
-              menuOpen={menuOpenId === id}
-              compact={!expanded}
-              onToggle={() => onMenuToggle(id)}
-              onSelect={name => onPointSelect(id, name)}
-              onReset={() => onPointClear(id)}
-            />
+          <div className="w-fit max-w-full pointer-events-auto" onClick={e => e.stopPropagation()}>
+            {tile.searchable ? (
+              <SearchablePointMenu
+                tile={tile}
+                title={TILE_TITLES[id]}
+                activePoint={activePoint}
+                menuOpen={menuOpenId === id}
+                category={category}
+                onCategoryChange={onCategoryChange}
+                onToggle={() => onMenuToggle(id)}
+                onSelect={name => onPointSelect(id, name)}
+                onReset={() => onPointClear(id)}
+              />
+            ) : (
+              <PointMenu
+                tile={tile}
+                title={TILE_TITLES[id]}
+                activePoint={activePoint}
+                menuOpen={menuOpenId === id}
+                compact={!expanded}
+                onToggle={() => onMenuToggle(id)}
+                onSelect={name => onPointSelect(id, name)}
+                onReset={() => onPointClear(id)}
+              />
+            )}
           </div>
         </div>
       )}
@@ -491,9 +684,13 @@ export default function HeadEarPoints() {
   const [menuOpenId, setMenuOpenId] = useState(null)
   // Magnification per tile, shared by the tile and its expanded view.
   const [views, setViews] = useState({})
+  // Kept here so the category survives closing the dropdown and expanding the tile.
+  const [category, setCategory] = useState('All')
 
   const tileCtx = {
     activePoints,
+    category,
+    onCategoryChange: setCategory,
     // Picking the selected point again clears it, same as the ZSA areas.
     onPointSelect: (id, name) => { setMenuOpenId(null); setActivePoints(p => ({ ...p, [id]: p[id] === name ? null : name })) },
     onPointClear: id => setActivePoints(p => ({ ...p, [id]: null })),
