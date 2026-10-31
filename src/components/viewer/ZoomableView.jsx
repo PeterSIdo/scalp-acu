@@ -1,4 +1,5 @@
 import { useReducer, useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
+import ResetIcon from '../ui/ResetIcon'
 
 const MIN_SCALE = 1
 const MAX_SCALE = 6
@@ -32,7 +33,7 @@ function reducer(state, action) {
   }
 }
 
-const ZoomableView = forwardRef(function ZoomableView({ children, hideControls = false, wheelZoom = true }, ref) {
+const ZoomableView = forwardRef(function ZoomableView({ children, wheelZoom = true, onReset }, ref) {
   const [{ scale, tx, ty }, dispatch] = useReducer(reducer, { scale: 1, tx: 0, ty: 0 })
   const containerRef = useRef(null)
   const isDragging = useRef(false)
@@ -119,30 +120,29 @@ const ZoomableView = forwardRef(function ZoomableView({ children, hideControls =
         {children}
       </div>
 
-      {/* Zoom controls */}
-      {!hideControls && (
-        <div className="absolute bottom-3 right-3 flex flex-row items-center gap-1 select-none bg-gray-900/70 rounded px-1.5 py-1">
-          <button
-            onMouseDown={e => e.stopPropagation()}
-            onClick={() => dispatch({ type: 'ZOOM_OUT' })}
-            className="w-8 h-8 bg-gray-800 hover:bg-gray-700 text-white rounded flex items-center justify-center text-xl font-bold border border-gray-600 leading-none"
-          >−</button>
-          <span className="text-xs text-gray-400 font-mono w-10 text-center">{Math.round(scale * 100)}%</span>
-          <button
-            onMouseDown={e => e.stopPropagation()}
-            onClick={() => dispatch({ type: 'ZOOM_IN' })}
-            className="w-8 h-8 bg-gray-800 hover:bg-gray-700 text-white rounded flex items-center justify-center text-xl font-bold border border-gray-600 leading-none"
-          >+</button>
-          {isZoomed && (
-            <button
-              onMouseDown={e => e.stopPropagation()}
-              onClick={() => dispatch({ type: 'RESET' })}
-              className="w-8 h-8 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded flex items-center justify-center text-sm border border-gray-600 ml-1"
-              title="Reset zoom"
-            >↺</button>
-          )}
-        </div>
-      )}
+      {/* Reset the whole screen */}
+      <button
+        type="button"
+        onMouseDown={e => e.stopPropagation()}
+        onClick={onReset}
+        aria-label="Reset screen"
+        title="Reset screen"
+        className="absolute bottom-3 right-3 transition duration-150 ease-out hover:scale-110 active:scale-90 hover:brightness-110"
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: '50%',
+          border: '2px solid #ffffff',
+          background: '#f97316',
+          color: '#ffffff',
+          padding: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.35)',
+          cursor: 'pointer',
+        }}
+      ><ResetIcon size={22} strokeWidth={3} /></button>
     </div>
   )
 })

@@ -143,6 +143,7 @@ export default function ViewerPage() {
   const [activeView, setActiveView] = useState('Grid')
   const [searchQuery, setSearchQuery] = useState('')
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
+  const [resetKey, setResetKey] = useState(0)
 
   const swipeStartX = useRef(null)
   const swipeStartY = useRef(null)
@@ -211,6 +212,15 @@ export default function ViewerPage() {
   const isNeck = activeSubgroup === 'ynsa-neck'
   // The ZSA grid scrolls like Y-Points, so the wheel scrolls instead of zooming.
   const isZsa = activeSubgroup === 'zsa-zones'
+
+  // Bumping resetKey remounts ZoomableView and the grid inside it, which clears
+  // the zoom plus every tile's selections, menus and magnification.
+  function handleReset() {
+    setResetKey(k => k + 1)
+    closeSheet()
+    setHighlightJsonId(null)
+    setSearchQuery('')
+  }
 
   function handleSystemChange(systemId) {
     const sys = SYSTEMS.find(s => s.id === systemId)
@@ -352,7 +362,7 @@ export default function ViewerPage() {
         {/* Diagram */}
         <div className="flex-1 min-h-0 bg-gray-300 dark:bg-gray-900 overflow-hidden p-4" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
           {isAvailable ? (
-            <ZoomableView hideControls={isNeck || isZsa} wheelZoom={!isNeck && !isZsa}>
+            <ZoomableView key={resetKey} onReset={handleReset} wheelZoom={!isNeck && !isZsa}>
               {activeView === 'Grid'      && <HeadBasicPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-basic']} />}
               {activeView === 'SensoryGrid' && <HeadSensoryPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-sensory']} />}
               {activeView === 'BrainGrid' && <HeadBrainPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-brain']} />}
