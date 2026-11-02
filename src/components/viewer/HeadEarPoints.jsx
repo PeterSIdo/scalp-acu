@@ -9,147 +9,12 @@ import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 import { AURICULOTHERAPY_CATEGORIES, AURICULOTHERAPY_POINTS } from '../../data/earAuriculotherapy'
+import { TILE_TITLES, MSK_GROUPS, MSK_SVG_IDS, MSK_LINE_IDS, ORG_GROUPS, ORG_SVG_IDS, MASTER_LINE_IDS, MASTER_SVG_IDS } from '../../data/earPoints'
 import { TOUCH_REACH, targetAt } from './touchHit'
 
 // 2x2 grid, row-major (same layout as Basic Points):
 // Master | Musculoskeletal / Internal Organs | Neuroendocrine.
 const TILE_IDS = ['master', 'musculoskeletal', 'internal', 'neuroendocrine']
-
-const TILE_TITLES = {
-  master: 'Chinese Auriculotherapy',
-  musculoskeletal: 'Musculoskeletal Points',
-  internal: 'Internal Organ Points',
-  neuroendocrine: 'Neuroendocrine Points',
-}
-
-// Musculoskeletal points from ear-acupoints.txt, in its groups and order.
-const MSK_GROUPS = [
-  { label: 'Lower limb', points: ['Toes (C)', 'Toes (E)', 'Heel (C)', 'Heel (E)', 'Ankle (C)', 'Ankle (E)', 'Knee (C)', 'Knee (E)', 'Hip (C)', 'Hip (E)'] },
-  { label: 'Upper limb', points: ['Fingers', 'Hand', 'Wrist', 'Elbow', 'Arm', 'Shoulder', 'Master Shoulder'] },
-  { label: 'Spine and trunk', points: ['Cervical Spine', 'Cervical Spine Point', 'Thoracic Spine', 'Lumbar Spine', 'Sacral Spine', 'Lumbago', 'Neck', 'Chest', 'Abdomen'] },
-  { label: 'Head and face', points: ['Occiput', 'Temples', 'Forehead', 'Face', 'Eye', 'Eye Disorder 1', 'Eye Disorder 2', 'Upper Jaw', 'Lower Jaw', 'TMJ', 'Dental Analgesia', 'Inner Ear (C)', 'Inner Ear (E)', 'Inner Nose (C)', 'External Ear (C)'] },
-  { label: 'Other points on this chart', points: ['Muscle Relaxation'] },
-]
-
-// ear-musculoskeletal.svg element id -> point name. Most ids equal the
-// point name; the rest are Figma renames/typos. The left leg figure is the
-// European one (Toes (E), Heel (E), Hip (E)), so its "Knee (C)_2" is Knee (E).
-// The two Inner Ear ids are swapped against the source chart: the boxed
-// square under Inner Nose (C) is Inner Ear (E), the lobe dot is Inner Ear (C).
-// "Fingers" is a group of five fingertip dots.
-const MSK_RENAMES = {
-  'Knee (C)_2': 'Knee (E)',
-  'Inner Ear (C)': 'Inner Ear (E)',
-  'Inner Ear': 'Inner Ear (C)',
-  'External Ear': 'External Ear (C)',
-  'Muscle Rekaxation': 'Muscle Relaxation',
-}
-const MSK_SVG_IDS = Object.fromEntries([
-  'Toes (C)', 'Toes (E)', 'Heel (C)', 'Heel (E)', 'Ankle (C)', 'Ankle (E)', 'Knee (C)', 'Knee (C)_2', 'Hip (C)', 'Hip (E)',
-  'Fingers', 'Hand', 'Wrist', 'Elbow', 'Arm', 'Shoulder', 'Master Shoulder',
-  'Cervical Spine', 'Cervical Spine Point', 'Thoracic Spine', 'Lumbar Spine', 'Sacral Spine', 'Lumbago', 'Neck', 'Chest', 'Abdomen',
-  'Occiput', 'Temples', 'Forehead', 'Face', 'Eye', 'Eye Disorder 1', 'Eye Disorder 2', 'Upper Jaw', 'Lower Jaw', 'TMJ',
-  'Dental Analgesia', 'Inner Ear (C)', 'Inner Ear', 'Inner Nose (C)', 'External Ear', 'Muscle Rekaxation',
-].map(id => [id, MSK_RENAMES[id] ?? id]))
-
-// Spine segments are stroked lines, not dots, so they're thickened rather than outlined.
-const MSK_LINE_IDS = new Set(['Cervical Spine', 'Thoracic Spine', 'Lumbar Spine', 'Sacral Spine'])
-
-// Internal organ points from ear-acupoints.txt, in its groups and order.
-const ORG_GROUPS = [
-  { label: 'Digestive', points: ['Mouth', 'Stomach', 'Small Intestine', 'Large Intestine', 'Liver', 'Pancreas', 'Spleen (C)', 'Spleen (E)'] },
-  { label: 'Cardiorespiratory', points: ['Heart (C)', 'Heart (E)', 'Lung 1', 'Lung 2', 'Throat (C)', 'Throat (E)', 'Diaphragm (C)'] },
-  { label: 'Urogenital', points: ['Kidney (C)', 'Kidney (E)', 'Bladder', 'Prostate (C)', 'Uterus (C)', 'Uterus (E)', 'External Genitals (C)', 'External Genitals (E)'] },
-]
-
-// ear-internal-organs.svg element id -> point name (the intestine ids are lower-case in Figma).
-const ORG_RENAMES = {
-  'Small intestine': 'Small Intestine',
-  'Large intestine': 'Large Intestine',
-}
-const ORG_SVG_IDS = Object.fromEntries([
-  'Mouth', 'Stomach', 'Small intestine', 'Large intestine', 'Liver', 'Pancreas', 'Spleen (C)', 'Spleen (E)',
-  'Heart (C)', 'Heart (E)', 'Lung 1', 'Lung 2', 'Throat (C)', 'Throat (E)', 'Diaphragm (C)',
-  'Kidney (C)', 'Kidney (E)', 'Bladder', 'Prostate (C)', 'Uterus (C)', 'Uterus (E)', 'External Genitals (C)', 'External Genitals (E)',
-].map(id => [id, ORG_RENAMES[id] ?? id]))
-
-// ear-chin-3.svg element id -> Chinese Auriculotherapy point name, where they
-// differ (Figma renames and typos). Most ids equal the name. Some points are
-// drawn twice (Thalamus, Lung, Bronchus, External Knee, Buttocks (Hip),
-// Inter Costal); the first element found carries the marker. The three
-// helix dots (Helix 4-6) all select the single "Helix 1-6" entry. The
-// "...Area" ids are groups (a shaded zone), which select as one.
-const MASTER_RENAMES = {
-  'Appex of the Tragus': 'Tragic Apex',
-  'Vision 1': 'Vision I',
-  'Vision 2': 'Vision II',
-  'Groove of Coronary Heart Disease': 'Coronary Heart Disease Groove',
-  'Groove of Missing Teeth': 'Missing Teeth Groove',
-  'Thalamus_2': 'Thalamus',
-  'Testis': 'Testicle',
-  'Exciting': 'Exciting Point',
-  'Helix 4': 'Helix 1-6',
-  'Helix 5': 'Helix 1-6',
-  'Helix 6': 'Helix 1-6',
-  'Raise Blood Pressure': 'Raising Blood Pressure Point',
-  'Cheek': 'Face & Cheek Area',
-  'Brainstem': 'Brain Stem',
-  'Tripple Heater Point': 'Triple Heater Point',
-  'San Jiao': 'Sanjiao',
-  'Lung_2': 'Lung',
-  'Bronchus_2': 'Bronchus',
-  'Endocrine Area': 'Endocrine',
-  'Symphatic': 'Sympathetic (sympathy)',
-  'Siatic': 'Sciatic Nerve',
-  'Hip': 'Buttocks (Hip)',
-  'Hip_2': 'Buttocks (Hip)',
-  'Sole': 'Sole of Foot',
-  'Calf': 'Calf Point',
-  'External Knee_2': 'External Knee',
-  'Thigh Muscles Area': 'Thigh Muscles',
-  'Lumbar Muscles Area': 'Lumbar Muscle',
-  'Intercostals Area': 'Inter Costal',
-  'Intercostals': 'Inter Costal',
-  'Diziness Area': 'Dizziness Point',
-  'Cervical Vertebrae Area': 'Cervix Vertebrae',
-  'Thyroid': 'Thyroid Gland',
-  'Mamma': 'Mammary Gland',
-  'Coccyx': 'Coccyx Vertebrae',
-  'Upper Back': 'Shoulder and Upper Back',
-  'Gallbladder': 'Gall Bladder',
-  'Bilary Duct': 'Biliary Duct',
-  'Duodendum': 'Duodenum',
-  'Diaphram': 'Diaphragm',
-  'Ear Center': 'Ear Centre',
-  'Abdominal Distention Area': 'Abdominal Area',
-  'Arm Pit': 'Armpit',
-  'Large Auricular Nerv': 'Great Auricular Nerve',
-  'Rheumatism Line': 'Rheumatic Line',
-}
-const MASTER_LINE_IDS = new Set(['Groove of Coronary Heart Disease', 'Groove of Hypertension', 'Groove of Missing Teeth', 'Groove of Tinnitus', 'Rheumatism Line'])
-const MASTER_SVG_IDS = Object.fromEntries([
-  // Tragus and intertragic notch
-  'External Ear', 'Thirst Point', 'Adrenal Gland', 'Appex of the Tragus', 'Vision 1', 'External Nose', 'Hunger Point',
-  // Lobe
-  'Eye', 'Upper Jaw', 'Lower Jaw', 'Thalamus', 'Thalamus_2', 'Brain Point', 'Testis', 'Exciting', 'Wisdom Teeth',
-  'Internal Ear', 'Helix 4', 'Helix 5', 'Helix 6', 'Vision 2', 'Lower Palate', 'Tongue', 'Upper Palate', 'Tonsil',
-  'Anxious Point', 'Raise Blood Pressure', 'Tooth', 'Neurasthenia Point', 'Cheek', 'Brainstem', 'Stop Asthma', 'Temple',
-  // Inferior concha
-  'Heart Point', 'Tripple Heater Point', 'Spleen', 'Lung', 'Lung_2', 'San Jiao', 'Bronchus', 'Bronchus_2', 'Trachea', 'Endocrine Area',
-  // Upper crus of helix / triangular fossa
-  'Symphatic', 'Siatic', 'Hip', 'Shenmen', 'Popliteal Fossa', 'Heel', 'Sole', 'Toe', 'Calf', 'External Knee', 'Hip Joint',
-  'Ankle', 'Instep', 'Knee Joint', 'Thigh Muscles Area',
-  // Antihelix
-  'Lumbar Muscles Area', 'Intercostals Area', 'Diziness Area', 'Cervical Vertebrae Area', 'Thyroid', 'Neck', 'Chest', 'Mamma',
-  'External Abdomen', 'External Knee_2', 'Hip_2', 'Coccyx', 'Hot Point', 'Abdomen', 'Upper Back', 'Intercostals',
-  // Superior concha
-  'Prostate', 'Bladder', 'Ureter', 'Kidney', 'Gallbladder', 'Liver', 'Bilary Duct', 'Duodendum', 'Stomach', 'Diaphram',
-  'Ear Center', 'Small Intestine', 'Appendix', 'Large Intestine', 'Abdominal Distention Area',
-  // Scaphoid fossa
-  'Finger', 'Wrist', 'Elbow', 'Shoulder', 'Shoulder Joint', 'Arm Pit', 'Clavicle', 'Large Auricular Nerv',
-  // Grooves and lines
-  ...MASTER_LINE_IDS,
-].map(id => [id, MASTER_RENAMES[id] ?? id]))
 
 // An optional drawing a tile can switch on and off: every group whose id
 // starts with `prefix`, except groups holding clickable points (the
@@ -801,7 +666,10 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
   )
 }
 
-export default function HeadEarPoints() {
+// `pick` ({ tile, name, n }) comes from the viewer's search panel: that point
+// is selected and its tile opened. `n` changes on every pick, so picking the
+// same point twice still applies.
+export default function HeadEarPoints({ pick = null }) {
   const [expandedId, setExpandedId] = useState(null)
   // Selected point and open dropdown are kept per tile.
   const [activePoints, setActivePoints] = useState({})
@@ -829,6 +697,18 @@ export default function HeadEarPoints() {
       const current = vs[id] ?? defaultView(TILE_BOXES[id])
       return { ...vs, [id]: typeof update === 'function' ? update(current) : update }
     }),
+  }
+
+  // A new search pick is applied while rendering (React's "adjust state when
+  // a prop changes" pattern), so it shows without an extra effect pass.
+  const [appliedPick, setAppliedPick] = useState(null)
+  if (pick !== appliedPick) {
+    setAppliedPick(pick)
+    if (pick) {
+      setMenuOpenId(null)
+      setActivePoints(p => ({ ...p, [pick.tile]: pick.name }))
+      setExpandedId(pick.tile)
+    }
   }
 
   useEffect(() => {

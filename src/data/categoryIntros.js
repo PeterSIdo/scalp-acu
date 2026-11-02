@@ -5,6 +5,19 @@
 // render this layout instead of the point layout.
 // Categories with no entry here simply don't show the link.
 export const CATEGORY_INTROS = {
+  // The system as a whole, from "About YNSA" in every YNSA grid's menu.
+  'ynsa': {
+    isCategory: true,
+    linkLabel: 'About YNSA',
+    name: 'Yamamoto New Scalp Acupuncture',
+    system: 'YNSA',
+    paragraphs: [
+      'Yamamoto New Scalp Acupuncture (YNSA) was developed by the Japanese physician Dr Toshikatsu Yamamoto, who first presented it in the early 1970s. In his clinical work he noticed that small tender spots on the scalp matched complaints elsewhere in the body, and that needling them could bring quick relief. Over the following decades he built these observations into a complete system.',
+      'YNSA is a microsystem, like ear acupuncture: the whole body is represented on one small area, in this case the scalp. Its points fall into groups. The Basic points map the body regions, the Sensory points relate to the eyes, nose, mouth and ears, the Brain points to the central nervous system, and the 12 Y points to the meridians and their organs. Each group has a Yin set at the front of the head and a mirror Yang set at the back, and all points appear on both sides.',
+      'Point selection is guided by palpation. The correct point is usually tender or slightly indurated. For the Y points, YNSA uses its own diagnosis, most often of the neck or the abdomen, where tender zones show which point to treat. After needling, the zone or the complaint is checked again, so the choice of point can be confirmed or adjusted straight away.',
+      "Treatment uses few, fine needles and the effect is often felt quickly. YNSA is widely used for pain and musculoskeletal problems, for neurological conditions such as stroke rehabilitation, Parkinson's disease and multiple sclerosis, and, through the Y points, for internal and functional complaints. The patient can stay seated and clothed, and the method combines well with other treatments.",
+    ],
+  },
   'ynsa-basic': {
     isCategory: true,
     linkLabel: 'About Basic Points',

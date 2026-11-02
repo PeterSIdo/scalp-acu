@@ -1,7 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { allPoints, yPointForMeridian } from '../../data/points'
 import { MERIDIANS } from '../../data/meridians'
-import InlineSearch from '../ui/InlineSearch'
 import HamburgerMenu from '../ui/HamburgerMenu'
 import YNSAYSideSvg from '../../assets/diagrams/YNSA-Y-Side.svg?react'
 import CrossIcon from '../ui/CrossIcon'
@@ -241,7 +240,7 @@ function buildPointStyle(activeMeridian) {
   return `${dimPoints}\n${restorePoints}`
 }
 
-// Shared text style for both the Meridian and Search triggers — plain text, no button
+// Shared text style for the Meridian trigger — plain text, no button
 // chrome, matching the SubgroupTabs font/weight elsewhere in the viewer.
 const TRIGGER_CLASS = (active) => `inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} transition-colors ${
   active
@@ -305,7 +304,7 @@ function MeridianMenu({ activeMeridian, menuOpen, onToggle, onSelect, onReset })
             </div>
           )}
         </div>
-        {/* Fixed-size slot so the clear button appearing doesn't shift Search sideways. */}
+        {/* Fixed-size slot so the clear button appearing doesn't shift the row. */}
         <span className="w-5 h-5 flex-shrink-0">
           {activeMeridian && (
             <button
@@ -350,7 +349,7 @@ function searchMeridians(query) {
 // photo tile passes YNSAYRealSvg + Y_REAL_POINTS instead — the two
 // backgrounds share point ids but not viewBox or point placement, since they're
 // different anatomical models (same pattern as NeckMeridianMap's diag/real
-// split). showMenu hides the Meridian/Search dropdown chrome for that
+// split). showMenu hides the hamburger and Meridian menu chrome for that
 // second tile — it shares activeMeridian with the primary tile instead of
 // duplicating the controls.
 // navExtraItems: extra hamburger entries after Meridians / Search, as
@@ -360,20 +359,18 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
   const [selectedId,       setSelectedId]       = useState(null)
   const [hoveredId,        setHoveredId]        = useState(null)
   const [internalMeridian, setInternalMeridian] = useState(null)
-  const [openPanel,        setOpenPanel]        = useState(null) // null | 'nav' | 'meridian' | 'search'
-  const [searchQuery,      setSearchQuery]      = useState('')
-  const [navMode,          setNavMode]          = useState(null) // null | 'meridian' | 'search'
+  const [openPanel,        setOpenPanel]        = useState(null) // null | 'nav' | 'meridian'
+  const [navMode,          setNavMode]          = useState(null) // null | 'meridian'
 
   const navItems = [
     { id: 'meridian', label: 'Meridians' },
-    { id: 'search',   label: 'Search by meridians, indications' },
     ...navExtraItems,
   ]
 
-  // Hamburger picks: Meridians / Search swap the control beside the
-  // hamburger and open straight away; extra items run their own onSelect.
+  // Hamburger picks: Meridians shows the Meridian dropdown beside the
+  // hamburger, open straight away; extra items run their own onSelect.
   function selectNav(id) {
-    if (id === 'meridian' || id === 'search') {
+    if (id === 'meridian') {
       setNavMode(id)
       setOpenPanel(id)
     } else {
@@ -419,11 +416,9 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
     onMeridianChange?.(code)
   }
 
-  // keepQuery: a search pick leaves its text in the search field.
-  function handleMeridianSelect(code, { keepQuery = false } = {}) {
+  function handleMeridianSelect(code) {
     setInternalMeridian(code)
     setOpenPanel(null)
-    if (!keepQuery) setSearchQuery('')
     setSelectedId(null)
     // No side of the ear is picked here, so show the meridian-level text.
     onPointSelect?.(yPointForMeridian(code))
@@ -433,7 +428,6 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
   function handleReset() {
     setInternalMeridian(null)
     setOpenPanel(null)
-    setSearchQuery('')
     setSelectedId(null)
     setHoveredId(null)
     onPointSelect?.(null)
@@ -475,6 +469,14 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
             activeId={navMode}
             onToggle={() => setOpenPanel(p => p === 'nav' ? null : 'nav')}
             onSelect={selectNav}
+            search={{
+              placeholder: 'Search by meridians, indications',
+              emptyText: 'No meridians or indications found',
+              compact: true,
+              matches: searchMeridians,
+              // Shows the pick in the Meridian menu beside the hamburger, whose × clears it.
+              onPick: code => { setNavMode('meridian'); handleMeridianSelect(code) },
+            }}
           />
           {navMode === 'meridian' && <MeridianMenu
             activeMeridian={activeMeridian}
@@ -482,18 +484,6 @@ export default function HeadYPoints({ onPointSelect, highlightJsonId = null, act
             onToggle={() => setOpenPanel(p => p === 'meridian' ? null : 'meridian')}
             onSelect={handleMeridianSelect}
             onReset={handleReset}
-          />}
-          {navMode === 'search' && <InlineSearch
-            autoFocus={openPanel === 'search'}
-            query={searchQuery}
-            open={openPanel === 'search'}
-            matches={searchMeridians(searchQuery)}
-            placeholder="Search by meridians, indications"
-            emptyText="No meridians or indications found"
-            onOpen={() => setOpenPanel('search')}
-            onQueryChange={setSearchQuery}
-            onPick={code => handleMeridianSelect(code, { keepQuery: true })}
-            onClear={handleReset}
           />}
         </div>
       )}

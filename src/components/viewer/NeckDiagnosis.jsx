@@ -60,6 +60,7 @@ function renderTileContent(id, { activeMeridian, onMeridianChange, onDiagMeridia
           navExtraItems={[
             { id: 'about', label: 'About Y Points',   onSelect: () => showIntro('ynsa-neck') },
             { id: 'flow',  label: 'Diagnostic Flow', onSelect: () => showIntro('ynsa-neck-flow') },
+            { id: 'about-ynsa', label: 'About YNSA', onSelect: () => showIntro('ynsa') },
             CASE_STUDIES_ITEM,
           ]}
         />

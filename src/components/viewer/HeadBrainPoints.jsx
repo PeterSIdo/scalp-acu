@@ -5,7 +5,6 @@ import HeadFrontal from './HeadFrontal'
 import HeadPosterior from './HeadPosterior'
 import { allPoints } from '../../data/points'
 import { CATEGORY_INTROS } from '../../data/categoryIntros'
-import InlineSearch from '../ui/InlineSearch'
 import HamburgerMenu from '../ui/HamburgerMenu'
 import TileTitle from '../ui/TileTitle'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
@@ -31,7 +30,7 @@ const BRAIN_POINT_IDS = [
 
 // Trigger label is the point's short name (drop " Point" wherever it
 // appears — e.g. "Cerebrum Point Yin" -> "Cerebrum Yin") so it stays
-// compact next to the Search trigger, matching Basic/Sensory Point's
+// compact next to the hamburger, matching Basic/Sensory Point's
 // short triggers.
 const shortLabel = name => name?.replace(/ Point\b/, '') ?? ''
 
@@ -104,7 +103,7 @@ function BrainPointMenu({ activePointId, menuOpen, onToggle, onSelect, onReset, 
           </button>
           <MenuSizer labels={['Brain Point', ...BRAIN_POINT_IDS.map(id => shortLabel(allPoints.find(p => p.id === id)?.name))]} />
         </div>
-        {/* Fixed-size slot so the clear button appearing doesn't shift Search sideways. */}
+        {/* Fixed-size slot so the clear button appearing doesn't shift the row. */}
         <span className="w-5 h-5 flex-shrink-0">
           {activePointId && (
             <button
@@ -168,12 +167,12 @@ function searchPoints(query) {
 // Hamburger menu items — same flow as Basic Points.
 const NAV_ITEMS = [
   { id: 'brain',  label: 'Brain Points' },
-  { id: 'search', label: 'Search by points, indications' },
   { id: 'about',  label: 'About Brain Points' },
+  { id: 'about-ynsa', label: 'About YNSA' },
   CASE_STUDIES_ITEM,
 ]
 
-function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, onPanelOpen, onPanelClose, searchQuery, onSearchQueryChange, navMode, onNavSelect }, expanded = false) {
+function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, onPanelClose, navMode, onNavModeChange, onNavSelect }, expanded = false) {
   switch (id) {
     case 'menu':
       return (
@@ -190,6 +189,19 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
               activeId={navMode}
               onToggle={() => onPanelToggle('nav')}
               onSelect={onNavSelect}
+              search={{
+                placeholder: 'Search by points, indications',
+                emptyText: 'No points or indications found',
+                compact: !expanded,
+                matches: searchPoints,
+                // Shows the pick in the point menu beside the hamburger, whose × clears it.
+                onPick: pointId => {
+                  onPanelClose()
+                  onNavModeChange('brain')
+                  onPointIdChange(pointId)
+                  onPointSelect?.(allPoints.find(p => p.id === pointId) ?? null)
+                },
+              }}
             />
             {navMode === 'brain' && <BrainPointMenu
               activePointId={activePointId}
@@ -203,28 +215,6 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
                 onPointSelect?.(nextId ? allPoints.find(p => p.id === nextId) ?? null : null)
               }}
               onReset={() => { onPointIdChange(null); onPointSelect?.(null) }}
-            />}
-            {navMode === 'search' && <InlineSearch
-              autoFocus={openPanel === 'search'}
-              query={searchQuery}
-              open={openPanel === 'search'}
-              matches={searchPoints(searchQuery)}
-              placeholder="Search by points, indications"
-              emptyText="No points or indications found"
-              compact={!expanded}
-              onOpen={() => onPanelOpen('search')}
-              onQueryChange={onSearchQueryChange}
-              onPick={pointId => {
-                onPanelClose()
-                onPointIdChange(pointId)
-                onPointSelect?.(allPoints.find(p => p.id === pointId) ?? null)
-              }}
-              onClear={() => {
-                onSearchQueryChange('')
-                onPanelClose()
-                onPointIdChange(null)
-                onPointSelect?.(null)
-              }}
             />}
           </div>
         </div>
@@ -249,23 +239,22 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
 export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null, pointFilter = null }) {
   const [expandedId,    setExpandedId]    = useState(null)
   const [activePointId, setActivePointId] = useState(null)
-  const [openPanel,     setOpenPanel]     = useState(null) // null | 'nav' | 'menu' | 'search'
-  const [searchQuery,   setSearchQuery]   = useState('')
-  const [navMode, setNavMode] = useState(null) // null | 'brain' | 'search'
+  const [openPanel,     setOpenPanel]     = useState(null) // null | 'nav' | 'menu'
+  const [navMode, setNavMode] = useState(null) // null | 'brain'
 
-  // Hamburger picks: the point list / search swap the control beside the
-  // hamburger and open straight away; About shows the intro in the InfoPanel.
+  // Hamburger picks: the point list shows beside the hamburger, open
+  // straight away; the Abouts show intros in the InfoPanel.
   function selectNav(item) {
     if (item === 'brain') {
       setNavMode('brain')
       setOpenPanel('menu')
-    } else if (item === 'search') {
-      setNavMode('search')
-      setOpenPanel('search')
     } else if (item === 'about') {
       setOpenPanel(null)
       setActivePointId(null)
       onPointSelect?.(CATEGORY_INTROS['ynsa-brain'])
+    } else if (item === 'about-ynsa') {
+      setOpenPanel(null)
+      onPointSelect?.(CATEGORY_INTROS['ynsa'])
     }
   }
 
@@ -300,10 +289,8 @@ export default function HeadBrainPoints({ onPointSelect, highlightJsonId = null,
     pointFilter,
     openPanel,
     onPanelToggle: panel => setOpenPanel(p => p === panel ? null : panel),
-    onPanelOpen: panel => setOpenPanel(panel),
     onPanelClose: () => setOpenPanel(null),
-    searchQuery,
-    onSearchQueryChange: setSearchQuery,
+    onNavModeChange: setNavMode,
     navMode,
     onNavSelect: selectNav,
   }

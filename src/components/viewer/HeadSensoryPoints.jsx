@@ -5,7 +5,6 @@ import HeadFrontal from './HeadFrontal'
 import HeadPosterior from './HeadPosterior'
 import { allPoints } from '../../data/points'
 import { CATEGORY_INTROS } from '../../data/categoryIntros'
-import InlineSearch from '../ui/InlineSearch'
 import HamburgerMenu from '../ui/HamburgerMenu'
 import TileTitle from '../ui/TileTitle'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
@@ -30,7 +29,7 @@ const SENSORY_POINT_IDS = [
 // Trigger label is the point's short name (drop " Point" wherever it
 // appears — trailing for most records, e.g. "Eye Point" -> "Eye", but
 // mid-string for the Extra Ear pair, e.g. "Extra Ear Point Yin" -> "Extra
-// Ear Yin") so it stays compact next to the Search trigger, matching Basic
+// Ear Yin") so it stays compact next to the hamburger, matching Basic
 // Point's single-letter trigger.
 const shortLabel = name => name?.replace(/ Point\b/, '') ?? ''
 
@@ -103,7 +102,7 @@ function SensoryPointMenu({ activePointId, menuOpen, onToggle, onSelect, onReset
           </button>
           <MenuSizer labels={['Sensory Point', ...SENSORY_POINT_IDS.map(id => shortLabel(allPoints.find(p => p.id === id)?.name))]} />
         </div>
-        {/* Fixed-size slot so the clear button appearing doesn't shift Search sideways. */}
+        {/* Fixed-size slot so the clear button appearing doesn't shift the row. */}
         <span className="w-5 h-5 flex-shrink-0">
           {activePointId && (
             <button
@@ -123,7 +122,7 @@ function SensoryPointMenu({ activePointId, menuOpen, onToggle, onSelect, onReset
         // (itself absolute left-3 right-3 top-3) rather than w-full of this
         // trigger's own div — same no-spill guarantee as Basic Points' zone
         // dropdown, anchored one level up so the trigger can shrink to
-        // content width and sit close to the Search trigger next to it.
+        // content width and sit close to the hamburger next to it.
         <div
           ref={dropdownRef}
           className={`sensory-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 ${GLASS_DROPDOWN} overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
@@ -169,12 +168,12 @@ function searchPoints(query) {
 // Hamburger menu items — same flow as Basic Points.
 const NAV_ITEMS = [
   { id: 'sensory',  label: 'Sensory Points' },
-  { id: 'search', label: 'Search by points, indications' },
   { id: 'about',  label: 'About Sensory Points' },
+  { id: 'about-ynsa', label: 'About YNSA' },
   CASE_STUDIES_ITEM,
 ]
 
-function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, onPanelOpen, onPanelClose, searchQuery, onSearchQueryChange, navMode, onNavSelect }, expanded = false) {
+function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, onPanelClose, navMode, onNavModeChange, onNavSelect }, expanded = false) {
   switch (id) {
     case 'menu':
       return (
@@ -189,6 +188,19 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
               activeId={navMode}
               onToggle={() => onPanelToggle('nav')}
               onSelect={onNavSelect}
+              search={{
+                placeholder: 'Search by points, indications',
+                emptyText: 'No points or indications found',
+                compact: !expanded,
+                matches: searchPoints,
+                // Shows the pick in the point menu beside the hamburger, whose × clears it.
+                onPick: pointId => {
+                  onPanelClose()
+                  onNavModeChange('sensory')
+                  onPointIdChange(pointId)
+                  onPointSelect?.(allPoints.find(p => p.id === pointId) ?? null)
+                },
+              }}
             />
             {navMode === 'sensory' && <SensoryPointMenu
               activePointId={activePointId}
@@ -202,28 +214,6 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
                 onPointSelect?.(nextId ? allPoints.find(p => p.id === nextId) ?? null : null)
               }}
               onReset={() => { onPointIdChange(null); onPointSelect?.(null) }}
-            />}
-            {navMode === 'search' && <InlineSearch
-              autoFocus={openPanel === 'search'}
-              query={searchQuery}
-              open={openPanel === 'search'}
-              matches={searchPoints(searchQuery)}
-              placeholder="Search by points, indications"
-              emptyText="No points or indications found"
-              compact={!expanded}
-              onOpen={() => onPanelOpen('search')}
-              onQueryChange={onSearchQueryChange}
-              onPick={pointId => {
-                onPanelClose()
-                onPointIdChange(pointId)
-                onPointSelect?.(allPoints.find(p => p.id === pointId) ?? null)
-              }}
-              onClear={() => {
-                onSearchQueryChange('')
-                onPanelClose()
-                onPointIdChange(null)
-                onPointSelect?.(null)
-              }}
             />}
           </div>
         </div>
@@ -249,23 +239,22 @@ function renderTileContent(id, { activePointId, onPointIdChange, onPointSelect, 
 export default function HeadSensoryPoints({ onPointSelect, highlightJsonId = null, pointFilter = null }) {
   const [expandedId,   setExpandedId]   = useState(null)
   const [activePointId, setActivePointId] = useState(null)
-  const [openPanel,    setOpenPanel]    = useState(null) // null | 'nav' | 'menu' | 'search'
-  const [searchQuery,  setSearchQuery]  = useState('')
-  const [navMode, setNavMode] = useState(null) // null | 'sensory' | 'search'
+  const [openPanel,    setOpenPanel]    = useState(null) // null | 'nav' | 'menu'
+  const [navMode, setNavMode] = useState(null) // null | 'sensory'
 
-  // Hamburger picks: the point list / search swap the control beside the
-  // hamburger and open straight away; About shows the intro in the InfoPanel.
+  // Hamburger picks: the point list shows beside the hamburger, open
+  // straight away; the Abouts show intros in the InfoPanel.
   function selectNav(item) {
     if (item === 'sensory') {
       setNavMode('sensory')
       setOpenPanel('menu')
-    } else if (item === 'search') {
-      setNavMode('search')
-      setOpenPanel('search')
     } else if (item === 'about') {
       setOpenPanel(null)
       setActivePointId(null)
       onPointSelect?.(CATEGORY_INTROS['ynsa-sensory'])
+    } else if (item === 'about-ynsa') {
+      setOpenPanel(null)
+      onPointSelect?.(CATEGORY_INTROS['ynsa'])
     }
   }
 
@@ -300,10 +289,8 @@ export default function HeadSensoryPoints({ onPointSelect, highlightJsonId = nul
     pointFilter,
     openPanel,
     onPanelToggle: panel => setOpenPanel(p => p === panel ? null : panel),
-    onPanelOpen: panel => setOpenPanel(panel),
     onPanelClose: () => setOpenPanel(null),
-    searchQuery,
-    onSearchQueryChange: setSearchQuery,
+    onNavModeChange: setNavMode,
     navMode,
     onNavSelect: selectNav,
   }

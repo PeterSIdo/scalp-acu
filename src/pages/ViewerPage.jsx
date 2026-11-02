@@ -48,7 +48,7 @@ const SYSTEMS = [
   },
   {
     id: 'ear',
-    label: 'Ear',
+    label: 'Auriculotherapy',
     fullName: 'Ear Acupuncture',
     subgroups: [
       { id: 'ear-points', label: 'Ear Points', views: ['EarGrid'], available: true },
@@ -144,6 +144,8 @@ export default function ViewerPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const [resetKey, setResetKey] = useState(0)
+  // Last ear point picked from the search panel, handed to the Ear grid.
+  const [earPick, setEarPick] = useState(null)
 
   const swipeStartX = useRef(null)
   const swipeStartY = useRef(null)
@@ -212,6 +214,9 @@ export default function ViewerPage() {
   const isNeck = activeSubgroup === 'ynsa-neck'
   // The ZSA grid scrolls like Y-Points, so the wheel scrolls instead of zooming.
   const isZsa = activeSubgroup === 'zsa-zones'
+  // The Ear tab searches ear points instead of YNSA.
+  const isEar = activeSystem === 'ear'
+  const searchPlaceholder = isEar ? 'Search ear points, categories…' : 'Search by points, indication, meridian…'
 
   // Bumping resetKey remounts ZoomableView and the grid inside it, which clears
   // the zoom plus every tile's selections, menus and magnification.
@@ -220,12 +225,14 @@ export default function ViewerPage() {
     closeSheet()
     setHighlightJsonId(null)
     setSearchQuery('')
+    setEarPick(null)
   }
 
   function handleSystemChange(systemId) {
     const sys = SYSTEMS.find(s => s.id === systemId)
     const firstSg = sys.subgroups?.[0] ?? null
     setActiveSystem(systemId)
+    setEarPick(null)
     setActiveSubgroup(firstSg?.id ?? null)
     setActiveView(firstSg?.views[0] ?? 'Lateral')
     setSelectedPoint(null)
@@ -242,6 +249,13 @@ export default function ViewerPage() {
   }
 
   function handleSearchSelect(point) {
+    // Ear results select the point on its tile in the Ear grid.
+    if (isEar) {
+      setEarPick({ tile: point.tile, name: point.name, n: Date.now() })
+      setSearchQuery('')
+      setMobileSearchOpen(false)
+      return
+    }
     const targetSubgroup = POINT_TO_SUBGROUP[point.id] ?? 'ynsa-basic'
     const sg = SYSTEMS.find(s => s.id === 'ynsa').subgroups.find(s => s.id === targetSubgroup)
     setActiveSystem('ynsa')
@@ -369,7 +383,7 @@ export default function ViewerPage() {
               {activeView === 'Neck'      && <NeckDiagnosis onPointSelect={handlePointSelect} />}
               {activeView === 'TCMGrid'   && <HeadTCMScalpAreas onPointSelect={handlePointSelect} />}
               {activeView === 'BrainZonesGrid' && <HeadBrainZones onPointSelect={handlePointSelect} />}
-              {activeView === 'EarGrid'   && <HeadEarPoints />}
+              {activeView === 'EarGrid'   && <HeadEarPoints pick={earPick} />}
               {activeView === 'ZSAGrid'   && <HeadZSAPoints onPointSelect={handlePointSelect} />}
             </ZoomableView>
           ) : (
@@ -396,7 +410,7 @@ export default function ViewerPage() {
                   </svg>
                   <input
                     type="text"
-                    placeholder="Search by points, indication, meridian…"
+                    placeholder={searchPlaceholder}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 text-sm pl-8 pr-8 py-1.5 rounded border border-gray-300 dark:border-gray-700 focus:border-amber-500 focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600"
@@ -413,7 +427,7 @@ export default function ViewerPage() {
 
               {/* Results or info panel */}
               {searchQuery.trim() ? (
-                <SearchPanel query={searchQuery} onSelect={handleSearchSelect} />
+                <SearchPanel query={searchQuery} onSelect={handleSearchSelect} system={isEar ? 'ear' : 'ynsa'} />
               ) : (
                 <div className="flex-1 overflow-y-auto scroll-touch">
                   <InfoPanel point={selectedPoint} isSubscribed={isActive} />
@@ -477,7 +491,7 @@ export default function ViewerPage() {
               </svg>
               <input
                 type="text"
-                placeholder="Search by points, indication, meridian…"
+                placeholder={searchPlaceholder}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 autoFocus
@@ -499,9 +513,9 @@ export default function ViewerPage() {
           </div>
           <div className="flex-1 overflow-y-auto">
             {!searchQuery.trim() ? (
-              <p className="text-gray-400 dark:text-gray-600 text-sm p-4 text-center">Type an indication to find matching points</p>
+              <p className="text-gray-400 dark:text-gray-600 text-sm p-4 text-center">{isEar ? 'Type a point or category name' : 'Type an indication to find matching points'}</p>
             ) : (
-              <SearchPanel query={searchQuery} onSelect={handleSearchSelect} />
+              <SearchPanel query={searchQuery} onSelect={handleSearchSelect} system={isEar ? 'ear' : 'ynsa'} />
             )}
           </div>
         </div>

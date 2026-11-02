@@ -5,7 +5,6 @@ import HeadFrontal from './HeadFrontal'
 import HeadPosterior from './HeadPosterior'
 import { allPoints } from '../../data/points'
 import { CATEGORY_INTROS } from '../../data/categoryIntros'
-import InlineSearch from '../ui/InlineSearch'
 import HamburgerMenu from '../ui/HamburgerMenu'
 import TileTitle from '../ui/TileTitle'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
@@ -79,8 +78,7 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset, com
 
   return (
     // No position/width classes here on purpose — the trigger sizes to its
-    // own content so it sits tight against the Search trigger next to it
-    // (same close grouping as Y-Points' Meridian/Search pair), and the
+    // own content so it sits tight against the hamburger next to it, and the
     // dropdown below anchors to the shared row wrapper instead (see its
     // left-0 right-0 comment) rather than stretching this div to the tile's
     // full width the way an earlier version did.
@@ -95,7 +93,7 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset, com
           </button>
           <MenuSizer labels={['Basic Point', ...ZONES]} />
         </div>
-        {/* Fixed-size slot so the clear button appearing doesn't shift Search sideways. */}
+        {/* Fixed-size slot so the clear button appearing doesn't shift the row. */}
         <span className="w-5 h-5 flex-shrink-0">
           {activeZone && (
             <button
@@ -136,12 +134,12 @@ function BasicPointMenu({ activeZone, menuOpen, onToggle, onSelect, onReset, com
   )
 }
 
-// Hamburger menu items. Basic Points / Search swap the control shown beside
-// the hamburger; About opens the category intro in the InfoPanel.
+// Hamburger menu items, under the menu's search field. Basic Points shows
+// the zone dropdown beside the hamburger; the Abouts open intros in the InfoPanel.
 const NAV_ITEMS = [
   { id: 'basic',  label: 'Basic Points' },
-  { id: 'search', label: 'Search by indications' },
   { id: 'about',  label: 'About Basic Points' },
+  { id: 'about-ynsa', label: 'About YNSA' },
   CASE_STUDIES_ITEM,
 ]
 
@@ -165,7 +163,7 @@ function searchZones(query) {
 // activeZone/onZoneChange are shared across all three diagram tiles — selecting
 // a zone from the menu, or clicking any point on any tile, flashes every point
 // in that zone across the other tiles too (same idea as Y-Points' activeMeridian).
-function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, onPanelOpen, onPanelClose, searchQuery, onSearchQueryChange, navMode, onNavSelect }, expanded = false) {
+function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highlightJsonId, pointFilter, openPanel, onPanelToggle, onPanelClose, navMode, onNavModeChange, onNavSelect }, expanded = false) {
   switch (id) {
     case 'menu':
       return (
@@ -180,6 +178,19 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
               activeId={navMode}
               onToggle={() => onPanelToggle('nav')}
               onSelect={onNavSelect}
+              search={{
+                placeholder: 'Search by indications',
+                emptyText: 'No indications found',
+                compact: !expanded,
+                matches: searchZones,
+                // Shows the pick in the point menu beside the hamburger, whose × clears it.
+                onPick: z => {
+                  onPanelClose()
+                  onNavModeChange('basic')
+                  onZoneChange(z)
+                  onPointSelect?.(allPoints.find(p => zoneOf(p.id) === z) ?? null)
+                },
+              }}
             />
             {navMode === 'basic' && <BasicPointMenu
               activeZone={activeZone}
@@ -200,28 +211,6 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
               }}
               onReset={() => { onZoneChange(null); onPointSelect?.(null) }}
             />}
-            {navMode === 'search' && <InlineSearch
-              autoFocus={openPanel === 'search'}
-              query={searchQuery}
-              open={openPanel === 'search'}
-              matches={searchZones(searchQuery)}
-              placeholder="Search by indications"
-              emptyText="No indications found"
-              compact={!expanded}
-              onOpen={() => onPanelOpen('search')}
-              onQueryChange={onSearchQueryChange}
-              onPick={z => {
-                onPanelClose()
-                onZoneChange(z)
-                onPointSelect?.(allPoints.find(p => zoneOf(p.id) === z) ?? null)
-              }}
-              onClear={() => {
-                onSearchQueryChange('')
-                onPanelClose()
-                onZoneChange(null)
-                onPointSelect?.(null)
-              }}
-            />}
           </div>
         </div>
       )
@@ -239,23 +228,22 @@ function renderTileContent(id, { activeZone, onZoneChange, onPointSelect, highli
 export default function HeadBasicPoints({ onPointSelect, highlightJsonId = null, pointFilter = null }) {
   const [expandedId,  setExpandedId]  = useState(null)
   const [activeZone,  setActiveZone]  = useState(null)
-  const [openPanel,   setOpenPanel]   = useState(null) // null | 'nav' | 'menu' | 'search'
-  const [searchQuery, setSearchQuery] = useState('')
-  const [navMode,     setNavMode]     = useState(null) // null | 'basic' | 'search'
+  const [openPanel,   setOpenPanel]   = useState(null) // null | 'nav' | 'menu'
+  const [navMode,     setNavMode]     = useState(null) // null | 'basic'
 
-  // Hamburger picks: Basic Points / Search swap the control next to the
-  // hamburger and open it straight away; About shows the intro in the InfoPanel.
+  // Hamburger picks: Basic Points shows the zone dropdown beside the
+  // hamburger, open straight away; the Abouts show intros in the InfoPanel.
   function selectNav(item) {
     if (item === 'basic') {
       setNavMode('basic')
       setOpenPanel('menu')
-    } else if (item === 'search') {
-      setNavMode('search')
-      setOpenPanel('search')
     } else if (item === 'about') {
       setOpenPanel(null)
       setActiveZone(null)
       onPointSelect?.(CATEGORY_INTROS['ynsa-basic'])
+    } else if (item === 'about-ynsa') {
+      setOpenPanel(null)
+      onPointSelect?.(CATEGORY_INTROS['ynsa'])
     }
   }
 
@@ -289,10 +277,8 @@ export default function HeadBasicPoints({ onPointSelect, highlightJsonId = null,
     pointFilter,
     openPanel,
     onPanelToggle: panel => setOpenPanel(p => p === panel ? null : panel),
-    onPanelOpen: panel => setOpenPanel(panel),
     onPanelClose: () => setOpenPanel(null),
-    searchQuery,
-    onSearchQueryChange: setSearchQuery,
+    onNavModeChange: setNavMode,
     navMode,
     onNavSelect: selectNav,
   }
