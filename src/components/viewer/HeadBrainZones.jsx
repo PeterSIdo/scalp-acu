@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import BrainZonesSvg from '../../assets/diagrams/brain-zones.svg?react'
 import BrainZones2Svg from '../../assets/diagrams/brain-zones2.svg?react'
-import InlineSearch from '../ui/InlineSearch'
 import HamburgerMenu from '../ui/HamburgerMenu'
 import TileTitle from '../ui/TileTitle'
 import CrossIcon from '../ui/CrossIcon'
@@ -359,12 +358,11 @@ function searchBrainZones(query) {
 const NAV_ITEMS = [
   { id: 'zones',  label: 'Brain Zones' },
   { id: 'parts',  label: 'Body Parts' },
-  { id: 'search', label: 'Search by zones, functions' },
 ]
 
-// Same layout as TCM Scalp Areas' tile 1/1: menu row (menus + search) above
+// Same layout as TCM Scalp Areas' tile 1/1: menu row (hamburger + menus) above
 // the diagram rather than floating over it.
-function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartChange, openMenu, onMenuToggle, onMenuOpen, onMenuClose, searchQuery, onSearchQueryChange, navMode, onNavSelect }, expanded = false) {
+function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartChange, openMenu, onMenuToggle, onMenuClose, navMode, onNavSelect, onNavModeChange }, expanded = false) {
   switch (id) {
     case 'zones': {
       const pick = key => {
@@ -384,6 +382,14 @@ function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartCha
                 dropdownClassName="left-3"
                 onToggle={() => onMenuToggle('nav')}
                 onSelect={onNavSelect}
+                search={{
+                  placeholder: 'Search by zones, functions',
+                  emptyText: 'No zones or functions found',
+                  compact: !expanded,
+                  matches: searchBrainZones,
+                  // Shows the pick in the Brain Zone / Body Part menu beside the hamburger, whose × clears it.
+                  onPick: key => { onNavModeChange(key.startsWith('part:') ? 'parts' : 'zones'); pick(key) },
+                }}
               />
               {navMode === 'zones' && <DropdownMenu
                 items={ZONE_ITEMS}
@@ -405,20 +411,6 @@ function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartCha
                 onSelect={name => { onMenuClose(); onPartChange(activePart === name ? null : name) }}
                 onReset={() => onPartChange(null)}
               />}
-              {navMode === 'search' && <InlineSearch
-                autoFocus={openMenu === 'search'}
-                query={searchQuery}
-                open={openMenu === 'search'}
-                matches={searchBrainZones(searchQuery)}
-                placeholder="Search by zones, functions"
-                emptyText="No zones or functions found"
-                compact={!expanded}
-                dropdownClassName="left-3 right-3"
-                onOpen={() => onMenuOpen('search')}
-                onQueryChange={onSearchQueryChange}
-                onPick={pick}
-                onClear={() => { onSearchQueryChange(''); onMenuClose(); onZoneChange(null); onPartChange(null) }}
-              />}
             </div>
           </div>
           <div style={{ flex: 1, minHeight: 0 }}>
@@ -439,8 +431,7 @@ export default function HeadBrainZones({ onPointSelect }) {
   const [activeZone, setActiveZone] = useState(null)
   const [activePart, setActivePart] = useState(null)
   const [openMenu,   setOpenMenu]   = useState(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [navMode,    setNavMode]    = useState(null) // null | 'zones' | 'parts' | 'search'
+  const [navMode,    setNavMode]    = useState(null) // null | 'zones' | 'parts'
 
   // Hamburger picks swap the control beside the hamburger and open it.
   function selectNav(item) {
@@ -480,10 +471,8 @@ export default function HeadBrainZones({ onPointSelect }) {
     onPartChange: setActivePart,
     openMenu,
     onMenuToggle: menu => setOpenMenu(open => (open === menu ? null : menu)),
-    onMenuOpen: menu => setOpenMenu(menu),
     onMenuClose: () => setOpenMenu(null),
-    searchQuery,
-    onSearchQueryChange: setSearchQuery,
+    onNavModeChange: setNavMode,
     navMode,
     onNavSelect: selectNav,
   }

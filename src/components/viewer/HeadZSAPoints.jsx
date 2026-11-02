@@ -10,7 +10,6 @@ import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 import HamburgerMenu from '../ui/HamburgerMenu'
-import InlineSearch from '../ui/InlineSearch'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
 import { CATEGORY_INTROS } from '../../data/categoryIntros'
 import { ZSA_AREA_INFO } from '../../data/zsaAreaInfo'
@@ -122,7 +121,6 @@ function searchAreas(query) {
 
 const NAV_ITEMS = [
   { id: 'areas', label: 'ZSA Areas' },
-  { id: 'search', label: 'Search by areas, indications' },
   { id: 'about', label: "About Zhu's Scalp Acupuncture" },
   CASE_STUDIES_ITEM,
 ]
@@ -363,7 +361,7 @@ function MeridiansDiagram({ id, selection, onSelect }) {
   )
 }
 
-function renderTileContent(id, { activeArea, onAreaSelect, meridianSelection, onMeridianSelect, onAreaPick, onAreaClear, openMenu, onMenuToggle, onMenuOpen, onMenuClose, onNavSelect, navMode, searchQuery, onSearchQueryChange }, expanded = false) {
+function renderTileContent(id, { activeArea, onAreaSelect, meridianSelection, onMeridianSelect, onAreaPick, onAreaClear, openMenu, onMenuToggle, onMenuClose, onNavSelect, navMode, onNavModeChange }, expanded = false) {
   if (!TILE_SVGS[id]) return null
   // Tile 1/1 carries the menu row; it and every expanded card keep the other
   // grids' 40px top offset for it. The other grid tiles are short, so they
@@ -387,6 +385,14 @@ function renderTileContent(id, { activeArea, onAreaSelect, meridianSelection, on
               dropdownClassName="left-3"
               onToggle={() => onMenuToggle('nav')}
               onSelect={onNavSelect}
+              search={{
+                placeholder: 'Search by areas, indications',
+                emptyText: 'No areas or indications found',
+                compact: !expanded,
+                matches: searchAreas,
+                // Shows the pick in the ZSA Area menu beside the hamburger, whose × clears it.
+                onPick: code => { onMenuClose(); onNavModeChange('areas'); onAreaPick(code) },
+              }}
             />
             {navMode === 'areas' && (
               <AreaMenu
@@ -396,22 +402,6 @@ function renderTileContent(id, { activeArea, onAreaSelect, meridianSelection, on
                 onToggle={() => onMenuToggle('areas')}
                 onSelect={onAreaSelect}
                 onReset={onAreaClear}
-              />
-            )}
-            {navMode === 'search' && (
-              <InlineSearch
-                autoFocus={openMenu === 'search'}
-                query={searchQuery}
-                open={openMenu === 'search'}
-                matches={searchAreas(searchQuery)}
-                placeholder="Search by areas, indications"
-                emptyText="No areas or indications found"
-                compact={!expanded}
-                dropdownClassName="left-3 right-3"
-                onOpen={() => onMenuOpen('search')}
-                onQueryChange={onSearchQueryChange}
-                onPick={code => { onMenuClose(); onAreaPick(code) }}
-                onClear={() => { onSearchQueryChange(''); onMenuClose(); onAreaClear() }}
               />
             )}
           </div>
@@ -425,8 +415,7 @@ export default function HeadZSAPoints({ onPointSelect }) {
   const [expandedId, setExpandedId] = useState(null)
   const [activeArea, setActiveArea] = useState(null)
   const [openMenu,   setOpenMenu]   = useState(null)
-  const [navMode,    setNavMode]    = useState(null) // null | 'areas' | 'search'
-  const [searchQuery, setSearchQuery] = useState('')
+  const [navMode,    setNavMode]    = useState(null) // null | 'areas'
   // Back-meridians tile: { meridian, point } or null, shared with its expanded card.
   const [meridianSelection, setMeridianSelection] = useState(null)
 
@@ -436,7 +425,7 @@ export default function HeadZSAPoints({ onPointSelect }) {
   }
 
   function selectNav(item) {
-    if (item === 'areas' || item === 'search') {
+    if (item === 'areas') {
       setNavMode(item)
       setOpenMenu(item)
     } else if (item === 'about') {
@@ -457,12 +446,10 @@ export default function HeadZSAPoints({ onPointSelect }) {
     onAreaClear: () => selectArea(null),
     openMenu,
     onMenuToggle: id => setOpenMenu(open => (open === id ? null : id)),
-    onMenuOpen: id => setOpenMenu(id),
     onMenuClose: () => setOpenMenu(null),
     onNavSelect: selectNav,
     navMode,
-    searchQuery,
-    onSearchQueryChange: setSearchQuery,
+    onNavModeChange: setNavMode,
   }
 
   useEffect(() => {
