@@ -3,7 +3,7 @@ import { flushSync } from 'react-dom'
 import EarBasicSvg from '../../assets/diagrams/ear-basic.svg?react'
 import EarMusculoskeletalSvg from '../../assets/diagrams/ear-musculoskeletal.svg?react'
 import EarInternalOrgansSvg from '../../assets/diagrams/ear-internal-organs.svg?react'
-import EarTcmSvg from '../../assets/diagrams/ear-tcm-2.svg?react'
+import EarTcmSvg from '../../assets/diagrams/ear-chin-3.svg?react'
 import TileTitle from '../ui/TileTitle'
 import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
@@ -72,20 +72,82 @@ const ORG_SVG_IDS = Object.fromEntries([
   'Kidney (C)', 'Kidney (E)', 'Bladder', 'Prostate (C)', 'Uterus (C)', 'Uterus (E)', 'External Genitals (C)', 'External Genitals (E)',
 ].map(id => [id, ORG_RENAMES[id] ?? id]))
 
-// ear-tcm-2.svg element id -> Chinese Auriculotherapy point name, where they
-// differ. Most ids equal the name.
+// ear-chin-3.svg element id -> Chinese Auriculotherapy point name, where they
+// differ (Figma renames and typos). Most ids equal the name. Some points are
+// drawn twice (Thalamus, Lung, Bronchus, External Knee, Buttocks (Hip),
+// Inter Costal); the first element found carries the marker. The three
+// helix dots (Helix 4-6) all select the single "Helix 1-6" entry. The
+// "...Area" ids are groups (a shaded zone), which select as one.
 const MASTER_RENAMES = {
-  'Raise Blood Pressure': 'Raising Blood Pressure Point',
+  'Appex of the Tragus': 'Tragic Apex',
+  'Vision 1': 'Vision I',
   'Vision 2': 'Vision II',
   'Groove of Coronary Heart Disease': 'Coronary Heart Disease Groove',
   'Groove of Missing Teeth': 'Missing Teeth Groove',
+  'Thalamus_2': 'Thalamus',
+  'Testis': 'Testicle',
+  'Exciting': 'Exciting Point',
+  'Helix 4': 'Helix 1-6',
+  'Helix 5': 'Helix 1-6',
+  'Helix 6': 'Helix 1-6',
+  'Raise Blood Pressure': 'Raising Blood Pressure Point',
   'Cheek': 'Face & Cheek Area',
+  'Brainstem': 'Brain Stem',
+  'Tripple Heater Point': 'Triple Heater Point',
+  'San Jiao': 'Sanjiao',
+  'Lung_2': 'Lung',
+  'Bronchus_2': 'Bronchus',
+  'Endocrine Area': 'Endocrine',
+  'Symphatic': 'Sympathetic (sympathy)',
+  'Siatic': 'Sciatic Nerve',
+  'Hip': 'Buttocks (Hip)',
+  'Hip_2': 'Buttocks (Hip)',
+  'Sole': 'Sole of Foot',
+  'Calf': 'Calf Point',
+  'External Knee_2': 'External Knee',
+  'Thigh Muscles Area': 'Thigh Muscles',
+  'Lumbar Muscles Area': 'Lumbar Muscle',
+  'Intercostals Area': 'Inter Costal',
+  'Intercostals': 'Inter Costal',
+  'Diziness Area': 'Dizziness Point',
+  'Cervical Vertebrae Area': 'Cervix Vertebrae',
+  'Thyroid': 'Thyroid Gland',
+  'Mamma': 'Mammary Gland',
+  'Coccyx': 'Coccyx Vertebrae',
+  'Upper Back': 'Shoulder and Upper Back',
+  'Gallbladder': 'Gall Bladder',
+  'Bilary Duct': 'Biliary Duct',
+  'Duodendum': 'Duodenum',
+  'Diaphram': 'Diaphragm',
+  'Ear Center': 'Ear Centre',
+  'Abdominal Distention Area': 'Abdominal Area',
+  'Arm Pit': 'Armpit',
+  'Large Auricular Nerv': 'Great Auricular Nerve',
+  'Rheumatism Line': 'Rheumatic Line',
 }
-const MASTER_LINE_IDS = new Set(['Groove of Coronary Heart Disease', 'Groove of Hypertension', 'Groove of Missing Teeth', 'Groove of Tinnitus'])
+const MASTER_LINE_IDS = new Set(['Groove of Coronary Heart Disease', 'Groove of Hypertension', 'Groove of Missing Teeth', 'Groove of Tinnitus', 'Rheumatism Line'])
 const MASTER_SVG_IDS = Object.fromEntries([
-  'Anxious Point', 'Brain Point', 'Brain Stem', 'Eye', 'Internal Ear', 'Lower Jaw', 'Lower Palate', 'Neurasthenia Point',
-  'Raise Blood Pressure', 'Tongue', 'Tonsil', 'Tooth', 'Upper Jaw', 'Upper Palate', 'Vision 2', 'Wisdom Teeth',
-  ...MASTER_LINE_IDS, 'Cheek',
+  // Tragus and intertragic notch
+  'External Ear', 'Thirst Point', 'Adrenal Gland', 'Appex of the Tragus', 'Vision 1', 'External Nose', 'Hunger Point',
+  // Lobe
+  'Eye', 'Upper Jaw', 'Lower Jaw', 'Thalamus', 'Thalamus_2', 'Brain Point', 'Testis', 'Exciting', 'Wisdom Teeth',
+  'Internal Ear', 'Helix 4', 'Helix 5', 'Helix 6', 'Vision 2', 'Lower Palate', 'Tongue', 'Upper Palate', 'Tonsil',
+  'Anxious Point', 'Raise Blood Pressure', 'Tooth', 'Neurasthenia Point', 'Cheek', 'Brainstem', 'Stop Asthma', 'Temple',
+  // Inferior concha
+  'Heart Point', 'Tripple Heater Point', 'Spleen', 'Lung', 'Lung_2', 'San Jiao', 'Bronchus', 'Bronchus_2', 'Trachea', 'Endocrine Area',
+  // Upper crus of helix / triangular fossa
+  'Symphatic', 'Siatic', 'Hip', 'Shenmen', 'Popliteal Fossa', 'Heel', 'Sole', 'Toe', 'Calf', 'External Knee', 'Hip Joint',
+  'Ankle', 'Instep', 'Knee Joint', 'Thigh Muscles Area',
+  // Antihelix
+  'Lumbar Muscles Area', 'Intercostals Area', 'Diziness Area', 'Cervical Vertebrae Area', 'Thyroid', 'Neck', 'Chest', 'Mamma',
+  'External Abdomen', 'External Knee_2', 'Hip_2', 'Coccyx', 'Hot Point', 'Abdomen', 'Upper Back', 'Intercostals',
+  // Superior concha
+  'Prostate', 'Bladder', 'Ureter', 'Kidney', 'Gallbladder', 'Liver', 'Bilary Duct', 'Duodendum', 'Stomach', 'Diaphram',
+  'Ear Center', 'Small Intestine', 'Appendix', 'Large Intestine', 'Abdominal Distention Area',
+  // Scaphoid fossa
+  'Finger', 'Wrist', 'Elbow', 'Shoulder', 'Shoulder Joint', 'Arm Pit', 'Clavicle', 'Large Auricular Nerv',
+  // Grooves and lines
+  ...MASTER_LINE_IDS,
 ].map(id => [id, MASTER_RENAMES[id] ?? id]))
 
 // Tiles whose diagram has clickable points, with their dropdown groups.
@@ -152,7 +214,7 @@ function PointMenu({ tile, title, activePoint, menuOpen, compact, onToggle, onSe
             title,
             ...tile.groups.flatMap(group => [
               <span className="text-[10px] font-bold uppercase tracking-wide">{group.label}</span>,
-              ...group.points.map(name => tile.drawn.has(name) ? name : `${name} (not on diagram)`),
+              ...group.points,
             ]),
           ]} />
 
@@ -171,7 +233,7 @@ function PointMenu({ tile, title, activePoint, menuOpen, compact, onToggle, onSe
                       </button>
                     ) : (
                       <div key={name} className="px-3 py-1.5 text-xs font-semibold text-gray-300 dark:text-gray-600 cursor-default">
-                        {name} <span className="font-normal italic">(not on diagram)</span>
+                        {name}
                       </div>
                     )
                   ))}
@@ -316,7 +378,7 @@ function SearchablePanel({ tile, activePoint, category, onCategoryChange, onSele
             </button>
           ) : (
             <div key={name} className="px-3 py-1.5 text-xs font-semibold text-gray-300 dark:text-gray-600 cursor-default">
-              <MatchedName name={name} query={search} /> <span className="font-normal italic">(not on diagram)</span>
+              <MatchedName name={name} query={search} />
               {tag}
             </div>
           )
@@ -339,7 +401,7 @@ function SearchablePointMenu({ tile, title, activePoint, menuOpen, category, onC
             {activePoint ?? title}
             <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
           </button>
-          <MenuSizer labels={[title, ...AURICULOTHERAPY_POINTS.map(({ name }) => tile.drawn.has(name) ? name : `${name} (not on diagram)`)]} />
+          <MenuSizer labels={[title, ...AURICULOTHERAPY_POINTS.map(({ name }) => name)]} />
           {menuOpen && (
             <SearchablePanel
               tile={tile}
@@ -495,7 +557,7 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom }) {
   )
 }
 
-// ear-tcm-2.svg is a 1207x1249 page, cropped to the ear.
+// ear-chin-3.svg is a 1207x1249 page, cropped to the ear.
 const TCM_VIEWBOX = { x: 285, y: 30, w: 737, h: 1160 }
 // ear-basic.svg (Inkscape, mm units) is shown whole.
 const BASIC_VIEWBOX = { x: 0, y: 0, w: 170.46902, h: 283.32684 }

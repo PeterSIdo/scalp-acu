@@ -67,7 +67,7 @@ export const AURICULOTHERAPY_CATEGORIES = [
 ]
 
 // Drawn on the diagram but not in any category above.
-export const AURICULOTHERAPY_UNCATEGORISED = ['Anxious Point']
+export const AURICULOTHERAPY_UNCATEGORISED = ['Anxious Point', 'Triple Heater Point']
 
 // Every point A-Z, with the categories it belongs to.
 export const AURICULOTHERAPY_POINTS = [...new Set([

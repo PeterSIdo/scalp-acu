@@ -479,3 +479,30 @@ the app's canonical codes instead:
   menus share one width for button and dropdown; Basic/Sensory/Brain Points
   keep a row-wide dropdown for their descriptions. YNSA buttons lost their
   fixed `w-28`, so long names are no longer cut off.
+
+## 2026-11-02 — Ear: Chinese Auriculotherapy on ear-chin-3.svg
+
+### Ear tile 1/1 (`HeadEarPoints.jsx`)
+- The Chinese Auriculotherapy tile now uses `ear-chin-3.svg` (new) instead of
+  `ear-tcm-2.svg` (left in the repo, unused). Same 1207x1249 page, same crop.
+- `MASTER_SVG_IDS` rewritten for the new drawing: 102 ids, 94 of the 152
+  points are now on the diagram. Figma typos are mapped in `MASTER_RENAMES`
+  (Symphatic, Siatic, Duodendum, Diaphram, Bilary Duct, Large Auricular Nerv,
+  Appex of the Tragus, ...). Rheumatic Line joins the grooves as a line point.
+  "...Area" ids are groups (shaded zones) and select as one.
+- Choices to confirm later:
+  - the cavum concha dot `Heart Point` maps to Heart Point (Special), so
+    Heart (Zang Fu) is not on the diagram;
+  - `Tripple Heater Point` and `San Jiao` are different dots: San Jiao maps
+    to Sanjiao, Triple Heater Point was added to
+    `AURICULOTHERAPY_UNCATEGORISED`;
+  - Abdominal Distention Area maps to Abdominal Area;
+  - Helix 4/5/6 all select "Helix 1-6";
+  - `Hip_2` and `External Knee_2` may be Figma duplicates;
+  - `Line 16` (grey dashed, antihelix) is treated as decoration.
+- Groove of Hypertension vs Hypotension is still open.
+
+### Ear dropdowns
+- Removed the "(not on diagram)" suffix from all ear menus. It made the
+  MenuSizer-sized button so wide that on phones it covered the tile's (X)
+  close button. Undrawn points are still listed, greyed and unclickable.
