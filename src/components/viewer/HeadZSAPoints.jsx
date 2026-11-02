@@ -14,6 +14,7 @@ import InlineSearch from '../ui/InlineSearch'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
 import { CATEGORY_INTROS } from '../../data/categoryIntros'
 import { ZSA_AREA_INFO } from '../../data/zsaAreaInfo'
+import { TOUCH_REACH, targetAt } from './touchHit'
 
 // 2x3 grid, row-major (same layout as Basic Points, one extra row):
 // Zones (bowed) | Zones (top) / Back Zones | Back Meridians / Top Meridians | (empty).
@@ -248,7 +249,121 @@ function ZonesDiagram({ id, activeArea, onSelect }) {
   )
 }
 
-function renderTileContent(id, { activeArea, onAreaSelect, onAreaPick, onAreaClear, openMenu, onMenuToggle, onMenuOpen, onMenuClose, onNavSelect, navMode, searchQuery, onSearchQueryChange }, expanded = false) {
+// ZSA-back-meridians.svg: per meridian, its point dots (ids = point names),
+// its line(s) and its legend swatch + legend text. Figma ids, so re-check them
+// if the diagram is re-exported; the yellow DU swatch is mis-named "CV" there.
+const BACK_MERIDIANS = {
+  DU: { points: ['DU20', 'DU19', 'DU18', 'DU17', 'DU16', 'DU15'], lines: ['Line 1'], legend: ['CV', 'DU'] },
+  UB: { points: ['UB9', 'UB10'], lines: ['Line 2'], legend: ['BL', 'UB'] },
+  GB: { points: ['GB19', 'GB12', 'GB20'], lines: ['Line 3', 'Line 4'], legend: ['GB', 'GB_2'] },
+}
+
+// Pulsing ring + name label, in diagram units (dots are r=7.5).
+const MARK = { ring: 12, pulse: 24, stroke: 2, gap: 18, pad: 7, font: 16, charW: 9.4 }
+const LINE_HIT_WIDTH = 16
+
+// The back-meridians diagram: tapping a dot selects that point, tapping a line
+// or legend entry selects the whole meridian; the other meridians fade back.
+// `selection` is { meridian, point } (point may be null) or null.
+function MeridiansDiagram({ id, selection, onSelect }) {
+  const hostRef = useRef(null)
+  const pointerType = useRef('mouse')
+  const [marker, setMarker] = useState(null)
+  const Diagram = TILE_SVGS[id]
+  const viewBox = TILE_VIEWBOXES[id]
+
+  // Tag every target, and lay invisible wide copies over the thin lines so
+  // they're easy to hit.
+  useEffect(() => {
+    const svg = hostRef.current?.querySelector('svg')
+    if (!svg) return
+    const hits = []
+    for (const [meridian, { points, lines, legend }] of Object.entries(BACK_MERIDIANS)) {
+      for (const elId of [...points, ...lines, ...legend]) {
+        const el = svg.querySelector(`[id="${elId}"]`)
+        if (!el) continue
+        el.dataset.zsaMeridian = meridian
+        if (points.includes(elId)) el.dataset.zsaPoint = elId
+        el.style.cursor = 'pointer'
+        el.style.transition = 'opacity 150ms ease'
+        if (lines.includes(elId)) {
+          const hit = el.cloneNode()
+          hit.removeAttribute('id')
+          hit.dataset.zsaMeridian = meridian
+          hit.style.cssText = `stroke: transparent; stroke-width: ${LINE_HIT_WIDTH}; stroke-linecap: round; cursor: pointer`
+          el.after(hit)
+          hits.push(hit)
+        }
+      }
+    }
+    return () => hits.forEach(hit => hit.remove())
+  }, [])
+
+  useEffect(() => {
+    const svg = hostRef.current?.querySelector('svg')
+    if (!svg) return
+    for (const [meridian, { points, lines, legend }] of Object.entries(BACK_MERIDIANS)) {
+      const faded = selection && selection.meridian !== meridian
+      for (const elId of [...points, ...lines, ...legend]) {
+        const el = svg.querySelector(`[id="${elId}"]`)
+        if (!el) continue
+        el.style.opacity = faded ? '0.25' : ''
+        // A meridian picked as a whole gets a bolder line.
+        if (lines.includes(elId)) el.style.strokeWidth = selection?.meridian === meridian && !selection.point ? '6' : ''
+      }
+    }
+    const el = selection?.point && svg.querySelector(`[id="${selection.point}"]`)
+    setMarker(el ? { name: selection.point, x: Number(el.getAttribute('cx')), y: Number(el.getAttribute('cy')) } : null)
+  }, [selection])
+
+  function handleClick(e) {
+    const reach = pointerType.current === 'mouse' ? 0 : TOUCH_REACH
+    const el = targetAt(hostRef.current, e.clientX, e.clientY, 'data-zsa-meridian', reach)
+    if (!el) return
+    e.stopPropagation()
+    onSelect({ meridian: el.dataset.zsaMeridian, point: el.dataset.zsaPoint ?? null })
+  }
+
+  // The marker is set by the effect above, one render after the selection
+  // changes, so it's drawn only while it still matches the selected point.
+  let label = null
+  if (marker && marker.name === selection?.point) {
+    const [vx, vy, vw, vh] = viewBox.split(' ').map(Number)
+    const { gap, pad, font, charW } = MARK
+    const w = marker.name.length * charW + pad * 2
+    const h = font + pad * 2
+    // Label to the right of the point, flipped left if it would leave the diagram.
+    const tx = marker.x + gap + w > vx + vw ? marker.x - w - gap : marker.x + gap
+    const ty = Math.min(Math.max(marker.y - h / 2, vy), vy + vh - h)
+    label = { tx, ty, w, h }
+  }
+
+  return (
+    <div
+      ref={hostRef}
+      onPointerDown={e => { pointerType.current = e.pointerType }}
+      onClick={handleClick}
+      style={{ position: 'relative', width: '100%', height: '100%' }}
+    >
+      <Diagram viewBox={viewBox} style={FILL} />
+      {label && (
+        <svg viewBox={viewBox} fill="none" xmlns="http://www.w3.org/2000/svg" style={{ ...FILL, pointerEvents: 'none' }}>
+          <circle cx={marker.x} cy={marker.y} r={MARK.ring} fill="none" stroke="#000000" strokeWidth={MARK.stroke * 0.75} opacity="0.9" />
+          <circle cx={marker.x} cy={marker.y} r={MARK.ring} fill="none" stroke="#000000" strokeWidth={MARK.stroke}>
+            <animate attributeName="r"       values={`${MARK.ring};${MARK.pulse};${MARK.ring}`} dur="1.6s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
+          </circle>
+          <rect x={label.tx} y={label.ty} width={label.w} height={label.h} rx={5} fill="rgba(0,0,0,0.72)" />
+          <text x={label.tx + MARK.pad} y={label.ty + MARK.font + MARK.pad * 0.6} fontSize={MARK.font} fill="white" fontFamily="system-ui, sans-serif">
+            {marker.name}
+          </text>
+        </svg>
+      )}
+    </div>
+  )
+}
+
+function renderTileContent(id, { activeArea, onAreaSelect, meridianSelection, onMeridianSelect, onAreaPick, onAreaClear, openMenu, onMenuToggle, onMenuOpen, onMenuClose, onNavSelect, navMode, searchQuery, onSearchQueryChange }, expanded = false) {
   if (!TILE_SVGS[id]) return null
   // Tile 1/1 carries the menu row; it and every expanded card keep the other
   // grids' 40px top offset for it. The other grid tiles are short, so they
@@ -258,7 +373,9 @@ function renderTileContent(id, { activeArea, onAreaSelect, onAreaPick, onAreaCle
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div style={{ position: 'absolute', top, left: 0, right: 0, bottom: expanded ? 0 : 4 }}>
-        <ZonesDiagram id={id} activeArea={activeArea} onSelect={onAreaSelect} />
+        {id === 'back-meridians'
+          ? <MeridiansDiagram id={id} selection={meridianSelection} onSelect={onMeridianSelect} />
+          : <ZonesDiagram id={id} activeArea={activeArea} onSelect={onAreaSelect} />}
       </div>
       {hasMenu && (
         <div className="absolute left-0 right-0 top-0 px-3 pt-3 z-20 pointer-events-none">
@@ -310,6 +427,8 @@ export default function HeadZSAPoints({ onPointSelect }) {
   const [openMenu,   setOpenMenu]   = useState(null)
   const [navMode,    setNavMode]    = useState(null) // null | 'areas' | 'search'
   const [searchQuery, setSearchQuery] = useState('')
+  // Back-meridians tile: { meridian, point } or null, shared with its expanded card.
+  const [meridianSelection, setMeridianSelection] = useState(null)
 
   function selectArea(code) {
     setActiveArea(code)
@@ -331,6 +450,10 @@ export default function HeadZSAPoints({ onPointSelect }) {
     activeArea,
     onAreaSelect: code => { setOpenMenu(null); selectArea(activeArea === code ? null : code) },
     onAreaPick: selectArea,
+    meridianSelection,
+    // Tapping the current selection again clears it, same as the areas.
+    onMeridianSelect: sel => setMeridianSelection(cur =>
+      cur && cur.meridian === sel.meridian && cur.point === sel.point ? null : sel),
     onAreaClear: () => selectArea(null),
     openMenu,
     onMenuToggle: id => setOpenMenu(open => (open === id ? null : id)),
@@ -423,14 +546,13 @@ export default function HeadZSAPoints({ onPointSelect }) {
       </div>
 
       {expandedId && (
-        <div
+        <div className="bg-gray-300 dark:bg-gray-900"
           style={{
             position: 'absolute',
             inset: 0,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'rgba(99, 236, 225, 0.6)',
             zIndex: 20,
           }}
         >

@@ -602,14 +602,13 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
       </div>
 
       {expandedId && (
-        <div
+        <div className="bg-gray-300 dark:bg-gray-900"
           style={{
             position: 'absolute',
             inset: 0,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'rgba(99, 236, 225, 0.6)',
             zIndex: 20,
           }}
         >

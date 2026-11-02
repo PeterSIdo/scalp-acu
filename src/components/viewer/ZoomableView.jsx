@@ -9,6 +9,8 @@ function reducer(state, action) {
     case 'WHEEL': {
       const factor = action.delta < 0 ? 1.12 : 0.88
       const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, state.scale * factor))
+      // Back at 1x, re-centre, as ZOOM_OUT does, so no pan offset is left over.
+      if (newScale <= MIN_SCALE) return { scale: 1, tx: 0, ty: 0 }
       const ratio = newScale / state.scale
       return {
         scale: newScale,
@@ -66,8 +68,10 @@ const ZoomableView = forwardRef(function ZoomableView({ children, wheelZoom = tr
     return () => el.removeEventListener('wheel', onWheel)
   }, [wheelZoom])
 
+  // Panning is only for a zoomed-in view: at 1x there's nothing to move to,
+  // and a stray mouse drag would shift the grid or an expanded card.
   function onMouseDown(e) {
-    if (e.button !== 0) return
+    if (e.button !== 0 || !isZoomed) return
     isDragging.current = true
     hasDragged.current = false
     lastPos.current = { x: e.clientX, y: e.clientY }

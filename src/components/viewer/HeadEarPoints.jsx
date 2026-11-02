@@ -9,6 +9,7 @@ import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 import { AURICULOTHERAPY_CATEGORIES, AURICULOTHERAPY_POINTS } from '../../data/earAuriculotherapy'
+import { TOUCH_REACH, targetAt } from './touchHit'
 
 // 2x2 grid, row-major (same layout as Basic Points):
 // Master | Musculoskeletal / Internal Organs | Neuroendocrine.
@@ -436,9 +437,6 @@ const MSK_VIEWBOX = { x: 70, y: 50, w: 660, h: 1030 }
 // numbers are scaled up 2x to look the same on screen.
 const MARK = { ring: 22, pulse: 44, stroke: 3, gap: 32, pad: 12, font: 22, charW: 12.4 }
 
-// How far (screen px) around a finger tap to look for a point.
-const TOUCH_REACH = 24
-
 // Movement (screen px) before a press on a magnified diagram counts as a pan;
 // a finger wobbles more than a mouse, so a tap isn't mistaken for a drag.
 const DRAG_SLOP = { mouse: 3, touch: 10, pen: 6 }
@@ -516,34 +514,10 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom }) {
     setMarker(selectedEl ? pointCentre(svg, selectedEl, tile.lineIds) : null)
   }, [tile, activePoint])
 
-  // Points hit at one screen position, this diagram only (elementsFromPoint
-  // also returns the grid tiles hidden under an expanded card).
-  function hitsAt(x, y) {
-    return document.elementsFromPoint(x, y)
-      .map(el => el.closest('[data-ear-point]'))
-      .filter(el => el && hostRef.current.contains(el))
-  }
-
-  // Fingers land a few pixels off a small dot, so a touch that misses is
-  // retried on rings around it, nearest ring first; the mouse stays exact.
-  function pointAt(x, y, reach) {
-    for (let r = 0; r <= reach; r += 6) {
-      const steps = r === 0 ? 1 : 12
-      const hits = []
-      for (let i = 0; i < steps; i++) {
-        const a = (i / steps) * 2 * Math.PI
-        hits.push(...hitsAt(x + r * Math.cos(a), y + r * Math.sin(a)))
-      }
-      // Lines and areas can overlap dots, so a dot wins.
-      const el = hits.find(h => h.tagName === 'circle') ?? hits[0]
-      if (el) return el.dataset.earPoint
-    }
-    return null
-  }
-
+  // A finger tap that misses a dot looks around it; the mouse stays exact.
   function handleClick(e) {
     const reach = pointerType.current === 'mouse' ? 0 : TOUCH_REACH
-    const name = pointAt(e.clientX, e.clientY, reach)
+    const name = targetAt(hostRef.current, e.clientX, e.clientY, 'data-ear-point', reach)?.dataset.earPoint
     if (!name) return
     e.stopPropagation()
     onSelect(name)
@@ -598,6 +572,12 @@ const TILE_BOXES = {
   musculoskeletal: MSK_VIEWBOX,
   internal: MSK_VIEWBOX,
   neuroendocrine: BASIC_VIEWBOX,
+}
+
+// Space (px) kept free under a diagram whose bottom would sit behind the
+// magnifier slider; the diagram shrinks into the rest and moves up.
+const TILE_BOTTOM_GAP = {
+  master: 30,
 }
 
 const MAX_ZOOM = 2
@@ -727,7 +707,7 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
   // Same 40px top offset as the other grids, leaving room for a menu row later.
   return (
     <div data-tile-body style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <div style={{ position: 'absolute', top: 40, left: 0, right: 0, bottom: 0 }}>
+      <div style={{ position: 'absolute', top: 40, left: 0, right: 0, bottom: TILE_BOTTOM_GAP[id] ?? 0 }}>
         {diagram}
       </div>
       {tile && (
@@ -762,7 +742,7 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
       )}
       {/* Bottom left, lined up with the menu above it; below the menu's
           z-20 so an open dropdown covers it. */}
-      <div className="absolute left-0 bottom-0 px-3 pb-3 z-10">
+      <div className="absolute left-0 bottom-0 px-3 pb-1 z-10">
         <ZoomSlider box={box} view={view} compact={!expanded} onViewChange={setView} />
       </div>
     </div>
@@ -871,14 +851,13 @@ export default function HeadEarPoints() {
       </div>
 
       {expandedId && (
-        <div
+        <div className="bg-gray-300 dark:bg-gray-900"
           style={{
             position: 'absolute',
             inset: 0,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'rgba(99, 236, 225, 0.6)',
             zIndex: 20,
           }}
         >
