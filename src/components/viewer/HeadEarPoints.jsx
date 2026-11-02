@@ -151,12 +151,17 @@ const MASTER_SVG_IDS = Object.fromEntries([
   ...MASTER_LINE_IDS,
 ].map(id => [id, MASTER_RENAMES[id] ?? id]))
 
+// An optional drawing a tile can switch on and off: every group whose id
+// starts with `prefix`, except groups holding clickable points (the
+// homunculus-spine group draws the four spine points, which stay visible).
+const HOMUNCULUS_LAYER = { prefix: 'homunculus-', label: 'Homunculus' }
+
 // Tiles whose diagram has clickable points, with their dropdown groups.
 // lineWidth/lineStroke style a selected line; hitWidth widens lines too thin to
 // click. `searchable` tiles use SearchablePointMenu instead of groups.
 const POINT_TILES = {
   master: { Svg: EarTcmSvg, searchable: true, svgIds: MASTER_SVG_IDS, lineIds: MASTER_LINE_IDS, lineWidth: '5', lineStroke: '#000000', hitWidth: 20 },
-  musculoskeletal: { Svg: EarMusculoskeletalSvg, groups: MSK_GROUPS, svgIds: MSK_SVG_IDS, lineIds: MSK_LINE_IDS, lineWidth: '16' },
+  musculoskeletal: { Svg: EarMusculoskeletalSvg, groups: MSK_GROUPS, svgIds: MSK_SVG_IDS, lineIds: MSK_LINE_IDS, lineWidth: '16', layer: HOMUNCULUS_LAYER },
   internal: { Svg: EarInternalOrgansSvg, groups: ORG_GROUPS, svgIds: ORG_SVG_IDS, lineIds: new Set() },
 }
 for (const tile of Object.values(POINT_TILES)) tile.drawn = new Set(Object.values(tile.svgIds))
@@ -462,7 +467,7 @@ function pointCentre(svg, el, lineIds) {
 // as the Basic Points heads (HeadLateral), drawn on an overlay SVG with the
 // same viewBox. `rect` is the visible (possibly magnified) window; the ring
 // and label are divided by `zoom` so they stay the same size on screen.
-function PointDiagram({ tile, activePoint, onSelect, rect, zoom }) {
+function PointDiagram({ tile, activePoint, onSelect, rect, zoom, showLayer = true }) {
   const hostRef = useRef(null)
   const pointerType = useRef('mouse')
   const [marker, setMarker] = useState(null)
@@ -513,6 +518,17 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom }) {
     }
     setMarker(selectedEl ? pointCentre(svg, selectedEl, tile.lineIds) : null)
   }, [tile, activePoint])
+
+  // Show or hide the tile's optional drawing. Runs after the effect above,
+  // which tags the point elements this skips.
+  useEffect(() => {
+    const svg = hostRef.current?.querySelector('svg')
+    if (!svg || !tile.layer) return
+    for (const el of svg.querySelectorAll(`[id^="${tile.layer.prefix}"]`)) {
+      if (el.querySelector('[data-ear-point]')) continue
+      el.style.display = showLayer ? '' : 'none'
+    }
+  }, [tile, showLayer])
 
   // A finger tap that misses a dot looks around it; the mouse stays exact.
   function handleClick(e) {
@@ -574,11 +590,9 @@ const TILE_BOXES = {
   neuroendocrine: BASIC_VIEWBOX,
 }
 
-// Space (px) kept free under a diagram whose bottom would sit behind the
-// magnifier slider; the diagram shrinks into the rest and moves up.
-const TILE_BOTTOM_GAP = {
-  master: 30,
-}
+// Space (px) kept free under every diagram so its bottom isn't hidden behind
+// the magnifier row; the diagram shrinks into the rest and moves up.
+const BOTTOM_GAP = 30
 
 const MAX_ZOOM = 2
 
@@ -689,16 +703,51 @@ function ZoomSlider({ box, view, compact, onViewChange }) {
   )
 }
 
-function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menuOpenId, onMenuToggle, views, onViewChange, category, onCategoryChange }, expanded = false) {
+// A figure icon; struck through when the drawing is off.
+function FigureIcon({ off }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+      <circle cx="12" cy="5" r="2.5" />
+      <path d="M12 9v6M7 11h10M12 15l-3.5 6M12 15l3.5 6" />
+      {off && <path d="M4 3l16 18" />}
+    </svg>
+  )
+}
+
+// On/off switch for a tile's optional drawing, styled like the slider beside
+// it. Compact (grid tile) shows the icon only; the expanded card adds the name.
+function LayerToggle({ label, on, compact, onToggle }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      aria-label={`${label} ${on ? 'on' : 'off'}`}
+      title={`${label}: ${on ? 'on' : 'off'}`}
+      onClick={e => { e.stopPropagation(); onToggle() }}
+      onMouseDown={e => e.stopPropagation()}
+      onPointerDown={e => e.stopPropagation()}
+      className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} transition-colors ${
+        on ? 'text-red-700' : 'text-gray-400 hover:text-red-700'
+      }`}
+    >
+      <FigureIcon off={!on} />
+      {!compact && <span>{label}</span>}
+    </button>
+  )
+}
+
+function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menuOpenId, onMenuToggle, views, onViewChange, category, onCategoryChange, layersOn, onLayerToggle }, expanded = false) {
   if (!TILE_IDS.includes(id)) return null
   const tile = POINT_TILES[id]
   const activePoint = activePoints[id] ?? null
   const box = TILE_BOXES[id]
   const view = views[id] ?? defaultView(box)
   const setView = update => onViewChange(id, update)
+  // Optional drawings (the homunculus) start switched on.
+  const layerOn = layersOn[id] ?? true
   let renderDiagram
   if (tile) {
-    renderDiagram = rect => <PointDiagram tile={tile} activePoint={activePoint} onSelect={name => onPointSelect(id, name)} rect={rect} zoom={view.zoom} />
+    renderDiagram = rect => <PointDiagram tile={tile} activePoint={activePoint} onSelect={name => onPointSelect(id, name)} rect={rect} zoom={view.zoom} showLayer={layerOn} />
   } else {
     // The neuroendocrine tile reuses the base ear until its own diagram exists.
     renderDiagram = rect => <EarBasicSvg viewBox={`${rect.x} ${rect.y} ${rect.w} ${rect.h}`} style={FILL} />
@@ -707,7 +756,7 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
   // Same 40px top offset as the other grids, leaving room for a menu row later.
   return (
     <div data-tile-body style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <div style={{ position: 'absolute', top: 40, left: 0, right: 0, bottom: TILE_BOTTOM_GAP[id] ?? 0 }}>
+      <div style={{ position: 'absolute', top: 40, left: 0, right: 0, bottom: BOTTOM_GAP }}>
         {diagram}
       </div>
       {tile && (
@@ -742,8 +791,11 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
       )}
       {/* Bottom left, lined up with the menu above it; below the menu's
           z-20 so an open dropdown covers it. */}
-      <div className="absolute left-0 bottom-0 px-3 pb-1 z-10">
+      <div className="absolute left-0 bottom-0 px-3 pb-1 z-10 flex items-stretch gap-1.5">
         <ZoomSlider box={box} view={view} compact={!expanded} onViewChange={setView} />
+        {tile?.layer && (
+          <LayerToggle label={tile.layer.label} on={layerOn} compact={!expanded} onToggle={() => onLayerToggle(id)} />
+        )}
       </div>
     </div>
   )
@@ -758,11 +810,15 @@ export default function HeadEarPoints() {
   const [views, setViews] = useState({})
   // Kept here so the category survives closing the dropdown and expanding the tile.
   const [category, setCategory] = useState('All')
+  // Optional drawing on/off per tile, shared by the tile and its expanded view.
+  const [layersOn, setLayersOn] = useState({})
 
   const tileCtx = {
     activePoints,
     category,
     onCategoryChange: setCategory,
+    layersOn,
+    onLayerToggle: id => setLayersOn(l => ({ ...l, [id]: !(l[id] ?? true) })),
     // Picking the selected point again clears it, same as the ZSA areas.
     onPointSelect: (id, name) => { setMenuOpenId(null); setActivePoints(p => ({ ...p, [id]: p[id] === name ? null : name })) },
     onPointClear: id => setActivePoints(p => ({ ...p, [id]: null })),
