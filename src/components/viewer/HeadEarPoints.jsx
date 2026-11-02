@@ -436,6 +436,13 @@ const MSK_VIEWBOX = { x: 70, y: 50, w: 660, h: 1030 }
 // numbers are scaled up 2x to look the same on screen.
 const MARK = { ring: 22, pulse: 44, stroke: 3, gap: 32, pad: 12, font: 22, charW: 12.4 }
 
+// How far (screen px) around a finger tap to look for a point.
+const TOUCH_REACH = 24
+
+// Movement (screen px) before a press on a magnified diagram counts as a pan;
+// a finger wobbles more than a mouse, so a tap isn't mistaken for a drag.
+const DRAG_SLOP = { mouse: 3, touch: 10, pen: 6 }
+
 // Centre of a point element in the SVG's own (viewBox) units. Spine segments
 // are curves, so their midpoint along the path is used rather than the bbox
 // centre, which can fall off the line.
@@ -459,6 +466,7 @@ function pointCentre(svg, el, lineIds) {
 // and label are divided by `zoom` so they stay the same size on screen.
 function PointDiagram({ tile, activePoint, onSelect, rect, zoom }) {
   const hostRef = useRef(null)
+  const pointerType = useRef('mouse')
   const [marker, setMarker] = useState(null)
 
   // Invisible wide copies of thin lines, so they're easy to click.
@@ -508,12 +516,34 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom }) {
     setMarker(selectedEl ? pointCentre(svg, selectedEl, tile.lineIds) : null)
   }, [tile, activePoint])
 
-  function handleClick(e) {
-    // Lines and areas can overlap dots, so a dot under the cursor wins.
-    const hits = document.elementsFromPoint(e.clientX, e.clientY)
+  // Points hit at one screen position, this diagram only (elementsFromPoint
+  // also returns the grid tiles hidden under an expanded card).
+  function hitsAt(x, y) {
+    return document.elementsFromPoint(x, y)
       .map(el => el.closest('[data-ear-point]'))
-      .filter(Boolean)
-    const name = (hits.find(el => el.tagName === 'circle') ?? hits[0])?.dataset.earPoint
+      .filter(el => el && hostRef.current.contains(el))
+  }
+
+  // Fingers land a few pixels off a small dot, so a touch that misses is
+  // retried on rings around it, nearest ring first; the mouse stays exact.
+  function pointAt(x, y, reach) {
+    for (let r = 0; r <= reach; r += 6) {
+      const steps = r === 0 ? 1 : 12
+      const hits = []
+      for (let i = 0; i < steps; i++) {
+        const a = (i / steps) * 2 * Math.PI
+        hits.push(...hitsAt(x + r * Math.cos(a), y + r * Math.sin(a)))
+      }
+      // Lines and areas can overlap dots, so a dot wins.
+      const el = hits.find(h => h.tagName === 'circle') ?? hits[0]
+      if (el) return el.dataset.earPoint
+    }
+    return null
+  }
+
+  function handleClick(e) {
+    const reach = pointerType.current === 'mouse' ? 0 : TOUCH_REACH
+    const name = pointAt(e.clientX, e.clientY, reach)
     if (!name) return
     e.stopPropagation()
     onSelect(name)
@@ -533,7 +563,7 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom }) {
   const viewBox = `${rect.x} ${rect.y} ${rect.w} ${rect.h}`
 
   return (
-    <div ref={hostRef} onClick={handleClick} style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div ref={hostRef} onPointerDown={e => { pointerType.current = e.pointerType }} onClick={handleClick} style={{ position: 'relative', width: '100%', height: '100%' }}>
       <tile.Svg viewBox={viewBox} style={FILL} />
       {label && (
         <svg
@@ -602,7 +632,7 @@ function MagnifiedDiagram({ box, view, onViewChange, children }) {
 
   function onPointerDown(e) {
     if (!zoomed || e.button !== 0) return
-    drag.current = { x: e.clientX, y: e.clientY }
+    drag.current = { x: e.clientX, y: e.clientY, slop: DRAG_SLOP[e.pointerType] ?? 3 }
     dragged.current = false
   }
 
@@ -613,14 +643,14 @@ function MagnifiedDiagram({ box, view, onViewChange, children }) {
     // Capture only once it's really a drag: capturing on pointer-down would
     // retarget the click to this wrapper, so points couldn't be selected.
     if (!dragged.current) {
-      if (Math.abs(dx) <= 3 && Math.abs(dy) <= 3) return
+      if (Math.abs(dx) <= drag.current.slop && Math.abs(dy) <= drag.current.slop) return
       dragged.current = true
       e.currentTarget.setPointerCapture(e.pointerId)
     }
     const rect = hostRef.current.getBoundingClientRect()
     // Pixels per SVG unit under preserveAspectRatio="xMidYMid meet".
     const scale = Math.min(rect.width / w, rect.height / h)
-    drag.current = { x: e.clientX, y: e.clientY }
+    drag.current = { ...drag.current, x: e.clientX, y: e.clientY }
     onViewChange(v => clampView(box, { ...v, cx: v.cx - dx / scale, cy: v.cy - dy / scale }))
   }
 
@@ -825,8 +855,9 @@ export default function HeadEarPoints() {
                 overflow: 'hidden',
                 transition: 'transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease',
               }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.015)'; e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.5)' }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.2)' }}
+              // Mouse only: on touch the hover lift would stick after a tap.
+              onPointerEnter={e => { if (e.pointerType !== 'mouse') return; e.currentTarget.style.transform = 'scale(1.015)'; e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.5)' }}
+              onPointerLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.2)' }}
             >
               {!isExpanded && (
                 <div style={{ flex: 1, minHeight: 0, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
