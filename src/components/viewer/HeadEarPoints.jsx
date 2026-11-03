@@ -314,7 +314,7 @@ const DRAG_SLOP = { mouse: 3, touch: 10, pen: 6 }
 // Centre of a point element in the SVG's own (viewBox) units. Spine segments
 // are curves, so their midpoint along the path is used rather than the bbox
 // centre, which can fall off the line.
-function pointCentre(svg, el, lineIds) {
+export function pointCentre(svg, el, lineIds) {
   const m = svg.getScreenCTM().inverse().multiply(el.getScreenCTM())
   let p
   if (lineIds.has(el.id) && el.getTotalLength) {
@@ -443,7 +443,7 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom, showLayer = tru
 }
 
 // ear-chin-3.svg is a 1207x1249 page, cropped to the ear.
-const TCM_VIEWBOX = { x: 285, y: 30, w: 737, h: 1160 }
+export const TCM_VIEWBOX = { x: 285, y: 30, w: 737, h: 1160 }
 // ear-basic.svg (Inkscape, mm units) is shown whole.
 const BASIC_VIEWBOX = { x: 0, y: 0, w: 170.46902, h: 283.32684 }
 

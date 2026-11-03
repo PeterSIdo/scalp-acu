@@ -10,12 +10,11 @@ function SourceCredit({ point }) {
   return (
     <>
       <Divider />
-      <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Source</h3>
+      <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Reference</h3>
       <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed mb-1">
-        Summarised in our own words from <span className="italic">{src.title}</span>
+        <span className="italic">{src.title}</span>
         {src.edition && ` (${src.edition})`} by {src.author}
         {src.publisher && `, ${src.publisher}`}{src.year && `, ${src.year}`}.
-        {point.plates?.length > 0 && ` See plates ${point.plates.join(', ')}.`}
       </p>
       {src.notice && (
         <p className="text-gray-500 dark:text-gray-500 text-[11px] italic leading-relaxed">{src.notice}</p>
@@ -24,14 +23,15 @@ function SourceCredit({ point }) {
   )
 }
 
-export default function InfoPanel({ point, isSubscribed }) {
+// `emptyHint` shows the "click a point" placeholder when nothing is selected
+// (YNSA only; the other systems leave the panel blank).
+export default function InfoPanel({ point, isSubscribed, emptyHint = true }) {
+  if (!point && !emptyHint) return null
   if (!point) {
     return (
       <div className="flex flex-col items-center justify-center h-full px-6 text-center">
         <div className="text-4xl mb-4">☝️</div>
-        <p className="text-lg text-black dark:text-gray-400">Click a point on the model to see its details</p>
-        <p className="text-sm mt-2 text-gray-600 dark:text-gray-500">Gold points are available, grey points require a subscription</p>
-      </div>
+        <p className="text-lg text-black dark:text-gray-400">Click a point on the model to see its details</p>      </div>
     )
   }
 

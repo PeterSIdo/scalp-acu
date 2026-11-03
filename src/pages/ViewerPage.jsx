@@ -435,7 +435,7 @@ export default function ViewerPage() {
                 <SearchPanel query={searchQuery} onSelect={handleSearchSelect} system={isEar ? 'ear' : 'ynsa'} />
               ) : (
                 <div className="flex-1 overflow-y-auto scroll-touch">
-                  <InfoPanel point={selectedPoint} isSubscribed={isActive} />
+                  <InfoPanel point={selectedPoint} isSubscribed={isActive} emptyHint={activeSystem === 'ynsa'} />
                 </div>
               )}
             </>

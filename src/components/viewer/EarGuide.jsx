@@ -1,7 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import EarTcmSvg from '../../assets/diagrams/ear-chin-3.svg?react'
 import { EAR_DESCRIPTION, EAR_FORMULAS, EAR_FORMULA_KEY_TERMS, EAR_FORMULA_SAFETY } from '../../data/earGuide'
+import { MASTER_SVG_IDS, MASTER_LINE_IDS } from '../../data/earPoints'
 import { SOURCES } from '../../data/sources'
-import CrossIcon from '../ui/CrossIcon'
+import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
+import { pointCentre, TCM_VIEWBOX } from './HeadEarPoints'
+
+const FILL = { position: 'absolute', inset: 0, width: '100%', height: '100%' }
 
 // Text pages for the Auriculotherapy "Description" and "Formulas" tabs. They
 // scroll on their own, outside ZoomableView.
@@ -22,7 +27,7 @@ function Source({ id }) {
   if (!src) return null
   return (
     <p className="text-gray-500 dark:text-gray-500 text-xs leading-relaxed mt-6">
-      Summarised in our own words from <span className="italic">{src.title}</span> by {src.author}.
+      Reference: <span className="italic">{src.title}</span> by {src.author}
     </p>
   )
 }
@@ -76,85 +81,251 @@ export function EarDescription() {
   )
 }
 
+// Formula point name -> its name on the Chinese Auriculotherapy diagram
+// (MASTER_SVG_IDS values), where they differ.
+const DIAGRAM_NAMES = {
+  'Sympathetic': 'Sympathetic (sympathy)',
+  'Dizziness Area': 'Dizziness Point',
+  'Lesser Occipital Nerve': 'Lesser Occipital Nerve Point',
+  'Allergy Area': 'Allergic Area',
+  'Gallbladder': 'Gall Bladder',
+  'Face and Cheek': 'Face & Cheek Area',
+  'Lower BP Point': 'Decrease Blood Pressure Point',
+  'Raise BP Point': 'Raising Blood Pressure Point',
+  'Tinnitus Groove': 'Groove of Tinnitus',
+  'Vision 2': 'Vision II',
+  'Tragus Apex': 'Tragic Apex',
+  'Helix 1–6': 'Helix 1-6',
+  'Breast': 'Mammary Gland',
+  'Bile Duct': 'Biliary Duct',
+  'Abdominal Distension Area': 'Abdominal Area',
+  'Cardia': 'Cardiac',
+  'Oesophagus': 'Esophagus',
+  'Nervous Subcortex': 'Subcortex',
+  'Cardiovascular Subcortex': 'Subcortex',
+  'Digestive Subcortex': 'Subcortex',
+}
+const DRAWN = new Set(Object.values(MASTER_SVG_IDS))
+
+// A formula's points with their diagram names and numbers. "Corresponding
+// Point" isn't a fixed point, so it gets no number.
+function formulaPoints(formula) {
+  let n = 0
+  return formula.points.map(raw => {
+    const bleed = raw.endsWith('(Bleed)')
+    const label = raw.replace(' (Bleed)', '')
+    const corresponding = label === 'Corresponding Point'
+    const diagram = DIAGRAM_NAMES[label] ?? label
+    const drawn = !corresponding && DRAWN.has(diagram)
+    return { label, bleed, corresponding, diagram, drawn, n: drawn ? ++n : null }
+  })
+}
+
 const matches = (f, q) =>
   f.name.toLowerCase().includes(q) ||
   f.points.some(p => p.toLowerCase().includes(q)) ||
   f.addOns?.some(a => a.toLowerCase().includes(q))
 
-function PointChip({ name }) {
-  const bleed = name.endsWith('(Bleed)')
-  const label = bleed ? name.replace(' (Bleed)', '') : name
-  return (
-    <span className="bg-gray-100 dark:bg-gray-800 text-black dark:text-gray-300 text-xs px-2 py-0.5 rounded">
-      {label}{bleed && <span className="ml-1 text-red-600 dark:text-red-400 font-semibold" title="Bleed">●</span>}
-    </span>
-  )
-}
-
-export function EarFormulas() {
+// Formula dropdown: a search field over the formulas, grouped by family.
+function FormulaMenu({ selected, onSelect }) {
+  const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
+  const rootRef = useRef(null)
   const q = query.trim().toLowerCase()
   const families = EAR_FORMULAS
     .map(fam => ({ ...fam, formulas: q ? fam.formulas.filter(f => matches(f, q)) : fam.formulas }))
     .filter(fam => fam.formulas.length > 0)
 
+  useEffect(() => {
+    if (!open) return
+    function onDown(e) { if (!rootRef.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('pointerdown', onDown)
+    return () => document.removeEventListener('pointerdown', onDown)
+  }, [open])
+
   return (
-    <Page>
-      <h1 className="text-xl font-bold text-black dark:text-white mb-2">Point Formulas by Function</h1>
-      <p className={`${BODY} mb-3`}>Sets of points with similar effects that work well together. Start with the core points, then add points for the specific cause.</p>
-
-      <ul className="space-y-1 mb-3">
-        {EAR_FORMULA_KEY_TERMS.map(t => (
-          <li key={t.label} className="text-xs leading-relaxed text-black dark:text-gray-300">
-            <span className="font-semibold">{t.label}{t.label === 'Bleed' && <span className="ml-1 text-red-600 dark:text-red-400">●</span>}:</span> {t.text}
-          </li>
-        ))}
-      </ul>
-
-      <div className="relative mb-4">
-        <input
-          type="text"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          placeholder="Filter by condition or point…"
-          className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 text-sm pl-3 pr-8 py-1.5 rounded border border-gray-300 dark:border-gray-700 focus:border-amber-500 focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600"
-        />
-        {query && (
-          <button
-            onClick={() => setQuery('')}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow"
-            aria-label="Clear"
-          ><CrossIcon size={10} strokeWidth={4} /></button>
-        )}
-      </div>
-
-      {families.map(fam => (
-        <section key={fam.family} className="mb-5">
-          <h2 className={H2}>{fam.family}</h2>
-          <div className="divide-y divide-gray-200 dark:divide-gray-800 border-y border-gray-200 dark:border-gray-800">
-            {fam.formulas.map(f => (
-              <div key={f.name} className="py-2.5 md:grid md:grid-cols-[11rem_1fr] md:gap-3">
-                <p className="text-sm font-semibold text-black dark:text-gray-100 mb-1 md:mb-0">{f.name}</p>
-                <div>
-                  <div className="flex flex-wrap gap-1">
-                    {f.points.map(p => <PointChip key={p} name={p} />)}
-                  </div>
-                  {f.addOns?.length > 0 && (
-                    <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mt-1.5">
-                      <span className="font-semibold">Add: </span>{f.addOns.join(' · ')}
-                    </p>
-                  )}
-                  {f.note && <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">{f.note}</p>}
-                </div>
+    <div ref={rootRef} className="relative w-full max-w-sm">
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className={`w-full flex justify-between items-center text-sm font-semibold px-3 py-2 ${GLASS_TRIGGER} ${selected || open ? 'text-red-700' : 'text-black hover:text-red-700'}`}
+      >
+        <span>{selected?.name ?? 'Choose a formula'}</span>
+        <span className="ml-2">{open ? '▲' : '▼'}</span>
+      </button>
+      {open && (
+        <div className={`absolute top-full left-0 right-0 mt-1 z-30 flex flex-col ${GLASS_DROPDOWN} bg-white/95 dark:bg-gray-900/95`}>
+          <div className="p-2 border-b border-gray-200 dark:border-gray-700">
+            <input
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Search condition or point…"
+              className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 text-sm px-2 py-1.5 rounded border border-gray-300 dark:border-gray-700 focus:border-amber-500 focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600"
+            />
+          </div>
+          <div className="overflow-y-auto scroll-touch max-h-[60vh] py-1">
+            {families.map(fam => (
+              <div key={fam.family}>
+                <div className="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wide text-gray-400">{fam.family}</div>
+                {fam.formulas.map(f => (
+                  <button
+                    key={f.name}
+                    type="button"
+                    onClick={() => { onSelect(f); setOpen(false); setQuery('') }}
+                    className={`block w-full text-left px-3 py-2 text-sm font-semibold transition-colors ${
+                      selected === f ? 'text-amber-500 dark:text-amber-400' : 'text-gray-700 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400'
+                    }`}
+                  >
+                    {f.name}
+                  </button>
+                ))}
               </div>
             ))}
+            {families.length === 0 && <p className="px-3 py-2 text-xs text-gray-400">No formulas match</p>}
           </div>
-        </section>
-      ))}
-      {families.length === 0 && <p className="text-sm text-gray-500 dark:text-gray-400">No formulas match “{query}”.</p>}
+        </div>
+      )}
+    </div>
+  )
+}
 
-      <Safety text={EAR_FORMULA_SAFETY} />
-      <Source id="huang-auriculotherapy" />
-    </Page>
+// The Chinese Auriculotherapy ear with a formula's points kept bright and
+// numbered; every other point fades back. `focus` (a diagram name) pulses.
+function FormulaDiagram({ points, focus, onFocus }) {
+  const hostRef = useRef(null)
+  const [marks, setMarks] = useState([])
+  const box = TCM_VIEWBOX
+  const viewBox = `${box.x} ${box.y} ${box.w} ${box.h}`
+
+  useEffect(() => {
+    const svg = hostRef.current?.querySelector('svg')
+    if (!svg) return
+    const numbers = new Map(points.filter(p => p.drawn).map(p => [p.diagram, p.n]))
+    const found = []
+    const seen = new Set()
+    for (const [elId, name] of Object.entries(MASTER_SVG_IDS)) {
+      const el = svg.querySelector(`[id="${elId}"]`)
+      if (!el) continue
+      el.style.transition = 'opacity 150ms ease'
+      el.style.cursor = numbers.has(name) ? 'pointer' : ''
+      el.dataset.formulaPoint = numbers.has(name) ? name : ''
+      el.style.opacity = numbers.size && !numbers.has(name) ? '0.2' : ''
+      // One number per point, on the first element found.
+      if (numbers.has(name) && !seen.has(name)) {
+        seen.add(name)
+        const c = pointCentre(svg, el, MASTER_LINE_IDS)
+        found.push({ name, n: numbers.get(name), x: c.x, y: c.y })
+      }
+    }
+    setMarks(found)
+  }, [points])
+
+  function handleClick(e) {
+    const name = e.target.closest('[data-formula-point]')?.dataset.formulaPoint
+    if (name) onFocus(name)
+  }
+
+  return (
+    <div ref={hostRef} onClick={handleClick} className="relative w-full h-full bg-white rounded-lg shadow">
+      <EarTcmSvg viewBox={viewBox} style={FILL} />
+      <svg viewBox={viewBox} style={{ ...FILL, pointerEvents: 'none' }} xmlns="http://www.w3.org/2000/svg">
+        {marks.map(m => {
+          const on = focus === m.name
+          return (
+            <g key={m.name}>
+              {on && (
+                <circle cx={m.x} cy={m.y} r="26" fill="none" stroke="#000" strokeWidth="3">
+                  <animate attributeName="r" values="26;48;26" dur="1.6s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
+                </circle>
+              )}
+              <circle cx={m.x + 22} cy={m.y - 22} r="15" fill={on ? '#b91c1c' : '#f59e0b'} stroke="white" strokeWidth="3" />
+              <text x={m.x + 22} y={m.y - 22} dy="0.35em" textAnchor="middle" fontSize="17" fontWeight="700" fill="white" fontFamily="system-ui, sans-serif">{m.n}</text>
+            </g>
+          )
+        })}
+      </svg>
+    </div>
+  )
+}
+
+function FormulaDetails({ formula, points, focus, onFocus }) {
+  return (
+    <div>
+      <h2 className="text-lg font-bold text-black dark:text-white mb-2">{formula.name}</h2>
+      <h3 className={H2}>Points</h3>
+      <ol className="space-y-1 mb-3">
+        {points.map(p => (
+          <li key={p.label}>
+            <button
+              type="button"
+              disabled={!p.drawn}
+              onClick={() => onFocus(focus === p.diagram ? null : p.diagram)}
+              className={`w-full flex items-center gap-2 text-left text-sm rounded px-1.5 py-1 ${
+                p.drawn ? 'hover:bg-amber-500/10' : 'cursor-default'
+              } ${focus === p.diagram && p.drawn ? 'bg-amber-500/15' : ''}`}
+            >
+              <span className={`flex-shrink-0 w-5 h-5 rounded-full text-[11px] font-bold flex items-center justify-center ${
+                p.drawn ? (focus === p.diagram ? 'bg-red-700 text-white' : 'bg-amber-500 text-white') : 'bg-gray-200 dark:bg-gray-800 text-gray-400'
+              }`}>{p.n ?? '–'}</span>
+              <span className="text-black dark:text-gray-200">{p.label}</span>
+              {p.bleed && <span className="text-red-600 dark:text-red-400 text-xs font-semibold">● bleed</span>}
+              {p.corresponding && <span className="text-gray-500 text-xs">(the affected body part)</span>}
+              {!p.drawn && !p.corresponding && <span className="text-gray-400 text-xs">not on diagram</span>}
+            </button>
+          </li>
+        ))}
+      </ol>
+      {formula.addOns?.length > 0 && (
+        <>
+          <h3 className={H2}>Add</h3>
+          <ul className="list-disc pl-5 space-y-1 mb-3">
+            {formula.addOns.map(a => <li key={a} className="text-sm text-black dark:text-gray-300">{a}</li>)}
+          </ul>
+        </>
+      )}
+      {formula.note && <p className="text-xs text-amber-700 dark:text-amber-400 mb-3">{formula.note}</p>}
+    </div>
+  )
+}
+
+export function EarFormulas() {
+  const [formula, setFormula] = useState(null)
+  const [focus, setFocus] = useState(null)
+  const points = useMemo(() => (formula ? formulaPoints(formula) : []), [formula])
+
+  return (
+    <div className="h-full overflow-y-auto scroll-touch">
+      <div className="flex flex-col md:flex-row gap-4 md:h-full">
+        {/* Menu + details */}
+        <div className="md:w-80 lg:w-96 flex-shrink-0 bg-white dark:bg-gray-950 rounded-lg shadow p-4 md:overflow-y-auto scroll-touch">
+          <FormulaMenu selected={formula} onSelect={f => { setFormula(f); setFocus(null) }} />
+          <div className="mt-4">
+            {formula ? (
+              <FormulaDetails formula={formula} points={points} focus={focus} onFocus={setFocus} />
+            ) : (
+              <>
+                <p className={`${BODY} mb-3`}>Pick a formula to see its points and add-ons, and where they are on the ear.</p>
+                <ul className="space-y-1.5 mb-3">
+                  {EAR_FORMULA_KEY_TERMS.map(t => (
+                    <li key={t.label} className="text-xs leading-relaxed text-black dark:text-gray-300">
+                      <span className="font-semibold">{t.label}{t.label === 'Bleed' && <span className="ml-1 text-red-600 dark:text-red-400">●</span>}:</span> {t.text}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <Safety text={EAR_FORMULA_SAFETY} />
+            <Source id="huang-auriculotherapy" />
+          </div>
+        </div>
+
+        {/* Ear diagram */}
+        <div className="flex-1 min-h-[70vh] md:min-h-0">
+          <FormulaDiagram points={points} focus={focus} onFocus={name => setFocus(f => (f === name ? null : name))} />
+        </div>
+      </div>
+    </div>
   )
 }

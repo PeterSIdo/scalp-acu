@@ -4,7 +4,7 @@
 export const SOURCES = {
   'huang-auriculotherapy': {
     title: 'Auriculotherapy Diagnosis and Treatment',
-    author: 'Li-Chun Huang',
+    author: 'Dr Li-Chun Huang, MD, O.M.D.',
   },
   'zhu-color-atlas': {
     title: "Color Atlas of Zhu's Scalp Acupuncture",
