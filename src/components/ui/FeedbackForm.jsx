@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { FEEDBACK_QUESTIONS } from '../../data/feedbackForm'
 import { api } from '../../lib/api'
+import { useAuth } from '../../hooks/useAuth'
 import CrossIcon from './CrossIcon'
 
 // Feedback form, opened from the top bar's menu. Full screen on phones, a
@@ -79,6 +80,8 @@ export default function FeedbackForm({ context, onClose }) {
   const [answers, setAnswers] = useState({})
   const [status, setStatus] = useState('editing') // editing | sending | sent
   const [error, setError] = useState(null)
+  const [honeypot, setHoneypot] = useState('')
+  const { user } = useAuth()
   const missing = FEEDBACK_QUESTIONS.filter(q => q.required && answers[q.id] == null)
 
   useEffect(() => {
@@ -95,6 +98,7 @@ export default function FeedbackForm({ context, onClose }) {
     try {
       await api.feedback.submit({
         answers,
+        website: honeypot,
         context: { ...context, screenWidth: window.innerWidth },
       })
       setStatus('sent')
@@ -139,6 +143,21 @@ export default function FeedbackForm({ context, onClose }) {
               {FEEDBACK_QUESTIONS.map(q => (
                 <Question key={q.id} q={q} value={answers[q.id]} onChange={v => setAnswers(a => ({ ...a, [q.id]: v }))} />
               ))}
+              {/* Not signed in and happy to be contacted: ask where to. */}
+              {answers.contact === 'Yes' && !user && (
+                <div className="mb-5 -mt-2">
+                  <input
+                    type="email"
+                    maxLength={200}
+                    value={answers.contactEmail ?? ''}
+                    onChange={e => setAnswers(a => ({ ...a, contactEmail: e.target.value }))}
+                    placeholder="Your email (optional)"
+                    className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 text-base md:text-sm px-3 py-2 rounded border border-gray-300 dark:border-gray-700 focus:border-amber-500 focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600"
+                  />
+                </div>
+              )}
+              {/* Spam trap: hidden from people, filled in by bots. */}
+              <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={honeypot} onChange={e => setHoneypot(e.target.value)} className="hidden" />
             </div>
             <div className="px-5 py-3 border-t border-gray-200 dark:border-gray-800 flex-shrink-0">
               {error && <p className="text-sm text-red-600 dark:text-red-400 mb-2">{error}</p>}
