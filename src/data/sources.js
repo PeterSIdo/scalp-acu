@@ -2,6 +2,10 @@
 // entries point here with `source: '<id>'`. The text itself is written in
 // our own words, not quoted.
 export const SOURCES = {
+  'huang-auriculotherapy': {
+    title: 'Auriculotherapy Diagnosis and Treatment',
+    author: 'Li-Chun Huang',
+  },
   'zhu-color-atlas': {
     title: "Color Atlas of Zhu's Scalp Acupuncture",
     series: "Zhu's Scalp Acupuncture Clinical Series",

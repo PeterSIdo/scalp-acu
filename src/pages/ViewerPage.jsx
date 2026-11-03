@@ -11,6 +11,7 @@ import NeckDiagnosis   from '../components/viewer/NeckDiagnosis'
 import HeadBrainZones from '../components/viewer/HeadBrainZones'
 import HeadEarPoints from '../components/viewer/HeadEarPoints'
 import HeadZSAPoints from '../components/viewer/HeadZSAPoints'
+import { EarDescription, EarFormulas } from '../components/viewer/EarGuide'
 import { ABOUT_APP } from '../data/aboutApp'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
@@ -51,7 +52,9 @@ const SYSTEMS = [
     label: 'Auriculotherapy',
     fullName: 'Ear Acupuncture',
     subgroups: [
-      { id: 'ear-points', label: 'Ear Points', views: ['EarGrid'], available: true },
+      { id: 'ear-points',      label: 'Ear Points',  views: ['EarGrid'],         available: true },
+      { id: 'ear-description', label: 'Description', views: ['EarDescription'],  available: true },
+      { id: 'ear-formulas',    label: 'Formulas',    views: ['EarFormulas'],     available: true },
     ],
   },
 ]
@@ -375,7 +378,9 @@ export default function ViewerPage() {
 
         {/* Diagram */}
         <div className="flex-1 min-h-0 bg-gray-300 dark:bg-gray-900 overflow-hidden p-4" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-          {isAvailable ? (
+          {activeView === 'EarDescription' ? <EarDescription />
+          : activeView === 'EarFormulas' ? <EarFormulas />
+          : isAvailable ? (
             <ZoomableView key={resetKey} onReset={handleReset} wheelZoom={!isNeck && !isZsa}>
               {activeView === 'Grid'      && <HeadBasicPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-basic']} />}
               {activeView === 'SensoryGrid' && <HeadSensoryPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-sensory']} />}
