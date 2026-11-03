@@ -10,7 +10,7 @@
     "dev": "vite",
     "dev:server": "dotenv -e .env.local -- node --watch server/index.js",
     "build": "vite build",
-    "start": "(prisma db push --skip-generate || echo 'prisma db push failed, starting anyway'); NODE_ENV=production node server/index.js",
+    "start": "NODE_ENV=production node server/index.js",
     "db:generate": "dotenv -e .env.local -- prisma generate",
     "db:migrate": "dotenv -e .env.local -- prisma migrate deploy",
     "db:push": "dotenv -e .env.local -- prisma db push",
