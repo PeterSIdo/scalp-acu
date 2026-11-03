@@ -506,3 +506,91 @@ the app's canonical codes instead:
 - Removed the "(not on diagram)" suffix from all ear menus. It made the
   MenuSizer-sized button so wide that on phones it covered the tile's (X)
   close button. Undrawn points are still listed, greyed and unclickable.
+
+---
+
+## 2026-11-03 — Ear Description & Formulas, phone fixes, installable app, feedback form
+
+**Status: committed and pushed** (`b03aa6f` … `15f77e4` on master).
+
+### Auriculotherapy: Description and Formulas tabs
+- New subgroups `ear-description` and `ear-formulas` (views `EarDescription`,
+  `EarFormulas`), rendered outside `ZoomableView` as scrolling pages
+  (`src/components/viewer/EarGuide.jsx`).
+- Text condensed from Li-Chun Huang's *Auriculotherapy Diagnosis and
+  Treatment*, Sections V and VI (`src/data/earGuide.js`). Source docx:
+  `OneDrive/Documents/Auriculotherapy/Li-Chun Book/Section V VI.docx`.
+  - Description: intro, "reading the ear", the six point groups with key
+    points, safety note.
+  - Formulas: 46 formulas in 7 families (Strengthening + Invigorating merged,
+    Fever under Resisting), core points, short add-ons, key terms.
+- Formulas page: searchable dropdown, then details (numbered points, add-ons)
+  and the Chinese Auriculotherapy ear (`ear-chin-3.svg`). The formula's points
+  stay bright with numbered amber badges and every one gets a name label
+  (fine black frame, see-through white). Labels avoid badges, dots and each
+  other, with a leader line if moved. Tapping a point pulses it and turns its
+  label red.
+- `DIAGRAM_NAMES` in EarGuide.jsx maps formula names to diagram names
+  (Sympathetic → "Sympathetic (sympathy)", Subcortex variants → Subcortex…).
+  `pointCentre` and `TCM_VIEWBOX` are now exported from HeadEarPoints.jsx.
+- **Not drawn on the ear yet** (shown as "not on diagram"): Heart, Occiput,
+  Ear Apex, Subcortex, Mouth, Forehead, Allergy Area, Pancreas, Pancreas
+  Point, Lower BP Point, Ascites Point, Constipation Point, Cymba Concha
+  Centre, Urethra, Rectum, Throat, Internal Nose, Ovary, Internal Genitals,
+  Brain, Cardia, Neurasthenia Area, Lesser Occipital Nerve. They get numbers
+  and labels automatically once drawn in the SVG with matching ids.
+- Phone bug fixed: in the stacked layout the diagram had only a min-height,
+  so its `h-full` child collapsed to 0. It now has a fixed `h-[75vh]` below `md`.
+
+### References and side panel
+- `SOURCES['huang-auriculotherapy']`: "Dr Li-Chun Huang, MD, O.M.D.".
+- Credits now read "Reference: <title> by <author>" (EarGuide) and
+  "REFERENCE / <title> (edition) by author, publisher, year." (InfoPanel).
+  "See plates C4" removed. Plate codes are still stored in zsaAreaInfo.js.
+- InfoPanel `emptyHint` prop: the "Click a point…" placeholder shows in YNSA
+  only. The "Gold points… subscription" line is removed everywhere.
+
+### Top bar (phones)
+- `shortLabel: 'Auriculo'` on the ear system. The top bar uses it, the tabs keep
+  "Auriculotherapy".
+- Below `md`, About / Feedback / Account / Sign out sit in a `HamburgerMenu`
+  at the right of the top bar. Desktop keeps the text links (plus Feedback).
+  This removed the sideways page scroll on phones.
+
+### Installable app (PWA)
+- `index.html`: title "AcuMap", `theme-color #63ECE1`, manifest and
+  apple-touch-icon links.
+- `public/manifest.webmanifest`: standalone, start `/viewer`, 192/512 icons
+  (512 also maskable).
+- New icon: dark-teal "A" with a red acupoint dot on teal (`icon.svg`).
+  `favicon.svg` (was the default Vite logo) is now the same design with
+  rounded corners. The PNGs were rendered with headless Edge, because no image
+  libraries are installed.
+- Android: ⋮ → Install app gives a full-screen app. Remove old shortcuts first.
+
+### Feedback form
+- Menu item "Feedback" opens `src/components/ui/FeedbackForm.jsx`, which is
+  full screen on phones and a card on desktop. Questions are in
+  `src/data/feedbackForm.js` (12 questions, only the overall stars are
+  required). Answers are saved by question id, so keep ids stable.
+- `POST /api/feedback` (`server/routes/feedback.js`) works without an account.
+  The viewer is public, and the first version, which required a session,
+  failed with "Not authenticated". A signed-in user's email is attached.
+  Otherwise an optional email is asked for when contact = Yes. Spam guard:
+  5 per IP per hour (in memory) plus a hidden `website` honeypot field.
+- New Prisma model `Feedback` (rating, answers Json, context Json, email,
+  userId). Read it in Railway → Postgres → Data → Feedback.
+
+### Deploy / environment notes
+- Schema changes reach the database through `railway.toml`
+  `preDeployCommand = "npx prisma db push"`. A duplicate db push briefly
+  added to `npm start` was removed (`d2a5784`).
+- From this PC, `npm run db:push` (P1001) and `railway link` ("invalid peer
+  certificate: UnknownIssuer") both fail. This is most likely Norton HTTPS
+  scanning intercepting TLS. TCP to the DB proxy is reachable. Use the
+  Railway dashboard instead, or add a Norton exception for railway.com /
+  rlwy.net.
+
+### Open items
+- Draw the missing formula points on `ear-chin-3.svg`.
+- Optional: show ZSA plate codes again as "Book plates: …".
