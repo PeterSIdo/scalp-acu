@@ -5,6 +5,7 @@ import cors from 'cors'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import authRouter from './routes/auth.js'
+import feedbackRouter from './routes/feedback.js'
 // import stripeRouter from './routes/stripe.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -21,6 +22,7 @@ app.use(cookieParser())
 app.use(express.json())
 
 app.use('/api/auth', authRouter)
+app.use('/api/feedback', feedbackRouter)
 // app.use('/api/stripe', stripeRouter)
 
 // Serve the React frontend in production

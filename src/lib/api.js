@@ -19,6 +19,9 @@ export const api = {
     logout: () => request('/api/auth/logout', { method: 'POST' }),
     me: () => request('/api/auth/me'),
   },
+  feedback: {
+    submit: (body) => request('/api/feedback', { method: 'POST', body }),
+  },
   stripe: {
     subscription: () => request('/api/stripe/subscription'),
     createCheckout: () => request('/api/stripe/create-checkout', { method: 'POST' }),

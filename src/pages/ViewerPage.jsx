@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import HamburgerMenu from '../components/ui/HamburgerMenu'
+import FeedbackForm from '../components/ui/FeedbackForm'
 import { useSubscription } from '../hooks/useSubscription'
 import { useAuth } from '../hooks/useAuth'
 import { useTheme } from '../providers/ThemeProvider'
@@ -64,6 +65,7 @@ const SYSTEMS = [
 // Phone top-bar menu.
 const ACCOUNT_MENU = [
   { id: 'about', label: 'About' },
+  { id: 'feedback', label: 'Feedback' },
   { id: 'account', label: 'Account' },
   { id: 'signout', label: 'Sign out' },
 ]
@@ -161,6 +163,7 @@ export default function ViewerPage() {
 
   const navigate = useNavigate()
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
   const accountMenuRef = useRef(null)
 
   // Close the account menu on a tap anywhere outside it.
@@ -174,6 +177,7 @@ export default function ViewerPage() {
   function handleAccountMenu(id) {
     setAccountMenuOpen(false)
     if (id === 'about') handlePointSelect(ABOUT_APP)
+    else if (id === 'feedback') setFeedbackOpen(true)
     else if (id === 'account') navigate('/account')
     else if (id === 'signout') logout()
   }
@@ -397,6 +401,7 @@ export default function ViewerPage() {
             />
           </div>
           <button onClick={() => handlePointSelect(ABOUT_APP)} className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">About</button>
+          <button onClick={() => setFeedbackOpen(true)} className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Feedback</button>
           <Link to="/account" className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Account</Link>
           <button onClick={logout} className="hidden md:inline text-gray-600 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">Sign out</button>
         </div>
@@ -522,6 +527,13 @@ export default function ViewerPage() {
             <InfoPanel point={selectedPoint} isSubscribed={isActive} />
           </div>
         </div>
+      )}
+
+      {feedbackOpen && (
+        <FeedbackForm
+          context={{ system: activeSystem, subgroup: activeSubgroup }}
+          onClose={() => setFeedbackOpen(false)}
+        />
       )}
 
       {/* Mobile search overlay */}

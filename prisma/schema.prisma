@@ -16,6 +16,18 @@ model User {
   subscription Subscription?
 }
 
+// In-app feedback form answers. `answers` is keyed by the question ids in
+// src/data/feedbackForm.js; `context` is what was open in the viewer.
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String?
+  email     String?
+  rating    Int
+  answers   Json
+  context   Json?
+  createdAt DateTime @default(now())
+}
+
 model Subscription {
   id                   String   @id @default(cuid())
   userId               String   @unique

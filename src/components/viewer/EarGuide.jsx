@@ -245,9 +245,71 @@ function FormulaDiagram({ points, focus, onFocus }) {
             </g>
           )
         })}
+        <PointLabels marks={marks} points={points} focus={focus} box={box} />
       </svg>
     </div>
   )
+}
+
+// Label sizes, in ear diagram units (the crop is ~737 wide).
+const LABEL = { font: 20, padX: 8, padY: 5, charW: 11, gap: 4 }
+
+// Name labels for every numbered point: a fine black frame on a see-through
+// white box, to the right of the number badge (left if it would leave the
+// crop). Labels are placed top to bottom; one that would overlap a label
+// already placed tries the other side, then steps down until it's clear.
+function placeLabels(marks, names, box) {
+  const { font, padX, padY, charW, gap } = LABEL
+  const h = font + padY * 2
+  // Every number badge and point dot is an obstacle, so labels don't hide them.
+  const obstacles = marks.flatMap(m => [
+    { x: m.x + 22 - 16, y: m.y - 22 - 16, w: 32, h: 32 },
+    { x: m.x - 10, y: m.y - 10, w: 20, h: 20 },
+  ])
+  const placed = []
+  const hits = (r, p) => r.x < p.x + p.w + gap && p.x < r.x + r.w + gap && r.y < p.y + p.h + gap && p.y < r.y + r.h + gap
+  const overlaps = r => placed.some(p => hits(r, p)) || obstacles.some(o => hits(r, o))
+  const clampY = y => Math.min(Math.max(y, box.y), box.y + box.h - h)
+  for (const m of [...marks].sort((a, b) => a.y - b.y)) {
+    const text = names.get(m.name)
+    if (!text) continue
+    const w = text.length * charW + padX * 2
+    const rightX = m.x + 42
+    const leftX = m.x - w - 14
+    const sides = rightX + w > box.x + box.w ? [leftX, rightX] : [rightX, leftX]
+    // Try beside the badge first, then alternately below and above it.
+    let rect = null
+    for (let step = 0; !rect && step <= 12; step++) {
+      const dy = (step % 2 ? 1 : -1) * Math.ceil(step / 2) * (h / 2 + gap)
+      for (const x of sides) {
+        const r = { x, y: clampY(m.y - 22 - h / 2 + dy), w, h }
+        if (r.x >= box.x && r.x + w <= box.x + box.w && !overlaps(r)) { rect = r; break }
+      }
+    }
+    rect ??= { x: sides[0], y: clampY(m.y - 22 - h / 2), w, h }
+    // Leader line from the badge when the label had to move off its row.
+    const badge = { x: m.x + 22, y: m.y - 22 }
+    const near = { x: Math.min(Math.max(badge.x, rect.x), rect.x + w), y: Math.min(Math.max(badge.y, rect.y), rect.y + h) }
+    const leader = Math.abs(rect.y + h / 2 - badge.y) > h * 0.75 ? { x1: badge.x, y1: badge.y, x2: near.x, y2: near.y } : null
+    placed.push({ ...rect, name: m.name, text, leader })
+  }
+  return placed
+}
+
+function PointLabels({ marks, points, focus, box }) {
+  const names = new Map(points.filter(p => p.drawn).map(p => [p.diagram, p.label]))
+  const labels = placeLabels(marks, names, box)
+  const { font, padX, padY } = LABEL
+  return labels.map(l => {
+    const on = l.name === focus
+    return (
+      <g key={l.name}>
+        {l.leader && <line {...l.leader} stroke={on ? '#b91c1c' : '#000'} strokeWidth="1.2" />}
+        <rect x={l.x} y={l.y} width={l.w} height={l.h} rx="5" fill="rgba(255,255,255,0.8)" stroke={on ? '#b91c1c' : '#000'} strokeWidth={on ? 2.5 : 1.2} />
+        <text x={l.x + padX} y={l.y + padY + font * 0.8} fontSize={font} fontWeight={on ? 700 : 500} fill={on ? '#b91c1c' : '#000'} fontFamily="system-ui, sans-serif">{l.text}</text>
+      </g>
+    )
+  })
 }
 
 function FormulaDetails({ formula, points, focus, onFocus }) {
