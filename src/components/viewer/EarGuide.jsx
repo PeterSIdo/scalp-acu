@@ -322,7 +322,9 @@ export function EarFormulas() {
         </div>
 
         {/* Ear diagram */}
-        <div className="flex-1 min-h-[70vh] md:min-h-0">
+        {/* Fixed height when stacked (phones): an h-full child can't resolve
+            against a min-height alone. Side by side, the row stretches it. */}
+        <div className="h-[75vh] flex-shrink-0 md:h-auto md:flex-1 md:flex-shrink md:min-h-0">
           <FormulaDiagram points={points} focus={focus} onFocus={name => setFocus(f => (f === name ? null : name))} />
         </div>
       </div>

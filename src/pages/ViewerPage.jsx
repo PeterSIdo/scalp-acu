@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useRef, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import HamburgerMenu from '../components/ui/HamburgerMenu'
 import { useSubscription } from '../hooks/useSubscription'
 import { useAuth } from '../hooks/useAuth'
 import { useTheme } from '../providers/ThemeProvider'
@@ -50,6 +51,7 @@ const SYSTEMS = [
   {
     id: 'ear',
     label: 'Auriculotherapy',
+    shortLabel: 'Auriculo', // top bar, where the full word is too long on phones
     fullName: 'Ear Acupuncture',
     subgroups: [
       { id: 'ear-points',      label: 'Ear Points',  views: ['EarGrid'],         available: true },
@@ -57,6 +59,13 @@ const SYSTEMS = [
       { id: 'ear-formulas',    label: 'Formulas',    views: ['EarFormulas'],     available: true },
     ],
   },
+]
+
+// Phone top-bar menu.
+const ACCOUNT_MENU = [
+  { id: 'about', label: 'About' },
+  { id: 'account', label: 'Account' },
+  { id: 'signout', label: 'Sign out' },
 ]
 
 // Which JSON point IDs belong to each subgroup — used to filter diagram dots
@@ -149,6 +158,25 @@ export default function ViewerPage() {
   const [resetKey, setResetKey] = useState(0)
   // Last ear point picked from the search panel, handed to the Ear grid.
   const [earPick, setEarPick] = useState(null)
+
+  const navigate = useNavigate()
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false)
+  const accountMenuRef = useRef(null)
+
+  // Close the account menu on a tap anywhere outside it.
+  useEffect(() => {
+    if (!accountMenuOpen) return
+    function onDown(e) { if (!accountMenuRef.current?.contains(e.target)) setAccountMenuOpen(false) }
+    document.addEventListener('pointerdown', onDown)
+    return () => document.removeEventListener('pointerdown', onDown)
+  }, [accountMenuOpen])
+
+  function handleAccountMenu(id) {
+    setAccountMenuOpen(false)
+    if (id === 'about') handlePointSelect(ABOUT_APP)
+    else if (id === 'account') navigate('/account')
+    else if (id === 'signout') logout()
+  }
 
   const swipeStartX = useRef(null)
   const swipeStartY = useRef(null)
@@ -341,7 +369,7 @@ export default function ViewerPage() {
       <header className="flex items-center justify-between px-4 py-2 border-b border-gray-300 dark:border-gray-800 bg-[#63ECE1] flex-shrink-0">
         <Link to="/" className="text-black font-bold text-lg">AcuMap</Link>
         <span className="text-black text-sm font-semibold">
-          {system.label}
+          {system.shortLabel ?? system.label}
         </span>
         <div className="flex items-center gap-3 text-sm">
           <button
@@ -358,9 +386,19 @@ export default function ViewerPage() {
           >
             {dark ? <SunIcon /> : <MoonIcon />}
           </button>
-          <button onClick={() => handlePointSelect(ABOUT_APP)} className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">About</button>
-          <Link to="/account" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Account</Link>
-          <button onClick={logout} className="text-gray-600 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">Sign out</button>
+          {/* Phones: About / Account / Sign out in a hamburger menu. */}
+          <div ref={accountMenuRef} className="md:hidden relative">
+            <HamburgerMenu
+              items={ACCOUNT_MENU}
+              open={accountMenuOpen}
+              onToggle={() => setAccountMenuOpen(o => !o)}
+              onSelect={handleAccountMenu}
+              dropdownClassName="right-0"
+            />
+          </div>
+          <button onClick={() => handlePointSelect(ABOUT_APP)} className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">About</button>
+          <Link to="/account" className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Account</Link>
+          <button onClick={logout} className="hidden md:inline text-gray-600 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">Sign out</button>
         </div>
       </header>
 
