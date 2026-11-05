@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import CrossIcon from './CrossIcon'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from './menuStyles'
+import { CASE_STUDIES_ITEM, OpenCasesContext } from '../../data/navItems'
 
 // Hamburger (three-line) navigation menu shared by the YNSA and TCM grids'
 // menu tiles. Each item either switches which control sits beside the
@@ -30,6 +31,7 @@ function MenuPanel({ items, activeId, onSelect, search, dropdownClassName }) {
   const fieldRef = useRef(null)
   const listRef = useRef(null)
   const [query, setQuery] = useState('')
+  const openCases = useContext(OpenCasesContext)
   const searching = !!search && query.trim() !== ''
   const matches = searching ? search.matches(query) : []
 
@@ -122,7 +124,7 @@ function MenuPanel({ items, activeId, onSelect, search, dropdownClassName }) {
               key={item.id}
               type="button"
               disabled={item.disabled}
-              onClick={() => onSelect(item.id)}
+              onClick={() => (item.id === CASE_STUDIES_ITEM.id && openCases ? openCases() : onSelect(item.id))}
               className={item.disabled
                 ? 'block w-full text-left px-3 py-1.5 text-xs font-semibold text-gray-400 dark:text-gray-500 cursor-not-allowed'
                 : ITEM_CLASS(activeId === item.id)}

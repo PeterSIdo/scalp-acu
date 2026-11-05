@@ -14,6 +14,8 @@ import HeadBrainZones from '../components/viewer/HeadBrainZones'
 import HeadEarPoints from '../components/viewer/HeadEarPoints'
 import HeadZSAPoints from '../components/viewer/HeadZSAPoints'
 import { EarDescription, EarFormulas } from '../components/viewer/EarGuide'
+import CasesPage from '../components/viewer/CasesPage'
+import { OpenCasesContext } from '../data/navItems'
 import { ABOUT_APP } from '../data/aboutApp'
 import ZoomableView from '../components/viewer/ZoomableView'
 import InfoPanel from '../components/ui/InfoPanel'
@@ -58,6 +60,14 @@ const SYSTEMS = [
       { id: 'ear-points',      label: 'Ear Points',  views: ['EarGrid'],         available: true },
       { id: 'ear-description', label: 'Description', views: ['EarDescription'],  available: true },
       { id: 'ear-formulas',    label: 'Formulas',    views: ['EarFormulas'],     available: true },
+    ],
+  },
+  {
+    id: 'cases',
+    label: 'Cases',
+    fullName: 'Case Studies & Methods',
+    subgroups: [
+      { id: 'cases-all', label: 'Case Studies', views: ['Cases'], available: true },
     ],
   },
 ]
@@ -251,6 +261,9 @@ export default function ViewerPage() {
   const isZsa = activeSubgroup === 'zsa-zones'
   // The Ear tab searches ear points instead of YNSA.
   const isEar = activeSystem === 'ear'
+  // Cases is a full-width reading page with its own list search, so the
+  // desktop side panel (point search + info) is hidden.
+  const isCases = activeSystem === 'cases'
   const searchPlaceholder = isEar ? 'Search ear points, categories…' : 'Search by points, indication, meridian…'
 
   // Bumping resetKey remounts ZoomableView and the grid inside it, which clears
@@ -273,6 +286,11 @@ export default function ViewerPage() {
     setSelectedPoint(null)
     setHighlightJsonId(null)
     setSearchQuery('')
+  }
+
+  // The grids' hamburger "Case Studies" item opens the Cases tab.
+  function openCasesTab() {
+    handleSystemChange('cases')
   }
 
   function handleSubgroupChange(subgroupId) {
@@ -368,6 +386,7 @@ export default function ViewerPage() {
   }
 
   return (
+    <OpenCasesContext.Provider value={openCasesTab}>
     <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       {/* Top bar */}
       <header className="flex items-center justify-between px-4 py-2 border-b border-gray-300 dark:border-gray-800 bg-[#63ECE1] flex-shrink-0">
@@ -421,7 +440,8 @@ export default function ViewerPage() {
 
         {/* Diagram */}
         <div className="flex-1 min-h-0 bg-gray-300 dark:bg-gray-900 overflow-hidden p-4" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-          {activeView === 'EarDescription' ? <EarDescription />
+          {activeView === 'Cases' ? <CasesPage />
+          : activeView === 'EarDescription' ? <EarDescription />
           : activeView === 'EarFormulas' ? <EarFormulas />
           : isAvailable ? (
             <ZoomableView key={resetKey} onReset={handleReset} wheelZoom={!isNeck && !isZsa}>
@@ -445,7 +465,7 @@ export default function ViewerPage() {
         </div>
 
         {/* Desktop side panel */}
-        <div className="hidden md:flex w-80 lg:w-96 flex-col border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+        <div className={`hidden ${isCases ? '' : 'md:flex'} w-80 lg:w-96 flex-col border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950`}>
           <ViewTabs />
 
           {isAvailable ? (
@@ -576,5 +596,6 @@ export default function ViewerPage() {
         </div>
       )}
     </div>
+    </OpenCasesContext.Provider>
   )
 }
