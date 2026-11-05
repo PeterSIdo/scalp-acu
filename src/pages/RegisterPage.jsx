@@ -30,8 +30,8 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         <Link to="/" className="text-amber-500 dark:text-amber-400 text-xl font-bold block text-center mb-8">AcuMap</Link>
         <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-800">
-          <h1 className="text-2xl font-bold mb-2 text-center text-gray-900 dark:text-white">Start your free trial</h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm text-center mb-6">14 days free, no credit card needed</p>
+          <h1 className="text-2xl font-bold mb-2 text-center text-gray-900 dark:text-white">Join the free beta</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm text-center mb-6">Free until the app is complete, no credit card needed</p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Full name</label>

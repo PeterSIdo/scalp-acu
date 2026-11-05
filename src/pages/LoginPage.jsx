@@ -62,7 +62,7 @@ export default function LoginPage() {
           </form>
           <p className="text-center text-gray-400 dark:text-gray-500 text-sm mt-6">
             No account?{' '}
-            <Link to="/register" className="text-amber-500 dark:text-amber-400 hover:underline">Start free trial</Link>
+            <Link to="/register" className="text-amber-500 dark:text-amber-400 hover:underline">Join the free beta</Link>
           </p>
         </div>
       </div>

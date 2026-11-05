@@ -8,7 +8,8 @@ const STATUS_LABELS = {
   trialing:  { label: 'Free Trial',      color: 'text-amber-500 dark:text-amber-400' },
   past_due:  { label: 'Payment Due',     color: 'text-red-500 dark:text-red-400'     },
   canceled:  { label: 'Cancelled',       color: 'text-gray-400 dark:text-gray-500'   },
-  none:      { label: 'No Subscription', color: 'text-gray-400 dark:text-gray-500'   },
+  // Beta: everyone without a paid subscription is a free beta tester.
+  none:      { label: 'Free Beta',       color: 'text-teal-600 dark:text-teal-400'   },
 }
 
 export default function AccountPage() {
@@ -78,12 +79,18 @@ export default function AccountPage() {
                   Manage Billing
                 </button>
               ) : (
-                <Link
-                  to="/viewer"
-                  className="block text-center w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-lg transition-colors"
-                >
-                  Subscribe to get full access
-                </Link>
+                <>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
+                    AcuMap is in beta and free to use until the app is complete. Thank you for testing it.
+                    Please tell us what's missing or could be better via the Feedback link in the app.
+                  </p>
+                  <Link
+                    to="/viewer"
+                    className="block text-center w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-lg transition-colors"
+                  >
+                    Back to the app
+                  </Link>
+                </>
               )}
             </>
           )}

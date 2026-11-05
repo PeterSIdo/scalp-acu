@@ -10,7 +10,7 @@ export default function LandingPage() {
         <div className="flex gap-4">
           <Link to="/login" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Log in</Link>
           <Link to="/register" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg transition-colors">
-            Start Free Trial
+            Join the Beta
           </Link>
         </div>
       </nav>
@@ -30,9 +30,9 @@ export default function LandingPage() {
           to="/register"
           className="inline-block bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-4 rounded-xl text-lg transition-colors"
         >
-          Start 14-Day Free Trial
+          Join the Free Beta
         </Link>
-        <p className="text-gray-400 dark:text-gray-500 mt-4 text-sm">No credit card required to start</p>
+        <p className="text-gray-400 dark:text-gray-500 mt-4 text-sm">Free until the app is complete. No credit card needed.</p>
       </section>
 
       {/* Features */}
@@ -69,10 +69,10 @@ export default function LandingPage() {
 
       {/* Pricing */}
       <section className="max-w-sm mx-auto px-8 py-16 text-center">
-        <h2 className="text-3xl font-bold mb-8">Simple Pricing</h2>
+        <h2 className="text-3xl font-bold mb-8">Free During Beta</h2>
         <div className="bg-white dark:bg-gray-900 border border-amber-500/30 rounded-2xl p-8">
-          <div className="text-4xl font-bold text-amber-500 dark:text-amber-400 mb-1">£14.99<span className="text-xl font-normal text-gray-400">/mo</span></div>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">14-day free trial included</p>
+          <div className="text-4xl font-bold text-amber-500 dark:text-amber-400 mb-1">£0</div>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">Free until the app is complete</p>
           <ul className="text-left space-y-3 mb-8 text-gray-700 dark:text-gray-300">
             {['YNSA, TCM, ZSA and ear systems', 'Locations, functions and indications', 'Interactive diagrams and search', 'New content as it is added'].map(item => (
               <li key={item} className="flex gap-2">
@@ -84,7 +84,7 @@ export default function LandingPage() {
             to="/register"
             className="block w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-lg transition-colors"
           >
-            Start Free Trial
+            Join the Beta
           </Link>
         </div>
       </section>
