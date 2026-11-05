@@ -79,6 +79,12 @@ const ACCOUNT_MENU = [
   { id: 'account', label: 'Account' },
   { id: 'signout', label: 'Sign out' },
 ]
+// Same menu for visitors who aren't logged in (the viewer is open during beta).
+const GUEST_MENU = [
+  { id: 'about', label: 'About' },
+  { id: 'feedback', label: 'Feedback' },
+  { id: 'login', label: 'Log in' },
+]
 
 // Which JSON point IDs belong to each subgroup — used to filter diagram dots
 const SUBGROUP_POINT_IDS = {
@@ -157,7 +163,7 @@ function SearchIcon() {
 }
 
 export default function ViewerPage() {
-  const { logout } = useAuth()
+  const { user, logout } = useAuth()
   const { isActive } = useSubscription()
   const { dark, toggle: toggleTheme } = useTheme()
   const [selectedPoint, setSelectedPoint] = useState(null)
@@ -189,7 +195,14 @@ export default function ViewerPage() {
     if (id === 'about') handlePointSelect(ABOUT_APP)
     else if (id === 'feedback') setFeedbackOpen(true)
     else if (id === 'account') navigate('/account')
-    else if (id === 'signout') logout()
+    else if (id === 'signout') handleSignOut()
+    else if (id === 'login') navigate('/login')
+  }
+
+  // Signing out leaves the (open) viewer looking unchanged, so go to the
+  // login page to make it obvious the session has ended.
+  async function handleSignOut() {
+    try { await logout() } finally { navigate('/login') }
   }
 
   const swipeStartX = useRef(null)
@@ -412,7 +425,7 @@ export default function ViewerPage() {
           {/* Phones: About / Account / Sign out in a hamburger menu. */}
           <div ref={accountMenuRef} className="md:hidden relative">
             <HamburgerMenu
-              items={ACCOUNT_MENU}
+              items={user ? ACCOUNT_MENU : GUEST_MENU}
               open={accountMenuOpen}
               onToggle={() => setAccountMenuOpen(o => !o)}
               onSelect={handleAccountMenu}
@@ -421,8 +434,14 @@ export default function ViewerPage() {
           </div>
           <button onClick={() => handlePointSelect(ABOUT_APP)} className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">About</button>
           <button onClick={() => setFeedbackOpen(true)} className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Feedback</button>
-          <Link to="/account" className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Account</Link>
-          <button onClick={logout} className="hidden md:inline text-gray-600 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">Sign out</button>
+          {user ? (
+            <>
+              <Link to="/account" className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Account</Link>
+              <button onClick={handleSignOut} className="hidden md:inline text-gray-600 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">Sign out</button>
+            </>
+          ) : (
+            <Link to="/login" className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Log in</Link>
+          )}
         </div>
       </header>
 

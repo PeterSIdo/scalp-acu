@@ -18,8 +18,7 @@ export default function AccountPage() {
   const navigate = useNavigate()
 
   async function handleSignOut() {
-    await logout()
-    navigate('/')
+    try { await logout() } finally { navigate('/login') }
   }
 
   async function handleManageBilling() {
