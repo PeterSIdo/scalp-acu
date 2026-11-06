@@ -4,11 +4,13 @@ import EarBasicSvg from '../../assets/diagrams/ear-basic.svg?react'
 import EarMusculoskeletalSvg from '../../assets/diagrams/ear-musculoskeletal.svg?react'
 import EarInternalOrgansSvg from '../../assets/diagrams/ear-internal-organs.svg?react'
 import EarTcmSvg from '../../assets/diagrams/ear-chin-3.svg?react'
+import EarTurnedSvg from '../../assets/diagrams/ear-11.svg?react'
 import TileTitle from '../ui/TileTitle'
 import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 import { AURICULOTHERAPY_CATEGORIES, AURICULOTHERAPY_POINTS } from '../../data/earAuriculotherapy'
+import { AURICULOTHERAPY_INFO } from '../../data/earAuriculotherapyInfo'
 import { TILE_TITLES, MSK_GROUPS, MSK_SVG_IDS, MSK_LINE_IDS, ORG_GROUPS, ORG_SVG_IDS, MASTER_LINE_IDS, MASTER_SVG_IDS } from '../../data/earPoints'
 import { TOUCH_REACH, targetAt } from './touchHit'
 
@@ -126,6 +128,12 @@ function PointMenu({ tile, title, activePoint, menuOpen, compact, onToggle, onSe
       </div>
     </div>
   )
+}
+
+// Description card for a point on a tile (only the Chinese Auriculotherapy
+// tile has descriptions so far), or null.
+function earPointInfo(tileId, name) {
+  return tileId === 'master' && name ? AURICULOTHERAPY_INFO[name] ?? null : null
 }
 
 const CATEGORY_BUTTONS = [{ label: 'All', short: 'All' }, ...AURICULOTHERAPY_CATEGORIES]
@@ -447,6 +455,15 @@ export const TCM_VIEWBOX = { x: 285, y: 30, w: 737, h: 1160 }
 // ear-basic.svg (Inkscape, mm units) is shown whole.
 const BASIC_VIEWBOX = { x: 0, y: 0, w: 170.46902, h: 283.32684 }
 
+// Extra points of view per tile, after the tile's own diagram (view 0). The
+// card's up/down arrows step through them. They have no points yet, so they
+// are drawn plain; picking a point returns to view 0, where it is drawn.
+const EXTRA_VIEWS = {
+  master: [
+    { Svg: EarTurnedSvg, box: { x: 250, y: 20, w: 670, h: 1170 }, label: 'Turned view' },
+  ],
+}
+
 // Unmagnified crop of each tile's diagram.
 const TILE_BOXES = {
   master: TCM_VIEWBOX,
@@ -460,6 +477,11 @@ const TILE_BOXES = {
 const BOTTOM_GAP = 30
 
 const MAX_ZOOM = 2
+
+// Crop of a tile's diagram at a point of view (0 = the tile's own diagram).
+function tileBox(id, angle = 0) {
+  return angle > 0 ? EXTRA_VIEWS[id][angle - 1].box : TILE_BOXES[id]
+}
 
 function defaultView(box) {
   return { zoom: 1, cx: box.x + box.w / 2, cy: box.y + box.h / 2 }
@@ -568,6 +590,40 @@ function ZoomSlider({ box, view, compact, onViewChange }) {
   )
 }
 
+// Up/down arrows that step through a tile's points of view, with "n/total".
+function ViewStepper({ index, total, label, compact, onStep }) {
+  const stop = e => e.stopPropagation()
+  const arrow = (dir, disabled, path, name) => (
+    <button
+      type="button"
+      disabled={disabled}
+      aria-label={name}
+      title={name}
+      onClick={e => { stop(e); onStep(dir) }}
+      className={`flex items-center justify-center w-5 h-5 rounded-full transition duration-150 ease-out ${
+        disabled ? 'text-gray-300 cursor-default' : 'text-black hover:text-red-700 hover:scale-110 active:scale-90'
+      }`}
+    >
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d={path} />
+      </svg>
+    </button>
+  )
+  return (
+    <div
+      className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} text-black`}
+      onClick={stop}
+      onMouseDown={stop}
+      onPointerDown={stop}
+    >
+      {arrow(-1, index === 0, 'M5 15l7-7 7 7', 'Previous view')}
+      <span className="tabular-nums">{index + 1}/{total}</span>
+      {arrow(1, index === total - 1, 'M5 9l7 7 7-7', 'Next view')}
+      {!compact && <span className="ml-1 font-normal">{label}</span>}
+    </div>
+  )
+}
+
 // A figure icon; struck through when the drawing is off.
 function FigureIcon({ off }) {
   return (
@@ -601,17 +657,23 @@ function LayerToggle({ label, on, compact, onToggle }) {
   )
 }
 
-function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menuOpenId, onMenuToggle, views, onViewChange, category, onCategoryChange, layersOn, onLayerToggle }, expanded = false) {
+function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menuOpenId, onMenuToggle, views, onViewChange, category, onCategoryChange, layersOn, onLayerToggle, angles, onAngleStep }, expanded = false) {
   if (!TILE_IDS.includes(id)) return null
   const tile = POINT_TILES[id]
   const activePoint = activePoints[id] ?? null
-  const box = TILE_BOXES[id]
+  const extraViews = EXTRA_VIEWS[id] ?? []
+  const angle = angles[id] ?? 0
+  const extra = angle > 0 ? extraViews[angle - 1] : null
+  const box = tileBox(id, angle)
   const view = views[id] ?? defaultView(box)
   const setView = update => onViewChange(id, update)
   // Optional drawings (the homunculus) start switched on.
   const layerOn = layersOn[id] ?? true
   let renderDiagram
-  if (tile) {
+  if (extra) {
+    const { Svg } = extra
+    renderDiagram = rect => <Svg viewBox={`${rect.x} ${rect.y} ${rect.w} ${rect.h}`} style={FILL} />
+  } else if (tile) {
     renderDiagram = rect => <PointDiagram tile={tile} activePoint={activePoint} onSelect={name => onPointSelect(id, name)} rect={rect} zoom={view.zoom} showLayer={layerOn} />
   } else {
     // The neuroendocrine tile reuses the base ear until its own diagram exists.
@@ -658,8 +720,17 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
           z-20 so an open dropdown covers it. */}
       <div className="absolute left-0 bottom-0 px-3 pb-1 z-10 flex items-stretch gap-1.5">
         <ZoomSlider box={box} view={view} compact={!expanded} onViewChange={setView} />
-        {tile?.layer && (
+        {tile?.layer && !extra && (
           <LayerToggle label={tile.layer.label} on={layerOn} compact={!expanded} onToggle={() => onLayerToggle(id)} />
+        )}
+        {extraViews.length > 0 && (
+          <ViewStepper
+            index={angle}
+            total={extraViews.length + 1}
+            label={extra ? extra.label : 'Side view'}
+            compact={!expanded}
+            onStep={dir => onAngleStep(id, dir)}
+          />
         )}
       </div>
     </div>
@@ -669,7 +740,10 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
 // `pick` ({ tile, name, n }) comes from the viewer's search panel: that point
 // is selected and its tile opened. `n` changes on every pick, so picking the
 // same point twice still applies.
-export default function HeadEarPoints({ pick = null }) {
+// `onPointSelect` gets the selected point's description card (Chinese
+// Auriculotherapy tile only; null for the other tiles or when cleared), shown
+// in the side panel / mobile sheet like the YNSA points.
+export default function HeadEarPoints({ pick = null, onPointSelect = null }) {
   const [expandedId, setExpandedId] = useState(null)
   // Selected point and open dropdown are kept per tile.
   const [activePoints, setActivePoints] = useState({})
@@ -680,21 +754,41 @@ export default function HeadEarPoints({ pick = null }) {
   const [category, setCategory] = useState('All')
   // Optional drawing on/off per tile, shared by the tile and its expanded view.
   const [layersOn, setLayersOn] = useState({})
+  // Point of view per tile (0 = the tile's own diagram, see EXTRA_VIEWS).
+  const [angles, setAngles] = useState({})
+
+  // Switching view resets the magnification, as each view has its own crop.
+  function setAngle(id, angle) {
+    if ((angles[id] ?? 0) === angle) return
+    setAngles(a => ({ ...a, [id]: angle }))
+    setViews(vs => ({ ...vs, [id]: defaultView(tileBox(id, angle)) }))
+  }
 
   const tileCtx = {
+    angles,
+    onAngleStep: (id, dir) => {
+      const total = (EXTRA_VIEWS[id]?.length ?? 0) + 1
+      setAngle(id, Math.min(Math.max((angles[id] ?? 0) + dir, 0), total - 1))
+    },
     activePoints,
     category,
     onCategoryChange: setCategory,
     layersOn,
     onLayerToggle: id => setLayersOn(l => ({ ...l, [id]: !(l[id] ?? true) })),
     // Picking the selected point again clears it, same as the ZSA areas.
-    onPointSelect: (id, name) => { setMenuOpenId(null); setActivePoints(p => ({ ...p, [id]: p[id] === name ? null : name })) },
-    onPointClear: id => setActivePoints(p => ({ ...p, [id]: null })),
+    onPointSelect: (id, name) => {
+      const next = activePoints[id] === name ? null : name
+      setMenuOpenId(null)
+      setAngle(id, 0)
+      setActivePoints(p => ({ ...p, [id]: next }))
+      onPointSelect?.(earPointInfo(id, next))
+    },
+    onPointClear: id => { setActivePoints(p => ({ ...p, [id]: null })); onPointSelect?.(null) },
     menuOpenId,
     onMenuToggle: id => setMenuOpenId(o => (o === id ? null : id)),
     views,
     onViewChange: (id, update) => setViews(vs => {
-      const current = vs[id] ?? defaultView(TILE_BOXES[id])
+      const current = vs[id] ?? defaultView(tileBox(id, angles[id] ?? 0))
       return { ...vs, [id]: typeof update === 'function' ? update(current) : update }
     }),
   }
@@ -707,6 +801,7 @@ export default function HeadEarPoints({ pick = null }) {
     if (pick) {
       setMenuOpenId(null)
       setActivePoints(p => ({ ...p, [pick.tile]: pick.name }))
+      setAngle(pick.tile, 0)
       setExpandedId(pick.tile)
     }
   }

@@ -14,6 +14,7 @@ import HeadBrainZones from '../components/viewer/HeadBrainZones'
 import HeadEarPoints from '../components/viewer/HeadEarPoints'
 import HeadZSAPoints from '../components/viewer/HeadZSAPoints'
 import { EarDescription, EarFormulas } from '../components/viewer/EarGuide'
+import { AURICULOTHERAPY_INFO } from '../data/earAuriculotherapyInfo'
 import CasesPage from '../components/viewer/CasesPage'
 import { OpenCasesContext } from '../data/navItems'
 import { ABOUT_APP } from '../data/aboutApp'
@@ -318,6 +319,7 @@ export default function ViewerPage() {
     // Ear results select the point on its tile in the Ear grid.
     if (isEar) {
       setEarPick({ tile: point.tile, name: point.name, n: Date.now() })
+      setSelectedPoint(point.tile === 'master' ? AURICULOTHERAPY_INFO[point.name] ?? null : null)
       setSearchQuery('')
       setMobileSearchOpen(false)
       return
@@ -470,7 +472,7 @@ export default function ViewerPage() {
               {activeView === 'Neck'      && <NeckDiagnosis onPointSelect={handlePointSelect} />}
               {activeView === 'TCMGrid'   && <HeadTCMScalpAreas onPointSelect={handlePointSelect} />}
               {activeView === 'BrainZonesGrid' && <HeadBrainZones onPointSelect={handlePointSelect} />}
-              {activeView === 'EarGrid'   && <HeadEarPoints pick={earPick} />}
+              {activeView === 'EarGrid'   && <HeadEarPoints pick={earPick} onPointSelect={handlePointSelect} />}
               {activeView === 'ZSAGrid'   && <HeadZSAPoints onPointSelect={handlePointSelect} />}
             </ZoomableView>
           ) : (
