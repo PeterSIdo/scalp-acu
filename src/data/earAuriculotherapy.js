@@ -26,7 +26,7 @@ export const AURICULOTHERAPY_CATEGORIES = [
       'Hot Point', 'Rheumatic Line', 'Constipation Point', 'Heart Point', 'Stop Asthma', 'Nephritis Point',
       'Tubercular Point', 'Specific Area I of Tumour', 'Specific Area II of Tumour',
       'Coronary Heart Disease Groove', 'Groove of Tinnitus', 'Missing Teeth Groove', 'Epilepsy Point',
-      'Hepatomegaly Area', 'Splenomegaly Area', 'Groove of Hypertension',
+      'Hepatomegaly Area', 'Splenomegaly Area', 'Groove of Hypotension',
     ],
   },
   {

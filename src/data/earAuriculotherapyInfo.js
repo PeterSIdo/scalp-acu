@@ -1263,9 +1263,9 @@ export const AURICULOTHERAPY_INFO = {
       }
     ]
   },
-  "Groove of Hypertension": {
-    "id": "EAR-CN-groove-of-hypertension",
-    "name": "Groove of Hypertension",
+  "Groove of Hypotension": {
+    "id": "EAR-CN-groove-of-hypotension",
+    "name": "Groove of Hypotension",
     "system": "Chinese Auriculotherapy",
     "source": "huang-auriculotherapy",
     "sections": [

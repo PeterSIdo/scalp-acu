@@ -71,8 +71,7 @@ const MASTER_RENAMES = {
   'Vision 1': 'Vision I',
   'Vision 2': 'Vision II',
   'Groove of Coronary Heart Disease': 'Coronary Heart Disease Groove',
-  'Groove of Missing Teeth': 'Missing Teeth Groove',
-  'Thalamus_2': 'Thalamus',
+  'Groove of Missing Teeth': 'Missing Teeth Groove',  'Thalamus_2': 'Thalamus',
   'Testis': 'Testicle',
   'Exciting': 'Exciting Point',
   'Helix 4': 'Helix 1-6',
@@ -113,7 +112,7 @@ const MASTER_RENAMES = {
   'Large Auricular Nerv': 'Great Auricular Nerve',
   'Rheumatism Line': 'Rheumatic Line',
 }
-export const MASTER_LINE_IDS = new Set(['Groove of Coronary Heart Disease', 'Groove of Hypertension', 'Groove of Missing Teeth', 'Groove of Tinnitus', 'Rheumatism Line'])
+export const MASTER_LINE_IDS = new Set(['Groove of Coronary Heart Disease', 'Groove of Hypotension', 'Groove of Missing Teeth', 'Groove of Tinnitus', 'Rheumatism Line'])
 export const MASTER_SVG_IDS = Object.fromEntries([
   // Tragus and intertragic notch
   'External Ear', 'Thirst Point', 'Adrenal Gland', 'Appex of the Tragus', 'Vision 1', 'External Nose', 'Hunger Point',

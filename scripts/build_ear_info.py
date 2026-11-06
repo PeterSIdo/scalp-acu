@@ -36,7 +36,7 @@ ALIASES = {
     'Missing Teeth Groove': 'Missing Tooth Groove',
     'Hepatomegaly Area': 'Enlarged Liver Area',
     'Splenomegaly Area': 'Enlarged Spleen Area',
-    'Groove of Hypertension': 'Low Blood Pressure Groove',
+    'Groove of Hypotension': 'Low Blood Pressure Groove',
     'Gall Bladder': 'Gallbladder',
     'Esophagus': 'Oesophagus',
     'Cardiac': 'Cardia',
