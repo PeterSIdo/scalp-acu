@@ -105,7 +105,13 @@ const DIAGRAM_NAMES = {
   'Cardiovascular Subcortex': 'Subcortex',
   'Digestive Subcortex': 'Subcortex',
 }
-const DRAWN = new Set(Object.values(MASTER_SVG_IDS))
+// Diagram points a formula names as one group.
+const GROUPS = {
+  'Helix 1': 'Helix 1-6', 'Helix 2': 'Helix 1-6', 'Helix 3': 'Helix 1-6',
+  'Helix 4': 'Helix 1-6', 'Helix 5': 'Helix 1-6', 'Helix 6': 'Helix 1-6',
+}
+const groupOf = name => GROUPS[name] ?? name
+const DRAWN = new Set(Object.values(MASTER_SVG_IDS).map(groupOf))
 
 // A formula's points with their diagram names and numbers. "Corresponding
 // Point" isn't a fixed point, so it gets no number.
@@ -204,7 +210,8 @@ function FormulaDiagram({ points, focus, onFocus }) {
     const numbers = new Map(points.filter(p => p.drawn).map(p => [p.diagram, p.n]))
     const found = []
     const seen = new Set()
-    for (const [elId, name] of Object.entries(MASTER_SVG_IDS)) {
+    for (const [elId, point] of Object.entries(MASTER_SVG_IDS)) {
+      const name = groupOf(point)
       const el = svg.querySelector(`[id="${elId}"]`)
       if (!el) continue
       el.style.transition = 'opacity 150ms ease'

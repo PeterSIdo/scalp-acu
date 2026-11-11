@@ -1454,9 +1454,114 @@ export const AURICULOTHERAPY_INFO = {
       }
     ]
   },
-  "Helix 1-6": {
-    "id": "EAR-CN-helix-1-6",
-    "name": "Helix 1-6",
+  "Helix 1": {
+    "id": "EAR-CN-helix-1",
+    "name": "Helix 1",
+    "system": "Chinese Auriculotherapy",
+    "source": "huang-auriculotherapy",
+    "sections": [
+      {
+        "title": "Functions & Uses",
+        "items": [
+          {
+            "label": "Actions",
+            "text": "Anti-inflammatory and fever-reducing."
+          },
+          {
+            "label": "Common uses",
+            "text": "Inflammation and fever of many kinds."
+          }
+        ]
+      }
+    ]
+  },
+  "Helix 2": {
+    "id": "EAR-CN-helix-2",
+    "name": "Helix 2",
+    "system": "Chinese Auriculotherapy",
+    "source": "huang-auriculotherapy",
+    "sections": [
+      {
+        "title": "Functions & Uses",
+        "items": [
+          {
+            "label": "Actions",
+            "text": "Anti-inflammatory and fever-reducing."
+          },
+          {
+            "label": "Common uses",
+            "text": "Inflammation and fever of many kinds."
+          }
+        ]
+      }
+    ]
+  },
+  "Helix 3": {
+    "id": "EAR-CN-helix-3",
+    "name": "Helix 3",
+    "system": "Chinese Auriculotherapy",
+    "source": "huang-auriculotherapy",
+    "sections": [
+      {
+        "title": "Functions & Uses",
+        "items": [
+          {
+            "label": "Actions",
+            "text": "Anti-inflammatory and fever-reducing."
+          },
+          {
+            "label": "Common uses",
+            "text": "Inflammation and fever of many kinds."
+          }
+        ]
+      }
+    ]
+  },
+  "Helix 4": {
+    "id": "EAR-CN-helix-4",
+    "name": "Helix 4",
+    "system": "Chinese Auriculotherapy",
+    "source": "huang-auriculotherapy",
+    "sections": [
+      {
+        "title": "Functions & Uses",
+        "items": [
+          {
+            "label": "Actions",
+            "text": "Anti-inflammatory and fever-reducing."
+          },
+          {
+            "label": "Common uses",
+            "text": "Inflammation and fever of many kinds."
+          }
+        ]
+      }
+    ]
+  },
+  "Helix 5": {
+    "id": "EAR-CN-helix-5",
+    "name": "Helix 5",
+    "system": "Chinese Auriculotherapy",
+    "source": "huang-auriculotherapy",
+    "sections": [
+      {
+        "title": "Functions & Uses",
+        "items": [
+          {
+            "label": "Actions",
+            "text": "Anti-inflammatory and fever-reducing."
+          },
+          {
+            "label": "Common uses",
+            "text": "Inflammation and fever of many kinds."
+          }
+        ]
+      }
+    ]
+  },
+  "Helix 6": {
+    "id": "EAR-CN-helix-6",
+    "name": "Helix 6",
     "system": "Chinese Auriculotherapy",
     "source": "huang-auriculotherapy",
     "sections": [

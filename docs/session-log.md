@@ -594,3 +594,101 @@ the app's canonical codes instead:
 ### Open items
 - Draw the missing formula points on `ear-chin-3.svg`.
 - Optional: show ZSA plate codes again as "Book plates: …".
+
+---
+
+## 2026-11-10 — ear-chin-3.svg re-export rewired, Drunk Point added
+
+**Status: not yet committed** (changed: `src/assets/diagrams/ear-chin-3.svg`
+(re-exported from Figma), `src/data/earPoints.js`,
+`src/data/earAuriculotherapy.js`).
+
+### What changed
+- The user drew about 40 more points in Figma and re-exported
+  `ear-chin-3.svg`. `MASTER_SVG_IDS` in `earPoints.js` now maps all of them.
+  The click, highlight, search and formula-number code all read from this
+  one map, so no component changes were needed.
+- **New IDs that match the point name exactly:** Occiput, Forehead, Parotid
+  Gland, Neurasthenia Area, External Sympathetic, Rectum, Anus, Urethra, Ovary,
+  Ear Apex, Hepatitis Point, Groin, Adnexa, Internal Genitals, Mouth,
+  Esophagus, Liver Yang, Ascites Point, Throat, Allergic Area.
+- **New renames in `MASTER_RENAMES` (Figma ID → point name):**
+  Nevous Subcortex → Subcortex · Nephritid Point → Nephritis Point ·
+  Lesser Optical Nerve → Lesser Occipital Nerve Point · Decrease BP Point →
+  Decrease Blood Pressure Point · Pelvis → Pelvic Cavity · Cervix → Cervix
+  Uteri · Constipation → Constipation Point · External Genital → External
+  Genitals · Sympathetic → Sympathetic (sympathy) · Thoracic/Lumbar/Sacral
+  Spine → Thoracic/Lumbar/Sacral Vertebrae · Cervicall Spine → Cervix
+  Vertebrae · `Helix  1`–`Helix  3` (the IDs have a double space) → Helix 1-6
+  · Stomach_2 → Stomach.
+- **Removed:** `Symphatic` (renamed to Sympathetic in Figma) and `Hip_2` (no
+  longer in the export). Buttocks (Hip) now has only one dot.
+- **Drunk Point** was drawn but wasn't in the point list. It is now in
+  Special Points in `earAuriculotherapy.js` and mapped in `earPoints.js`.
+  Huang's book has no entry for it, so it shows no info card (the same as
+  Anxious Point and Triple Heater Point).
+- `Spine` and `Nervous system` are wrapper groups in Figma, not points, so
+  they are left unmapped.
+- A script checked that every mapped ID exists in the SVG and every name is
+  in the point list. `vite build` passes.
+
+### Notes / open items
+- Cervix Vertebrae is now drawn twice: the new `Cervicall Spine` segment and
+  the old `Cervical Vertebrae Area` zone. The segment comes first in the map,
+  so it carries the marker. Delete the old zone in Figma if it is left over.
+- Still not drawn (19): Auricular Temporal Nerve, Brain, Cardiac, Cymba Concha
+  Centre, Epilepsy Point, Groove on Back of the Auricle (probably posterior),
+  Heart, Hepatomegaly Area, Internal Nose, Larynx and Tooth, Pancreas,
+  Pancreas Point, Rib Rim, Sacroiliac Articulation, Specific Area I/II of
+  Tumour, Splenomegaly Area, Tubercular Point, Vertex.
+- Drunk Point needs description text if a card is wanted.
+- Not yet clicked through in the browser.
+
+---
+
+## 2026-11-11 — Ear menu clean-up: Helix split, undrawn points removed, re-export wired
+
+**Status: not yet committed** (changed files: `src/data/earAuriculotherapy.js`,
+`src/data/earAuriculotherapyInfo.js`, `src/data/earPoints.js`,
+`src/data/earGuide.js`, `src/components/viewer/EarGuide.jsx`,
+`src/assets/diagrams/ear-chin-3.svg`).
+
+### What shipped
+
+- **Helix 1-6 split into Helix 1 … Helix 6.** Each helix dot now selects its
+  own menu entry (Back of the Auricle). `earAuriculotherapyInfo.js` has six
+  entries (`EAR-CN-helix-1` … `-6`) with the same text as the old combined
+  entry. In the Formulas guide, "Helix 1–6" stays one point: `EarGuide.jsx`
+  has a `GROUPS` map that groups the six dots, so one number covers all six.
+- **Removed from the menu** (not on the diagram): Auricular Temporal Nerve,
+  Brain, Cymba Concha Centre, Groove on Back of the Auricle, Hepatomegaly Area,
+  Larynx and Tooth, Pancreas Point, Rib Rim, Sacroiliac Articulation, Specific
+  Area I and II of Tumour, Splenomegaly Area, Tubercular Point, Vertex, and
+  Heart Point (its dot was renamed to Heart in Figma). Their info text is still
+  in `earAuriculotherapyInfo.js` but nothing shows it.
+- **External Sympathetic** is now only in Nervous System (removed from Body
+  Parts).
+- **ear-chin-3.svg re-exported** with five new dots: Cardiac, Heart, Internal
+  Nose, Epilepsy Point and Pancreas. These are now in `MASTER_SVG_IDS`. Layers
+  renamed in Figma, with the map updated to match: Heart Point → Heart,
+  Cervicall Spine → Cervical Spine, External Genital → External Genitals,
+  Decrease BP Point → Decrease Blood Pressure Point, Nephritid Point →
+  Nephritis Point, Lesser Optical Nerve → Lesser Occipital Nerve Point. The
+  renames that were no longer needed are gone from `MASTER_RENAMES`.
+- **Formulas (`earGuide.js`):** Heart Point removed from "Slowing the heart
+  rate" and "Improving circulation". Brain removed from "Memory & focus", which
+  already had Brain Point.
+- A script checked that every mapped ID exists in the SVG and every menu point
+  has a dot. Every menu point now has a dot.
+- Menu count: 143 different points. Nervous System 16, Endocrine 8, Special
+  Points 19, Zang Fu 11, Body Parts 67, Back of the Auricle 19, plus 2 with no
+  category (Anxious Point, Triple Heater Point).
+
+### Notes / open items
+- The six Helix info cards have the same text. Give them their own text if the
+  source has it.
+- Remove the unused info entries for the removed points if they won't come
+  back.
+- `vite build` passed after the re-export wiring. The later menu and formula
+  edits were not rebuilt.
+- Not yet clicked through in the browser.

@@ -5,13 +5,14 @@ import EarMusculoskeletalSvg from '../../assets/diagrams/ear-musculoskeletal.svg
 import EarInternalOrgansSvg from '../../assets/diagrams/ear-internal-organs.svg?react'
 import EarTcmSvg from '../../assets/diagrams/ear-chin-3.svg?react'
 import EarTurnedSvg from '../../assets/diagrams/ear-11.svg?react'
+import EarPosteriorSvg from '../../assets/diagrams/posterior-ear.svg?react'
 import TileTitle from '../ui/TileTitle'
 import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 import { AURICULOTHERAPY_CATEGORIES, AURICULOTHERAPY_POINTS } from '../../data/earAuriculotherapy'
 import { AURICULOTHERAPY_INFO } from '../../data/earAuriculotherapyInfo'
-import { TILE_TITLES, MSK_GROUPS, MSK_SVG_IDS, MSK_LINE_IDS, ORG_GROUPS, ORG_SVG_IDS, MASTER_LINE_IDS, MASTER_SVG_IDS } from '../../data/earPoints'
+import { TILE_TITLES, MSK_GROUPS, MSK_SVG_IDS, MSK_LINE_IDS, ORG_GROUPS, ORG_SVG_IDS, MASTER_LINE_IDS, MASTER_SVG_IDS, POSTERIOR_SVG_IDS } from '../../data/earPoints'
 import { TOUCH_REACH, targetAt } from './touchHit'
 
 // 2x2 grid, row-major (same layout as Basic Points):
@@ -32,6 +33,13 @@ const POINT_TILES = {
   internal: { Svg: EarInternalOrgansSvg, groups: ORG_GROUPS, svgIds: ORG_SVG_IDS, lineIds: new Set() },
 }
 for (const tile of Object.values(POINT_TILES)) tile.drawn = new Set(Object.values(tile.svgIds))
+
+// Clickable points on an extra point of view (see EXTRA_VIEWS), in the same
+// shape as a POINT_TILES entry so PointDiagram can draw them.
+const POSTERIOR_POINTS = { Svg: EarPosteriorSvg, svgIds: POSTERIOR_SVG_IDS, lineIds: new Set() }
+POSTERIOR_POINTS.drawn = new Set(Object.values(POSTERIOR_SVG_IDS))
+// The menu lists every point of the tile, so the posterior ones count as drawn.
+for (const name of POSTERIOR_POINTS.drawn) POINT_TILES.master.drawn.add(name)
 
 // Same trigger/dropdown classes as the ZSA and TCM grids' menus.
 const TRIGGER_CLASS = (active) => `text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} transition-colors ${
@@ -454,14 +462,35 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom, showLayer = tru
 export const TCM_VIEWBOX = { x: 285, y: 30, w: 737, h: 1160 }
 // ear-basic.svg (Inkscape, mm units) is shown whole.
 const BASIC_VIEWBOX = { x: 0, y: 0, w: 170.46902, h: 283.32684 }
+// posterior-ear.svg is a 1200x1200 page, cropped to the ear.
+const POSTERIOR_VIEWBOX = { x: 300, y: 15, w: 600, h: 1170 }
 
 // Extra points of view per tile, after the tile's own diagram (view 0). The
-// card's up/down arrows step through them. They have no points yet, so they
-// are drawn plain; picking a point returns to view 0, where it is drawn.
+// card's up/down arrows step through them. A view with `points` has its own
+// clickable points; others are drawn plain. Picking a point switches to the
+// view that draws it (see pointView).
 const EXTRA_VIEWS = {
   master: [
     { Svg: EarTurnedSvg, box: { x: 250, y: 20, w: 670, h: 1170 }, label: 'Turned view' },
+    { Svg: EarPosteriorSvg, box: POSTERIOR_VIEWBOX, label: 'Posterior view', points: POSTERIOR_POINTS },
   ],
+}
+
+// Point names drawn on a tile's point of view (0 = the tile's own diagram).
+function viewPoints(id, angle) {
+  if (angle > 0) return EXTRA_VIEWS[id][angle - 1].points?.drawn ?? new Set()
+  return new Set(Object.values(POINT_TILES[id]?.svgIds ?? {}))
+}
+
+// The point of view to show `name` on: the current one if it draws it,
+// otherwise the first that does (the tile's own diagram if none).
+function pointView(id, name, current) {
+  if (!name || viewPoints(id, current).has(name)) return current
+  const total = (EXTRA_VIEWS[id]?.length ?? 0) + 1
+  for (let angle = 0; angle < total; angle++) {
+    if (viewPoints(id, angle).has(name)) return angle
+  }
+  return 0
 }
 
 // Unmagnified crop of each tile's diagram.
@@ -670,7 +699,9 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
   // Optional drawings (the homunculus) start switched on.
   const layerOn = layersOn[id] ?? true
   let renderDiagram
-  if (extra) {
+  if (extra?.points) {
+    renderDiagram = rect => <PointDiagram tile={extra.points} activePoint={activePoint} onSelect={name => onPointSelect(id, name)} rect={rect} zoom={view.zoom} />
+  } else if (extra) {
     const { Svg } = extra
     renderDiagram = rect => <Svg viewBox={`${rect.x} ${rect.y} ${rect.w} ${rect.h}`} style={FILL} />
   } else if (tile) {
@@ -779,7 +810,7 @@ export default function HeadEarPoints({ pick = null, onPointSelect = null }) {
     onPointSelect: (id, name) => {
       const next = activePoints[id] === name ? null : name
       setMenuOpenId(null)
-      setAngle(id, 0)
+      setAngle(id, pointView(id, next, angles[id] ?? 0))
       setActivePoints(p => ({ ...p, [id]: next }))
       onPointSelect?.(earPointInfo(id, next))
     },
@@ -801,7 +832,7 @@ export default function HeadEarPoints({ pick = null, onPointSelect = null }) {
     if (pick) {
       setMenuOpenId(null)
       setActivePoints(p => ({ ...p, [pick.tile]: pick.name }))
-      setAngle(pick.tile, 0)
+      setAngle(pick.tile, pointView(pick.tile, pick.name, angles[pick.tile] ?? 0))
       setExpandedId(pick.tile)
     }
   }
