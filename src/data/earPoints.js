@@ -153,6 +153,18 @@ export const MASTER_SVG_IDS = Object.fromEntries([
   ...MASTER_LINE_IDS,
 ].map(id => [id, MASTER_RENAMES[id] ?? id]))
 
+// ear-11.svg (the Turned view of the Chinese Auriculotherapy tile) draws a
+// selection of the tile's points with the same Figma ids as ear-chin-3.svg,
+// so they map through MASTER_SVG_IDS.
+export const TURNED_SVG_IDS = Object.fromEntries([
+  // Hidden behind the turned concha
+  'Throat', 'Brainstem', 'Brain Point', 'Thalamus', 'Epilepsy Point', 'Nevous Subcortex', 'Internal Nose',
+  // Inferior concha
+  'Heart', 'Tripple Heater Point', 'Spleen', 'Lung', 'Lung_2', 'San Jiao', 'Bronchus', 'Bronchus_2', 'Trachea', 'Endocrine Area',
+  // Superior concha
+  'Stomach', 'Cardiac', 'Esophagus', 'Mouth',
+].map(id => [id, MASTER_SVG_IDS[id]]))
+
 // posterior-ear.svg element id -> Chinese Auriculotherapy point name. These
 // points sit on the Chinese Auriculotherapy tile's Posterior view.
 export const POSTERIOR_SVG_IDS = {

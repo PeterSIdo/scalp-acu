@@ -692,3 +692,40 @@ the app's canonical codes instead:
 - `vite build` passed after the re-export wiring. The later menu and formula
   edits were not rebuilt.
 - Not yet clicked through in the browser.
+
+---
+
+## 2026-11-13 — Chinese Auriculotherapy: clickable points on the Turned view
+
+**Status: not yet committed** (changed files: `src/assets/diagrams/ear-11.svg`,
+`src/data/earPoints.js`, `src/components/viewer/HeadEarPoints.jsx`).
+
+### What shipped
+
+- **ear-11.svg re-exported** with point layers. The first export had only the
+  drawing (generic `Vector N` shapes), so nothing could be wired. The diagram
+  shows a selection of the tile's points, not all of them.
+- **`TURNED_SVG_IDS` in `earPoints.js`:** the 21 point layers in ear-11.svg.
+  Their Figma ids are the same as in ear-chin-3.svg, so they map through
+  `MASTER_SVG_IDS` and get the same menu names and info cards ("Nevous
+  Subcortex" → Subcortex, "Tripple Heater Point" → Triple Heater Point, as on
+  the main view). A grep check confirmed every id is in the master list.
+  - "points hiiden" group (blue, hidden behind the turned concha): Throat,
+    Brainstem, Brain Point, Thalamus, Epilepsy Point, Subcortex, Internal Nose.
+  - Inferior concha: Heart, Triple Heater Point, Spleen, Lung (2 dots), San
+    Jiao, Bronchus (2 dots), Trachea, Endocrine.
+  - Superior concha: Stomach, Cardiac, Esophagus, Mouth.
+- **`HeadEarPoints.jsx`:** new `TURNED_POINTS` (same shape as
+  `POSTERIOR_POINTS`); the "Turned view" entry in `EXTRA_VIEWS.master` now has
+  `points: TURNED_POINTS`, so its dots are clickable with the pulsing ring and
+  label.
+- **View switching (existing `pointView` logic):** picking a menu point while on
+  the Turned view stays there if the view draws it, otherwise jumps to the main
+  diagram. On the main diagram it stays put, since all 21 points are drawn there
+  too.
+
+### Notes / open items
+- `vite build` passed. ESLint's two `react-refresh/only-export-components`
+  errors in `HeadEarPoints.jsx` (`pointCentre`, `TCM_VIEWBOX` exports) were
+  already there before this change.
+- Not yet clicked through in the browser. Check the blue points especially.

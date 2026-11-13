@@ -12,7 +12,7 @@ import MenuSizer from '../ui/MenuSizer'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 import { AURICULOTHERAPY_CATEGORIES, AURICULOTHERAPY_POINTS } from '../../data/earAuriculotherapy'
 import { AURICULOTHERAPY_INFO } from '../../data/earAuriculotherapyInfo'
-import { TILE_TITLES, MSK_GROUPS, MSK_SVG_IDS, MSK_LINE_IDS, ORG_GROUPS, ORG_SVG_IDS, MASTER_LINE_IDS, MASTER_SVG_IDS, POSTERIOR_SVG_IDS } from '../../data/earPoints'
+import { TILE_TITLES, MSK_GROUPS, MSK_SVG_IDS, MSK_LINE_IDS, ORG_GROUPS, ORG_SVG_IDS, MASTER_LINE_IDS, MASTER_SVG_IDS, POSTERIOR_SVG_IDS, TURNED_SVG_IDS } from '../../data/earPoints'
 import { TOUCH_REACH, targetAt } from './touchHit'
 
 // 2x2 grid, row-major (same layout as Basic Points):
@@ -38,6 +38,9 @@ for (const tile of Object.values(POINT_TILES)) tile.drawn = new Set(Object.value
 // shape as a POINT_TILES entry so PointDiagram can draw them.
 const POSTERIOR_POINTS = { Svg: EarPosteriorSvg, svgIds: POSTERIOR_SVG_IDS, lineIds: new Set() }
 POSTERIOR_POINTS.drawn = new Set(Object.values(POSTERIOR_SVG_IDS))
+// The Turned view (ear-11.svg) draws a selection of the master points.
+const TURNED_POINTS = { Svg: EarTurnedSvg, svgIds: TURNED_SVG_IDS, lineIds: new Set() }
+TURNED_POINTS.drawn = new Set(Object.values(TURNED_SVG_IDS))
 // The menu lists every point of the tile, so the posterior ones count as drawn.
 for (const name of POSTERIOR_POINTS.drawn) POINT_TILES.master.drawn.add(name)
 
@@ -471,7 +474,7 @@ const POSTERIOR_VIEWBOX = { x: 300, y: 15, w: 600, h: 1170 }
 // view that draws it (see pointView).
 const EXTRA_VIEWS = {
   master: [
-    { Svg: EarTurnedSvg, box: { x: 250, y: 20, w: 670, h: 1170 }, label: 'Turned view' },
+    { Svg: EarTurnedSvg, box: { x: 250, y: 20, w: 670, h: 1170 }, label: 'Turned view', points: TURNED_POINTS },
     { Svg: EarPosteriorSvg, box: POSTERIOR_VIEWBOX, label: 'Posterior view', points: POSTERIOR_POINTS },
   ],
 }
