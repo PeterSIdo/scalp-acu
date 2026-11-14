@@ -51,13 +51,14 @@ export const AURICULOTHERAPY_CATEGORIES = [
       'Calf Point', 'Clavicle', 'Shoulder Joint', 'Shoulder', 'Elbow', 'Wrist', 'Finger', 'Armpit',
       'Biliary Duct', 'External Abdomen',
       'Sole of Foot', 'Thigh Muscles', 'Instep', 'Wisdom Teeth',
+      'Tragic Apex', 'Vision I', 'Vision II',
     ],
   },
   {
     label: 'Back of the Auricle',
     short: 'Back of Ear',
     points: [
-      'Tragic Apex', 'Ear Apex', 'Vision I', 'Vision II', 'Liver Yang',
+      'Ear Apex', 'Liver Yang',
       'Helix 1', 'Helix 2', 'Helix 3', 'Helix 4', 'Helix 5', 'Helix 6',
       'Heart on Back of the Auricle', 'Liver in posterior Auricle', 'Spleen on Back of The Auricle',
       'Lung on back of the Auricle', 'Kidney In Back of Auricle', 'Upper Ear Root', 'Middle Ear Root',

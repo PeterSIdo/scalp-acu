@@ -729,3 +729,50 @@ the app's canonical codes instead:
   errors in `HeadEarPoints.jsx` (`pointCentre`, `TCM_VIEWBOX` exports) were
   already there before this change.
 - Not yet clicked through in the browser. Check the blue points especially.
+
+---
+
+## 2026-11-14 — Western Auriculotherapy card + diagram filtering
+
+**Status: committed** (changed files: `src/assets/diagrams/western-ear-complet.svg`
+(new), `src/data/earPoints.js`, `src/data/earAuriculotherapy.js`,
+`src/components/viewer/HeadEarPoints.jsx`).
+
+### What shipped
+
+- **New card "Western Auriculotherapy"** replaces the bottom-right
+  placeholder (tile id `neuroendocrine` → `western`; `ear-basic.svg` no longer
+  used). Diagram: `western-ear-complet.svg` (1200x1200 page, cropped with
+  `WESTERN_VIEWBOX` {260, 60, 720, 1090}); already has a white backing rect.
+- **Points (`earPoints.js`):** `WESTERN_SVG_IDS` = `MSK_SVG_IDS` + `ORG_SVG_IDS`
+  (same Figma ids/typos) + neuroendocrine ids. New `ENDOCRINE_POINTS`,
+  `NERVOUS_POINTS`, `WESTERN_CATEGORIES` (Musculoskeletal, Internal Organs,
+  Endocrine, Nervous System), `WESTERN_POINTS` (A-Z with categories); added to
+  `EAR_SEARCH_INDEX`. Figma typo renames: `Brain Stem (C)`, `Hippocamus (Memory`,
+  `Amygdala (Agressiveness)`, `Sciatic Nerv`, `Lesser Occipital Nerve`
+  (→ "... - Wind Stream (C)").
+  - **Uterus (C) is not in the SVG** → greyed out in the menu.
+- **Menu:** same searchable menu as the Chinese card. `SearchablePanel` /
+  `SearchablePointMenu` now read `tile.points` / `tile.categories` instead of
+  the hard-coded Chinese lists; the selected category is kept per tile.
+- **Diagram filtering (both Chinese and Western cards, `filterDiagram: true`):**
+  - Category filter hides the other categories' points; All shows everything.
+    Applies to the Chinese card's Turned/Posterior views too; the wide click
+    copies of thin lines are hidden with their line.
+  - A point picked from the menu (list, search, Enter) or from the viewer's
+    search panel is shown **alone**. Clicking a point on the ear keeps the
+    old fade. Picking a category, clearing, or re-picking the point resets it.
+  - Category point Sets are built once (`tile.categoryPoints`) — a new Set per
+    render would loop PointDiagram's effect via `setMarker`.
+- **Homunculus on the Western card:** off by default; turns on automatically
+  while the Musculoskeletal filter or a musculoskeletal point is selected
+  (`layerAuto`). The manual toggle overrides until the automatic state next
+  changes. Musculoskeletal card unchanged (homunculus on).
+- **Chinese categories:** Tragic Apex, Vision I, Vision II moved from Back of
+  the Auricle to Body Parts (they're on the front of the ear).
+
+### Notes / open items
+- `vite build` passed. The two existing ESLint `react-refresh` errors remain.
+- Checked in the browser: crop, Endocrine filter (Western and Chinese),
+  homunculus auto-on with Musculoskeletal. Not clicked through: solo point on
+  menu pick, Back of Ear / Body Parts after the category move.

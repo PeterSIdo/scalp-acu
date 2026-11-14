@@ -6,7 +6,7 @@ export const TILE_TITLES = {
   master: 'Chinese Auriculotherapy',
   musculoskeletal: 'Musculoskeletal Points',
   internal: 'Internal Organ Points',
-  neuroendocrine: 'Neuroendocrine Points',
+  western: 'Western Auriculotherapy',
 }
 
 // Musculoskeletal points from ear-acupoints.txt, in its groups and order.
@@ -179,6 +179,48 @@ export const POSTERIOR_SVG_IDS = {
   'KIdney': 'Kidney In Back of Auricle',
 }
 
+// Neuroendocrine points from ear-acupoints.txt, split into the dropdown's
+// Endocrine and Nervous System groups.
+export const ENDOCRINE_POINTS = [
+  'Pituitary Gland', 'Pineal Gland', 'Thyroid Gland (C)', 'Thyroid Gland (E)', 'Adrenal Gland (C)', 'Adrenal Gland (E)',
+  'Ovaries/Testes (E)', 'Gonadotropins - FSH, Ovaries (C)', 'ACTH', 'TSH',
+]
+export const NERVOUS_POINTS = [
+  'Brain (C)', 'Brainstem (C)', 'Frontal Cortex', 'Limbic System (Prostaglandin)', 'Hippocampus (memory)',
+  'Amygdala (aggressiveness)', 'Spinal Cord', 'Sciatic Nerve', 'Lesser Occipital Nerve - Wind Stream (C)',
+]
+
+// Western Auriculotherapy (western-ear-complet.svg) draws every point of the
+// Musculoskeletal and Internal Organ charts (same Figma ids) plus the
+// neuroendocrine ones. `short` is the label on the dropdown's filter buttons.
+export const WESTERN_CATEGORIES = [
+  { label: 'Musculoskeletal', short: 'Musculoskeletal', points: MSK_GROUPS.flatMap(g => g.points) },
+  { label: 'Internal Organs', short: 'Organs', points: ORG_GROUPS.flatMap(g => g.points) },
+  { label: 'Endocrine', short: 'Endocrine', points: ENDOCRINE_POINTS },
+  { label: 'Nervous System', short: 'Nervous', points: NERVOUS_POINTS },
+]
+export const WESTERN_POINTS = [...new Set(WESTERN_CATEGORIES.flatMap(c => c.points))]
+  .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
+  .map(name => ({ name, categories: WESTERN_CATEGORIES.filter(c => c.points.includes(name)).map(c => c.label) }))
+
+// western-ear-complet.svg neuroendocrine ids that differ from the point name (Figma typos).
+const NEURO_RENAMES = {
+  'Brain Stem (C)': 'Brainstem (C)',
+  'Hippocamus (Memory': 'Hippocampus (memory)',
+  'Amygdala (Agressiveness)': 'Amygdala (aggressiveness)',
+  'Sciatic Nerv': 'Sciatic Nerve',
+  'Lesser Occipital Nerve': 'Lesser Occipital Nerve - Wind Stream (C)',
+}
+export const WESTERN_SVG_IDS = {
+  ...MSK_SVG_IDS,
+  ...ORG_SVG_IDS,
+  ...Object.fromEntries([
+    ...ENDOCRINE_POINTS,
+    'Brain (C)', 'Brain Stem (C)', 'Frontal Cortex', 'Limbic System (Prostaglandin)', 'Hippocamus (Memory',
+    'Amygdala (Agressiveness)', 'Spinal Cord', 'Sciatic Nerv', 'Lesser Occipital Nerve',
+  ].map(id => [id, NEURO_RENAMES[id] ?? id])),
+}
+
 // Every ear point, one entry per tile it is listed on, for the viewer search
 // panel: `groups` are its categories (Chinese Auriculotherapy) or dropdown
 // group; `drawn` is false for points listed but not on the diagram yet.
@@ -186,11 +228,13 @@ const DRAWN = {
   master: new Set([...Object.values(MASTER_SVG_IDS), ...Object.values(POSTERIOR_SVG_IDS)]),
   musculoskeletal: new Set(Object.values(MSK_SVG_IDS)),
   internal: new Set(Object.values(ORG_SVG_IDS)),
+  western: new Set(Object.values(WESTERN_SVG_IDS)),
 }
 export const EAR_SEARCH_INDEX = [
   ...AURICULOTHERAPY_POINTS.map(({ name, categories }) => ({ tile: 'master', name, groups: categories })),
   ...MSK_GROUPS.flatMap(g => g.points.map(name => ({ tile: 'musculoskeletal', name, groups: [g.label] }))),
   ...ORG_GROUPS.flatMap(g => g.points.map(name => ({ tile: 'internal', name, groups: [g.label] }))),
+  ...WESTERN_POINTS.map(({ name, categories }) => ({ tile: 'western', name, groups: categories })),
 ].map(entry => ({
   ...entry,
   key: `${entry.tile}:${entry.name}`,

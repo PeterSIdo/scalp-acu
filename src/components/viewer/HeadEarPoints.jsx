@@ -1,23 +1,23 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import EarBasicSvg from '../../assets/diagrams/ear-basic.svg?react'
 import EarMusculoskeletalSvg from '../../assets/diagrams/ear-musculoskeletal.svg?react'
 import EarInternalOrgansSvg from '../../assets/diagrams/ear-internal-organs.svg?react'
 import EarTcmSvg from '../../assets/diagrams/ear-chin-3.svg?react'
 import EarTurnedSvg from '../../assets/diagrams/ear-11.svg?react'
 import EarPosteriorSvg from '../../assets/diagrams/posterior-ear.svg?react'
+import EarWesternSvg from '../../assets/diagrams/western-ear-complet.svg?react'
 import TileTitle from '../ui/TileTitle'
 import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 import { AURICULOTHERAPY_CATEGORIES, AURICULOTHERAPY_POINTS } from '../../data/earAuriculotherapy'
 import { AURICULOTHERAPY_INFO } from '../../data/earAuriculotherapyInfo'
-import { TILE_TITLES, MSK_GROUPS, MSK_SVG_IDS, MSK_LINE_IDS, ORG_GROUPS, ORG_SVG_IDS, MASTER_LINE_IDS, MASTER_SVG_IDS, POSTERIOR_SVG_IDS, TURNED_SVG_IDS } from '../../data/earPoints'
+import { TILE_TITLES, MSK_GROUPS, MSK_SVG_IDS, MSK_LINE_IDS, ORG_GROUPS, ORG_SVG_IDS, MASTER_LINE_IDS, MASTER_SVG_IDS, POSTERIOR_SVG_IDS, TURNED_SVG_IDS, WESTERN_CATEGORIES, WESTERN_POINTS, WESTERN_SVG_IDS } from '../../data/earPoints'
 import { TOUCH_REACH, targetAt } from './touchHit'
 
 // 2x2 grid, row-major (same layout as Basic Points):
-// Master | Musculoskeletal / Internal Organs | Neuroendocrine.
-const TILE_IDS = ['master', 'musculoskeletal', 'internal', 'neuroendocrine']
+// Master | Musculoskeletal / Internal Organs | Western.
+const TILE_IDS = ['master', 'musculoskeletal', 'internal', 'western']
 
 // An optional drawing a tile can switch on and off: every group whose id
 // starts with `prefix`, except groups holding clickable points (the
@@ -26,13 +26,22 @@ const HOMUNCULUS_LAYER = { prefix: 'homunculus-', label: 'Homunculus' }
 
 // Tiles whose diagram has clickable points, with their dropdown groups.
 // lineWidth/lineStroke style a selected line; hitWidth widens lines too thin to
-// click. `searchable` tiles use SearchablePointMenu instead of groups.
+// click. `searchable` tiles use SearchablePointMenu, listing `points` (A-Z,
+// with their categories) and filtering by `categories`, instead of groups.
 const POINT_TILES = {
-  master: { Svg: EarTcmSvg, searchable: true, svgIds: MASTER_SVG_IDS, lineIds: MASTER_LINE_IDS, lineWidth: '5', lineStroke: '#000000', hitWidth: 20 },
+  master: { Svg: EarTcmSvg, searchable: true, filterDiagram: true, points: AURICULOTHERAPY_POINTS, categories: AURICULOTHERAPY_CATEGORIES, svgIds: MASTER_SVG_IDS, lineIds: MASTER_LINE_IDS, lineWidth: '5', lineStroke: '#000000', hitWidth: 20 },
   musculoskeletal: { Svg: EarMusculoskeletalSvg, groups: MSK_GROUPS, svgIds: MSK_SVG_IDS, lineIds: MSK_LINE_IDS, lineWidth: '16', layer: HOMUNCULUS_LAYER },
   internal: { Svg: EarInternalOrgansSvg, groups: ORG_GROUPS, svgIds: ORG_SVG_IDS, lineIds: new Set() },
+  // filterDiagram: picking a category also hides the other categories' points on the diagram.
+  // layerAuto: the homunculus starts off and comes on by itself while the
+  // Musculoskeletal filter or one of its points is selected.
+  western: { Svg: EarWesternSvg, searchable: true, filterDiagram: true, layerAuto: { category: 'Musculoskeletal', points: new Set(MSK_GROUPS.flatMap(g => g.points)) }, points: WESTERN_POINTS, categories: WESTERN_CATEGORIES, svgIds: WESTERN_SVG_IDS, lineIds: MSK_LINE_IDS, lineWidth: '16', layer: HOMUNCULUS_LAYER },
 }
-for (const tile of Object.values(POINT_TILES)) tile.drawn = new Set(Object.values(tile.svgIds))
+for (const tile of Object.values(POINT_TILES)) {
+  tile.drawn = new Set(Object.values(tile.svgIds))
+  // Built once, so PointDiagram's effect doesn't rerun on every render.
+  if (tile.filterDiagram) tile.categoryPoints = Object.fromEntries(tile.categories.map(c => [c.label, new Set(c.points)]))
+}
 
 // Clickable points on an extra point of view (see EXTRA_VIEWS), in the same
 // shape as a POINT_TILES entry so PointDiagram can draw them.
@@ -63,6 +72,8 @@ const TRANSITION_STYLE = `
   animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
 }
 `
+
+const NO_POINTS = new Set()
 
 const FILL = { position: 'absolute', inset: 0, width: '100%', height: '100%' }
 
@@ -147,7 +158,6 @@ function earPointInfo(tileId, name) {
   return tileId === 'master' && name ? AURICULOTHERAPY_INFO[name] ?? null : null
 }
 
-const CATEGORY_BUTTONS = [{ label: 'All', short: 'All' }, ...AURICULOTHERAPY_CATEGORIES]
 
 // A point name with the searched letters highlighted.
 function MatchedName({ name, query }) {
@@ -170,8 +180,8 @@ function SearchablePanel({ tile, activePoint, category, onCategoryChange, onSele
   const [listHeight, setListHeight] = useState(160)
   const search = query.trim().toLowerCase()
   const points = search
-    ? AURICULOTHERAPY_POINTS.filter(point => point.name.toLowerCase().includes(search))
-    : AURICULOTHERAPY_POINTS.filter(point => category === 'All' || point.categories.includes(category))
+    ? tile.points.filter(point => point.name.toLowerCase().includes(search))
+    : tile.points.filter(point => category === 'All' || point.categories.includes(category))
 
   useLayoutEffect(() => {
     const body = panelRef.current.closest('[data-tile-body]')
@@ -212,7 +222,7 @@ function SearchablePanel({ tile, activePoint, category, onCategoryChange, onSele
     if (e.key !== 'Enter') return
     e.preventDefault()
     const first = points.find(point => tile.drawn.has(point.name))
-    if (first) onSelect(first.name)
+    if (first) onSelect(first.name, true)
   }
 
   return (
@@ -235,7 +245,7 @@ function SearchablePanel({ tile, activePoint, category, onCategoryChange, onSele
         />
       </div>
       <div className="flex flex-wrap gap-1 px-2 pb-2">
-        {CATEGORY_BUTTONS.map(({ label, short }) => (
+        {[{ label: 'All', short: 'All' }, ...tile.categories].map(({ label, short }) => (
           <button
             key={label}
             type="button"
@@ -262,7 +272,7 @@ function SearchablePanel({ tile, activePoint, category, onCategoryChange, onSele
             <span className="block text-[11px] font-normal leading-snug text-gray-500 dark:text-gray-400">{categories.join(' · ')}</span>
           )
           return tile.drawn.has(name) ? (
-            <button key={name} type="button" onClick={() => onSelect(name)} className={DROPDOWN_ITEM_CLASS(activePoint === name)}>
+            <button key={name} type="button" onClick={() => onSelect(name, true)} className={DROPDOWN_ITEM_CLASS(activePoint === name)}>
               <MatchedName name={name} query={search} />
               {tag}
             </button>
@@ -280,7 +290,8 @@ function SearchablePanel({ tile, activePoint, category, onCategoryChange, onSele
 }
 
 // Point dropdown for long lists: closed, it's one line like PointMenu; open,
-// it adds search and category buttons. The column can shrink below its
+// it adds search and category buttons. onSelect(name, fromMenu) tells
+// whether the point was picked from the menu (list or search) rather than the diagram. The column can shrink below its
 // longest label, so on phones the panel stays inside the tile.
 function SearchablePointMenu({ tile, title, activePoint, menuOpen, category, onCategoryChange, onToggle, onSelect, onReset }) {
   return (
@@ -291,7 +302,7 @@ function SearchablePointMenu({ tile, title, activePoint, menuOpen, category, onC
             {activePoint ?? title}
             <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
           </button>
-          <MenuSizer labels={[title, ...AURICULOTHERAPY_POINTS.map(({ name }) => name)]} />
+          <MenuSizer labels={[title, ...tile.points.map(({ name }) => name)]} />
           {menuOpen && (
             <SearchablePanel
               tile={tile}
@@ -351,7 +362,8 @@ export function pointCentre(svg, el, lineIds) {
 // as the Basic Points heads (HeadLateral), drawn on an overlay SVG with the
 // same viewBox. `rect` is the visible (possibly magnified) window; the ring
 // and label are divided by `zoom` so they stay the same size on screen.
-function PointDiagram({ tile, activePoint, onSelect, rect, zoom, showLayer = true }) {
+// `visible` (a Set of point names, or null for all) hides the other points.
+function PointDiagram({ tile, activePoint, onSelect, rect, zoom, showLayer = true, visible = null }) {
   const hostRef = useRef(null)
   const pointerType = useRef('mouse')
   const [marker, setMarker] = useState(null)
@@ -382,6 +394,7 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom, showLayer = tru
       if (!el) continue
       const isLine = tile.lineIds.has(elId)
       el.dataset.earPoint = name
+      el.style.display = !visible || visible.has(name) || name === activePoint ? '' : 'none'
       el.style.cursor = 'pointer'
       el.style.transition = 'opacity 150ms ease'
       if (!activePoint) {
@@ -400,8 +413,13 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom, showLayer = tru
         el.style.stroke = ''
       }
     }
+    // The wide click copies of thin lines (no id) follow their line.
+    for (const hit of svg.querySelectorAll('[data-ear-point]:not([id])')) {
+      const name = hit.dataset.earPoint
+      hit.style.display = !visible || visible.has(name) || name === activePoint ? '' : 'none'
+    }
     setMarker(selectedEl ? pointCentre(svg, selectedEl, tile.lineIds) : null)
-  }, [tile, activePoint])
+  }, [tile, activePoint, visible])
 
   // Show or hide the tile's optional drawing. Runs after the effect above,
   // which tags the point elements this skips.
@@ -463,8 +481,8 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom, showLayer = tru
 
 // ear-chin-3.svg is a 1207x1249 page, cropped to the ear.
 export const TCM_VIEWBOX = { x: 285, y: 30, w: 737, h: 1160 }
-// ear-basic.svg (Inkscape, mm units) is shown whole.
-const BASIC_VIEWBOX = { x: 0, y: 0, w: 170.46902, h: 283.32684 }
+// western-ear-complet.svg is a 1200x1200 page, cropped to the ear.
+const WESTERN_VIEWBOX = { x: 260, y: 60, w: 720, h: 1090 }
 // posterior-ear.svg is a 1200x1200 page, cropped to the ear.
 const POSTERIOR_VIEWBOX = { x: 300, y: 15, w: 600, h: 1170 }
 
@@ -501,7 +519,7 @@ const TILE_BOXES = {
   master: TCM_VIEWBOX,
   musculoskeletal: MSK_VIEWBOX,
   internal: MSK_VIEWBOX,
-  neuroendocrine: BASIC_VIEWBOX,
+  western: WESTERN_VIEWBOX,
 }
 
 // Space (px) kept free under every diagram so its bottom isn't hidden behind
@@ -689,7 +707,7 @@ function LayerToggle({ label, on, compact, onToggle }) {
   )
 }
 
-function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menuOpenId, onMenuToggle, views, onViewChange, category, onCategoryChange, layersOn, onLayerToggle, angles, onAngleStep }, expanded = false) {
+function renderTileContent(id, { soloPoints, activePoints, onPointSelect, onPointClear, menuOpenId, onMenuToggle, views, onViewChange, categories, onCategoryChange, layersOn, onLayerToggle, angles, onAngleStep }, expanded = false) {
   if (!TILE_IDS.includes(id)) return null
   const tile = POINT_TILES[id]
   const activePoint = activePoints[id] ?? null
@@ -699,19 +717,28 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
   const box = tileBox(id, angle)
   const view = views[id] ?? defaultView(box)
   const setView = update => onViewChange(id, update)
-  // Optional drawings (the homunculus) start switched on.
-  const layerOn = layersOn[id] ?? true
+  // Points of the selected category, for tiles that filter their diagram (null = all).
+  // A point picked from the menu or a search is shown alone (PointDiagram always keeps the
+  // active point, so an empty set leaves just that one).
+  const category = categories[id] ?? 'All'
+  // Optional drawings (the homunculus) are on, or follow layerAuto. A manual
+  // switch holds until the automatic state next changes.
+  const auto = tile?.layerAuto
+    ? category === tile.layerAuto.category || tile.layerAuto.points.has(activePoint)
+    : true
+  const manual = layersOn[id]
+  const layerOn = manual && manual.auto === auto ? manual.on : auto
+  const visible = tile?.filterDiagram && soloPoints[id] && soloPoints[id] === activePoint
+    ? NO_POINTS
+    : tile?.categoryPoints?.[category] ?? null
   let renderDiagram
   if (extra?.points) {
-    renderDiagram = rect => <PointDiagram tile={extra.points} activePoint={activePoint} onSelect={name => onPointSelect(id, name)} rect={rect} zoom={view.zoom} />
+    renderDiagram = rect => <PointDiagram tile={extra.points} activePoint={activePoint} onSelect={name => onPointSelect(id, name)} rect={rect} zoom={view.zoom} visible={visible} />
   } else if (extra) {
     const { Svg } = extra
     renderDiagram = rect => <Svg viewBox={`${rect.x} ${rect.y} ${rect.w} ${rect.h}`} style={FILL} />
-  } else if (tile) {
-    renderDiagram = rect => <PointDiagram tile={tile} activePoint={activePoint} onSelect={name => onPointSelect(id, name)} rect={rect} zoom={view.zoom} showLayer={layerOn} />
   } else {
-    // The neuroendocrine tile reuses the base ear until its own diagram exists.
-    renderDiagram = rect => <EarBasicSvg viewBox={`${rect.x} ${rect.y} ${rect.w} ${rect.h}`} style={FILL} />
+    renderDiagram = rect => <PointDiagram tile={tile} activePoint={activePoint} onSelect={name => onPointSelect(id, name)} rect={rect} zoom={view.zoom} showLayer={layerOn} visible={visible} />
   }
   const diagram = <MagnifiedDiagram box={box} view={view} onViewChange={setView}>{renderDiagram}</MagnifiedDiagram>
   // Same 40px top offset as the other grids, leaving room for a menu row later.
@@ -730,9 +757,9 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
                 activePoint={activePoint}
                 menuOpen={menuOpenId === id}
                 category={category}
-                onCategoryChange={onCategoryChange}
+                onCategoryChange={label => onCategoryChange(id, label)}
                 onToggle={() => onMenuToggle(id)}
-                onSelect={name => onPointSelect(id, name)}
+                onSelect={(name, fromMenu) => onPointSelect(id, name, fromMenu)}
                 onReset={() => onPointClear(id)}
               />
             ) : (
@@ -755,7 +782,7 @@ function renderTileContent(id, { activePoints, onPointSelect, onPointClear, menu
       <div className="absolute left-0 bottom-0 px-3 pb-1 z-10 flex items-stretch gap-1.5">
         <ZoomSlider box={box} view={view} compact={!expanded} onViewChange={setView} />
         {tile?.layer && !extra && (
-          <LayerToggle label={tile.layer.label} on={layerOn} compact={!expanded} onToggle={() => onLayerToggle(id)} />
+          <LayerToggle label={tile.layer.label} on={layerOn} compact={!expanded} onToggle={() => onLayerToggle(id, { on: !layerOn, auto })} />
         )}
         {extraViews.length > 0 && (
           <ViewStepper
@@ -784,12 +811,15 @@ export default function HeadEarPoints({ pick = null, onPointSelect = null }) {
   const [menuOpenId, setMenuOpenId] = useState(null)
   // Magnification per tile, shared by the tile and its expanded view.
   const [views, setViews] = useState({})
-  // Kept here so the category survives closing the dropdown and expanding the tile.
-  const [category, setCategory] = useState('All')
-  // Optional drawing on/off per tile, shared by the tile and its expanded view.
+  // Kept here (per tile) so the category survives closing the dropdown and expanding the tile.
+  const [categories, setCategories] = useState({})
+  // Manual on/off of the optional drawing per tile ({ on, auto }: the switch and
+  // the automatic state it overrode), shared by the tile and its expanded view.
   const [layersOn, setLayersOn] = useState({})
   // Point of view per tile (0 = the tile's own diagram, see EXTRA_VIEWS).
   const [angles, setAngles] = useState({})
+  // Point per tile picked from the menu or a search, shown alone on the diagram (filterDiagram tiles).
+  const [soloPoints, setSoloPoints] = useState({})
 
   // Switching view resets the magnification, as each view has its own crop.
   function setAngle(id, angle) {
@@ -805,19 +835,25 @@ export default function HeadEarPoints({ pick = null, onPointSelect = null }) {
       setAngle(id, Math.min(Math.max((angles[id] ?? 0) + dir, 0), total - 1))
     },
     activePoints,
-    category,
-    onCategoryChange: setCategory,
+    categories,
+    // Picking a category shows its points again, even after a search pick.
+    onCategoryChange: (id, label) => {
+      setCategories(c => ({ ...c, [id]: label }))
+      setSoloPoints(sp => ({ ...sp, [id]: null }))
+    },
+    soloPoints,
     layersOn,
-    onLayerToggle: id => setLayersOn(l => ({ ...l, [id]: !(l[id] ?? true) })),
+    onLayerToggle: (id, state) => setLayersOn(l => ({ ...l, [id]: state })),
     // Picking the selected point again clears it, same as the ZSA areas.
-    onPointSelect: (id, name) => {
+    onPointSelect: (id, name, fromMenu = false) => {
       const next = activePoints[id] === name ? null : name
+      setSoloPoints(sp => ({ ...sp, [id]: fromMenu ? next : null }))
       setMenuOpenId(null)
       setAngle(id, pointView(id, next, angles[id] ?? 0))
       setActivePoints(p => ({ ...p, [id]: next }))
       onPointSelect?.(earPointInfo(id, next))
     },
-    onPointClear: id => { setActivePoints(p => ({ ...p, [id]: null })); onPointSelect?.(null) },
+    onPointClear: id => { setActivePoints(p => ({ ...p, [id]: null })); setSoloPoints(sp => ({ ...sp, [id]: null })); onPointSelect?.(null) },
     menuOpenId,
     onMenuToggle: id => setMenuOpenId(o => (o === id ? null : id)),
     views,
@@ -835,6 +871,7 @@ export default function HeadEarPoints({ pick = null, onPointSelect = null }) {
     if (pick) {
       setMenuOpenId(null)
       setActivePoints(p => ({ ...p, [pick.tile]: pick.name }))
+      setSoloPoints(sp => ({ ...sp, [pick.tile]: pick.name }))
       setAngle(pick.tile, pointView(pick.tile, pick.name, angles[pick.tile] ?? 0))
       setExpandedId(pick.tile)
     }
