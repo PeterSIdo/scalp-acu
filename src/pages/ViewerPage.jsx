@@ -12,9 +12,9 @@ import HeadTCMScalpAreas from '../components/viewer/HeadTCMScalpAreas'
 import NeckDiagnosis   from '../components/viewer/NeckDiagnosis'
 import HeadBrainZones from '../components/viewer/HeadBrainZones'
 import HeadEarPoints from '../components/viewer/HeadEarPoints'
+import { earPointInfo } from '../data/earPointInfo'
 import HeadZSAPoints from '../components/viewer/HeadZSAPoints'
-import { EarDescription, EarFormulas } from '../components/viewer/EarGuide'
-import { AURICULOTHERAPY_INFO } from '../data/earAuriculotherapyInfo'
+import { EarDescription, EarFormulas, EarSeeds } from '../components/viewer/EarGuide'
 import CasesPage from '../components/viewer/CasesPage'
 import { OpenCasesContext } from '../data/navItems'
 import { ABOUT_APP } from '../data/aboutApp'
@@ -61,6 +61,7 @@ const SYSTEMS = [
       { id: 'ear-points',      label: 'Ear Points',  views: ['EarGrid'],         available: true },
       { id: 'ear-description', label: 'Description', views: ['EarDescription'],  available: true },
       { id: 'ear-formulas',    label: 'Formulas',    views: ['EarFormulas'],     available: true },
+      { id: 'ear-seeds',       label: 'Ear Seeds',   views: ['EarSeeds'],        available: true },
     ],
   },
   {
@@ -319,7 +320,7 @@ export default function ViewerPage() {
     // Ear results select the point on its tile in the Ear grid.
     if (isEar) {
       setEarPick({ tile: point.tile, name: point.name, n: Date.now() })
-      setSelectedPoint(point.tile === 'master' ? AURICULOTHERAPY_INFO[point.name] ?? null : null)
+      setSelectedPoint(earPointInfo(point.tile, point.name))
       setSearchQuery('')
       setMobileSearchOpen(false)
       return
@@ -464,6 +465,7 @@ export default function ViewerPage() {
           {activeView === 'Cases' ? <CasesPage />
           : activeView === 'EarDescription' ? <EarDescription />
           : activeView === 'EarFormulas' ? <EarFormulas />
+          : activeView === 'EarSeeds' ? <EarSeeds />
           : isAvailable ? (
             <ZoomableView key={resetKey} onReset={handleReset} wheelZoom={!isNeck && !isZsa}>
               {activeView === 'Grid'      && <HeadBasicPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-basic']} />}

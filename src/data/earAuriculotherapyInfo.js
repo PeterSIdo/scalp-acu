@@ -2553,9 +2553,9 @@ export const AURICULOTHERAPY_INFO = {
       }
     ]
   },
-  "Pancreas": {
+  "Pancreas / Gallbladder": {
     "id": "EAR-CN-pancreas",
-    "name": "Pancreas",
+    "name": "Pancreas / Gallbladder",
     "system": "Chinese Auriculotherapy",
     "source": "huang-auriculotherapy",
     "sections": [
@@ -3317,9 +3317,9 @@ export const AURICULOTHERAPY_INFO = {
       }
     ]
   },
-  "Sympathetic (sympathy)": {
+  "Sympathetic Nerve": {
     "id": "EAR-CN-sympathetic-sympathy",
-    "name": "Sympathetic (sympathy)",
+    "name": "Sympathetic Nerve",
     "system": "Chinese Auriculotherapy",
     "source": "huang-auriculotherapy",
     "sections": [

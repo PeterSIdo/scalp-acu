@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import EarTcmSvg from '../../assets/diagrams/ear-chin-3.svg?react'
 import { EAR_DESCRIPTION, EAR_FORMULAS, EAR_FORMULA_KEY_TERMS, EAR_FORMULA_SAFETY } from '../../data/earGuide'
+import { EAR_SEEDS_GUIDE, EAR_SEEDS_SAFETY, EAR_SEED_FORMULAS } from '../../data/earSeeds'
 import { MASTER_SVG_IDS, MASTER_LINE_IDS } from '../../data/earPoints'
 import { SOURCES } from '../../data/sources'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
@@ -8,8 +9,8 @@ import { pointCentre, TCM_VIEWBOX } from './HeadEarPoints'
 
 const FILL = { position: 'absolute', inset: 0, width: '100%', height: '100%' }
 
-// Text pages for the Auriculotherapy "Description" and "Formulas" tabs. They
-// scroll on their own, outside ZoomableView.
+// Text pages for the Auriculotherapy "Description", "Formulas" and "Ear Seeds"
+// tabs. They scroll on their own, outside ZoomableView.
 
 const H2 = 'text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2'
 const BODY = 'text-black dark:text-gray-300 text-sm leading-relaxed'
@@ -84,16 +85,20 @@ export function EarDescription() {
 // Formula point name -> its name on the Chinese Auriculotherapy diagram
 // (MASTER_SVG_IDS values), where they differ.
 const DIAGRAM_NAMES = {
-  'Sympathetic': 'Sympathetic (sympathy)',
+  'Sympathetic': 'Sympathetic Nerve',
   'Dizziness Area': 'Dizziness Point',
   'Lesser Occipital Nerve': 'Lesser Occipital Nerve Point',
   'Allergy Area': 'Allergic Area',
   'Gallbladder': 'Gall Bladder',
+  'Pancreas': 'Pancreas / Gallbladder',
   'Face and Cheek': 'Face & Cheek Area',
   'Lower BP Point': 'Decrease Blood Pressure Point',
   'Raise BP Point': 'Raising Blood Pressure Point',
   'Tinnitus Groove': 'Groove of Tinnitus',
   'Vision 2': 'Vision II',
+  'Eye Disorder 1': 'Vision I',
+  'Eye Disorder 2': 'Vision II',
+  'Cervical Vertebrae': 'Cervix Vertebrae',
   'Tragus Apex': 'Tragic Apex',
   'Helix 1–6': 'Helix 1-6',
   'Breast': 'Mammary Gland',
@@ -133,12 +138,12 @@ const matches = (f, q) =>
   f.addOns?.some(a => a.toLowerCase().includes(q))
 
 // Formula dropdown: a search field over the formulas, grouped by family.
-function FormulaMenu({ selected, onSelect }) {
+function FormulaMenu({ formulas, selected, onSelect }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const rootRef = useRef(null)
   const q = query.trim().toLowerCase()
-  const families = EAR_FORMULAS
+  const families = formulas
     .map(fam => ({ ...fam, formulas: q ? fam.formulas.filter(f => matches(f, q)) : fam.formulas }))
     .filter(fam => fam.formulas.length > 0)
 
@@ -196,8 +201,8 @@ function FormulaMenu({ selected, onSelect }) {
   )
 }
 
-// The Chinese Auriculotherapy ear with a formula's points kept bright and
-// numbered; every other point fades back. `focus` (a diagram name) pulses.
+// The Chinese Auriculotherapy ear showing only a formula's points,
+// numbered; the other points are hidden. `focus` (a diagram name) pulses.
 function FormulaDiagram({ points, focus, onFocus }) {
   const hostRef = useRef(null)
   const [marks, setMarks] = useState([])
@@ -214,10 +219,10 @@ function FormulaDiagram({ points, focus, onFocus }) {
       const name = groupOf(point)
       const el = svg.querySelector(`[id="${elId}"]`)
       if (!el) continue
-      el.style.transition = 'opacity 150ms ease'
       el.style.cursor = numbers.has(name) ? 'pointer' : ''
       el.dataset.formulaPoint = numbers.has(name) ? name : ''
-      el.style.opacity = numbers.size && !numbers.has(name) ? '0.2' : ''
+      // Only the formula's points are shown (all of them before one is picked).
+      el.style.display = numbers.size && !numbers.has(name) ? 'none' : ''
       // One number per point, on the first element found.
       if (numbers.has(name) && !seen.has(name)) {
         seen.add(name)
@@ -359,7 +364,9 @@ function FormulaDetails({ formula, points, focus, onFocus }) {
   )
 }
 
-export function EarFormulas() {
+// Formula picker beside the ear diagram. `intro` shows until a formula is
+// picked; `footer` always shows under it.
+function FormulaPage({ formulas, intro, footer }) {
   const [formula, setFormula] = useState(null)
   const [focus, setFocus] = useState(null)
   const points = useMemo(() => (formula ? formulaPoints(formula) : []), [formula])
@@ -369,24 +376,10 @@ export function EarFormulas() {
       <div className="flex flex-col md:flex-row gap-4 md:h-full">
         {/* Menu + details */}
         <div className="md:w-80 lg:w-96 flex-shrink-0 bg-white dark:bg-gray-950 rounded-lg shadow p-4 md:overflow-y-auto scroll-touch">
-          <FormulaMenu selected={formula} onSelect={f => { setFormula(f); setFocus(null) }} />
+          <FormulaMenu formulas={formulas} selected={formula} onSelect={f => { setFormula(f); setFocus(null) }} />
           <div className="mt-4">
-            {formula ? (
-              <FormulaDetails formula={formula} points={points} focus={focus} onFocus={setFocus} />
-            ) : (
-              <>
-                <p className={`${BODY} mb-3`}>Pick a formula to see its points and add-ons, and where they are on the ear.</p>
-                <ul className="space-y-1.5 mb-3">
-                  {EAR_FORMULA_KEY_TERMS.map(t => (
-                    <li key={t.label} className="text-xs leading-relaxed text-black dark:text-gray-300">
-                      <span className="font-semibold">{t.label}{t.label === 'Bleed' && <span className="ml-1 text-red-600 dark:text-red-400">●</span>}:</span> {t.text}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-            <Safety text={EAR_FORMULA_SAFETY} />
-            <Source id="huang-auriculotherapy" />
+            {formula ? <FormulaDetails formula={formula} points={points} focus={focus} onFocus={setFocus} /> : intro}
+            {footer}
           </div>
         </div>
 
@@ -398,5 +391,70 @@ export function EarFormulas() {
         </div>
       </div>
     </div>
+  )
+}
+
+export function EarFormulas() {
+  return (
+    <FormulaPage
+      formulas={EAR_FORMULAS}
+      intro={
+        <>
+          <p className={`${BODY} mb-3`}>Pick a formula to see its points and add-ons, and where they are on the ear.</p>
+          <ul className="space-y-1.5 mb-3">
+            {EAR_FORMULA_KEY_TERMS.map(t => (
+              <li key={t.label} className="text-xs leading-relaxed text-black dark:text-gray-300">
+                <span className="font-semibold">{t.label}{t.label === 'Bleed' && <span className="ml-1 text-red-600 dark:text-red-400">●</span>}:</span> {t.text}
+              </li>
+            ))}
+          </ul>
+        </>
+      }
+      footer={<><Safety text={EAR_FORMULA_SAFETY} /><Source id="huang-auriculotherapy" /></>}
+    />
+  )
+}
+
+function GuideList({ title, items, ordered }) {
+  const List = ordered ? 'ol' : 'ul'
+  return (
+    <>
+      <h3 className={`${H2} mt-4`}>{title}</h3>
+      <List className={`${ordered ? 'list-decimal' : 'list-disc'} pl-5 space-y-1 mb-2`}>
+        {items.map(t => <li key={t} className="text-xs leading-relaxed text-black dark:text-gray-300">{t}</li>)}
+      </List>
+    </>
+  )
+}
+
+// Ear Seeds: needle-free home formulas for beginners. Until a formula is
+// picked, the panel shows how to use ear seeds; after, a short care reminder.
+export function EarSeeds() {
+  const g = EAR_SEEDS_GUIDE
+  return (
+    <FormulaPage
+      formulas={EAR_SEED_FORMULAS}
+      intro={
+        <>
+          <h2 className="text-lg font-bold text-black dark:text-white mb-2">Ear Seeds</h2>
+          {g.intro.map(t => <p key={t} className={`${BODY} mb-2`}>{t}</p>)}
+          <p className={`${BODY} mb-1`}>Pick a condition above to see which points to seed.</p>
+          <GuideList title="Why ear seeds" items={g.benefits} />
+          <h3 className={`${H2} mt-4`}>You will need</h3>
+          <p className="text-xs leading-relaxed text-black dark:text-gray-300 mb-2">{g.supplies}</p>
+          <GuideList title="How to apply" items={g.apply} ordered />
+          <GuideList title="Daily care" items={g.care} />
+          <GuideList title="Precautions" items={g.precautions} />
+        </>
+      }
+      footer={
+        <>
+          <p className="text-xs leading-relaxed text-gray-600 dark:text-gray-400 mt-2">
+            Massage each seed 3–5 times a day for 30–60 seconds. Remove after 2–4 days and switch ears.
+          </p>
+          <Safety text={EAR_SEEDS_SAFETY} />
+        </>
+      }
+    />
   )
 }

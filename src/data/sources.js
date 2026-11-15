@@ -6,6 +6,13 @@ export const SOURCES = {
     title: 'Auriculotherapy Diagnosis and Treatment',
     author: 'Dr Li-Chun Huang, MD, O.M.D.',
   },
+  'chen-single-point': {
+    title: '100 Diseases Treated by Single Point of Acupuncture and Moxibustion',
+    author: 'Chen Decheng',
+    publisher: 'Foreign Languages Press, Beijing',
+    year: 2001,
+    isbn: '7-119-02744-1',
+  },
   'zhu-color-atlas': {
     title: "Color Atlas of Zhu's Scalp Acupuncture",
     series: "Zhu's Scalp Acupuncture Clinical Series",

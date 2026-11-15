@@ -18,7 +18,7 @@ DOCX, POINTS_JS, OUT = sys.argv[1:4]
 
 # App point name -> book heading (without its number), where they differ.
 ALIASES = {
-    'Sympathetic (sympathy)': 'Sympathetic',
+    'Sympathetic Nerve': 'Sympathetic',
     'Lesser Occipital Nerve Point': 'Lesser Occipital Nerve',
     'Auricular Temporal Nerve': 'Auriculotemporal Nerve',
     'Thyroid Gland': 'Thyroid',
@@ -38,6 +38,7 @@ ALIASES = {
     'Splenomegaly Area': 'Enlarged Spleen Area',
     'Groove of Hypotension': 'Low Blood Pressure Groove',
     'Gall Bladder': 'Gallbladder',
+    'Pancreas / Gallbladder': 'Pancreas',
     'Esophagus': 'Oesophagus',
     'Cardiac': 'Cardia',
     'Face & Cheek Area': 'Face and Cheek',

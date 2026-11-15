@@ -1,7 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import EarMusculoskeletalSvg from '../../assets/diagrams/ear-musculoskeletal.svg?react'
-import EarInternalOrgansSvg from '../../assets/diagrams/ear-internal-organs.svg?react'
 import EarTcmSvg from '../../assets/diagrams/ear-chin-3.svg?react'
 import EarTurnedSvg from '../../assets/diagrams/ear-11.svg?react'
 import EarPosteriorSvg from '../../assets/diagrams/posterior-ear.svg?react'
@@ -11,31 +9,28 @@ import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 import { AURICULOTHERAPY_CATEGORIES, AURICULOTHERAPY_POINTS } from '../../data/earAuriculotherapy'
-import { AURICULOTHERAPY_INFO } from '../../data/earAuriculotherapyInfo'
-import { TILE_TITLES, MSK_GROUPS, MSK_SVG_IDS, MSK_LINE_IDS, ORG_GROUPS, ORG_SVG_IDS, MASTER_LINE_IDS, MASTER_SVG_IDS, POSTERIOR_SVG_IDS, TURNED_SVG_IDS, WESTERN_CATEGORIES, WESTERN_POINTS, WESTERN_SVG_IDS } from '../../data/earPoints'
+import { earPointInfo } from '../../data/earPointInfo'
+import { TILE_TITLES, MSK_GROUPS, MSK_LINE_IDS, MASTER_LINE_IDS, MASTER_SVG_IDS, POSTERIOR_SVG_IDS, TURNED_SVG_IDS, WESTERN_CATEGORIES, WESTERN_POINTS, WESTERN_SVG_IDS } from '../../data/earPoints'
 import { TOUCH_REACH, targetAt } from './touchHit'
 
-// 2x2 grid, row-major (same layout as Basic Points):
-// Master | Musculoskeletal / Internal Organs | Western.
-const TILE_IDS = ['master', 'musculoskeletal', 'internal', 'western']
+// One row of two tiles: Chinese Auriculotherapy | Western Auriculotherapy.
+const TILE_IDS = ['master', 'western']
 
 // An optional drawing a tile can switch on and off: every group whose id
 // starts with `prefix`, except groups holding clickable points (the
 // homunculus-spine group draws the four spine points, which stay visible).
 const HOMUNCULUS_LAYER = { prefix: 'homunculus-', label: 'Homunculus' }
 
-// Tiles whose diagram has clickable points, with their dropdown groups.
+// Tiles whose diagram has clickable points.
 // lineWidth/lineStroke style a selected line; hitWidth widens lines too thin to
-// click. `searchable` tiles use SearchablePointMenu, listing `points` (A-Z,
-// with their categories) and filtering by `categories`, instead of groups.
+// click. Tiles use SearchablePointMenu, listing `points` (A-Z, with their
+// categories) and filtering by `categories`.
 const POINT_TILES = {
-  master: { Svg: EarTcmSvg, searchable: true, filterDiagram: true, points: AURICULOTHERAPY_POINTS, categories: AURICULOTHERAPY_CATEGORIES, svgIds: MASTER_SVG_IDS, lineIds: MASTER_LINE_IDS, lineWidth: '5', lineStroke: '#000000', hitWidth: 20 },
-  musculoskeletal: { Svg: EarMusculoskeletalSvg, groups: MSK_GROUPS, svgIds: MSK_SVG_IDS, lineIds: MSK_LINE_IDS, lineWidth: '16', layer: HOMUNCULUS_LAYER },
-  internal: { Svg: EarInternalOrgansSvg, groups: ORG_GROUPS, svgIds: ORG_SVG_IDS, lineIds: new Set() },
+  master: { Svg: EarTcmSvg, filterDiagram: true, points: AURICULOTHERAPY_POINTS, categories: AURICULOTHERAPY_CATEGORIES, svgIds: MASTER_SVG_IDS, lineIds: MASTER_LINE_IDS, lineWidth: '5', lineStroke: '#000000', hitWidth: 20 },
   // filterDiagram: picking a category also hides the other categories' points on the diagram.
   // layerAuto: the homunculus starts off and comes on by itself while the
   // Musculoskeletal filter or one of its points is selected.
-  western: { Svg: EarWesternSvg, searchable: true, filterDiagram: true, layerAuto: { category: 'Musculoskeletal', points: new Set(MSK_GROUPS.flatMap(g => g.points)) }, points: WESTERN_POINTS, categories: WESTERN_CATEGORIES, svgIds: WESTERN_SVG_IDS, lineIds: MSK_LINE_IDS, lineWidth: '16', layer: HOMUNCULUS_LAYER },
+  western: { Svg: EarWesternSvg, filterDiagram: true, layerAuto: { category: 'Musculoskeletal', points: new Set(MSK_GROUPS.flatMap(g => g.points)) }, points: WESTERN_POINTS, categories: WESTERN_CATEGORIES, svgIds: WESTERN_SVG_IDS, lineIds: MSK_LINE_IDS, lineWidth: '16', layer: HOMUNCULUS_LAYER },
 }
 for (const tile of Object.values(POINT_TILES)) {
   tile.drawn = new Set(Object.values(tile.svgIds))
@@ -76,88 +71,6 @@ const TRANSITION_STYLE = `
 const NO_POINTS = new Set()
 
 const FILL = { position: 'absolute', inset: 0, width: '100%', height: '100%' }
-
-// Point dropdown, same shape as AreaMenu in HeadZSAPoints.jsx, with the
-// txt file's groups as headings. Points not drawn yet are listed but greyed.
-function PointMenu({ tile, title, activePoint, menuOpen, compact, onToggle, onSelect, onReset }) {
-  const dropdownRef = useRef(null)
-
-  // Native wheel-stop so the page doesn't scroll under the dropdown.
-  useEffect(() => {
-    const el = dropdownRef.current
-    if (!menuOpen || !el) return
-    function onWheel(e) {
-      e.preventDefault()
-      e.stopPropagation()
-      el.scrollTop += e.deltaY
-    }
-    el.addEventListener('wheel', onWheel, { passive: false })
-    return () => el.removeEventListener('wheel', onWheel)
-  }, [menuOpen])
-
-  return (
-    <div onClick={e => e.stopPropagation()}>
-      <div className="flex items-center gap-1.5">
-        {/* Button and dropdown share one grid column, sized by MenuSizer,
-            so both are as wide as the longest point name. */}
-        <div className="relative grid">
-          <button type="button" onClick={onToggle} className={`${TRIGGER_CLASS(!!activePoint || menuOpen)} flex justify-between text-left`}>
-            {activePoint ?? title}
-            <span className="ml-1">{menuOpen ? '▲' : '▼'}</span>
-          </button>
-          <MenuSizer labels={[
-            title,
-            ...tile.groups.flatMap(group => [
-              <span className="text-[10px] font-bold uppercase tracking-wide">{group.label}</span>,
-              ...group.points,
-            ]),
-          ]} />
-
-          {menuOpen && (
-            <div
-              ref={dropdownRef}
-              className={`scroll-touch absolute top-full left-0 right-0 mt-1 py-1 ${GLASS_DROPDOWN} overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
-            >
-              {tile.groups.map(group => (
-                <div key={group.label}>
-                  <div className="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wide text-gray-400">{group.label}</div>
-                  {group.points.map(name => (
-                    tile.drawn.has(name) ? (
-                      <button key={name} type="button" onClick={() => onSelect(name)} className={DROPDOWN_ITEM_CLASS(activePoint === name)}>
-                        {name}
-                      </button>
-                    ) : (
-                      <div key={name} className="px-3 py-1.5 text-xs font-semibold text-gray-300 dark:text-gray-600 cursor-default">
-                        {name}
-                      </div>
-                    )
-                  ))}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        {activePoint && (
-          <button
-            type="button"
-            onClick={onReset}
-            aria-label="Clear selection"
-            className="flex items-center justify-center w-5 h-5 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm transition duration-150 ease-out hover:scale-110 active:scale-90"
-          >
-            <CrossIcon size={10} strokeWidth={4} />
-          </button>
-        )}
-      </div>
-    </div>
-  )
-}
-
-// Description card for a point on a tile (only the Chinese Auriculotherapy
-// tile has descriptions so far), or null.
-function earPointInfo(tileId, name) {
-  return tileId === 'master' && name ? AURICULOTHERAPY_INFO[name] ?? null : null
-}
-
 
 // A point name with the searched letters highlighted.
 function MatchedName({ name, query }) {
@@ -328,9 +241,6 @@ function SearchablePointMenu({ tile, title, activePoint, menuOpen, category, onC
     </div>
   )
 }
-
-// Cropped from the 794x1123 A4 page to the ear itself (same page for every ear diagram).
-const MSK_VIEWBOX = { x: 70, y: 50, w: 660, h: 1030 }
 
 // Pulsing ring + name label sizes, in ear diagram units. Their dots
 // are r=15 (vs r~7 on the Basic Points heads), so HeadLateral's ring/label
@@ -517,8 +427,6 @@ function pointView(id, name, current) {
 // Unmagnified crop of each tile's diagram.
 const TILE_BOXES = {
   master: TCM_VIEWBOX,
-  musculoskeletal: MSK_VIEWBOX,
-  internal: MSK_VIEWBOX,
   western: WESTERN_VIEWBOX,
 }
 
@@ -750,30 +658,17 @@ function renderTileContent(id, { soloPoints, activePoints, onPointSelect, onPoin
       {tile && (
         <div className="absolute left-0 right-0 top-0 px-3 pt-3 z-20 pointer-events-none">
           <div className="w-fit max-w-full pointer-events-auto" onClick={e => e.stopPropagation()}>
-            {tile.searchable ? (
-              <SearchablePointMenu
-                tile={tile}
-                title={TILE_TITLES[id]}
-                activePoint={activePoint}
-                menuOpen={menuOpenId === id}
-                category={category}
-                onCategoryChange={label => onCategoryChange(id, label)}
-                onToggle={() => onMenuToggle(id)}
-                onSelect={(name, fromMenu) => onPointSelect(id, name, fromMenu)}
-                onReset={() => onPointClear(id)}
-              />
-            ) : (
-              <PointMenu
-                tile={tile}
-                title={TILE_TITLES[id]}
-                activePoint={activePoint}
-                menuOpen={menuOpenId === id}
-                compact={!expanded}
-                onToggle={() => onMenuToggle(id)}
-                onSelect={name => onPointSelect(id, name)}
-                onReset={() => onPointClear(id)}
-              />
-            )}
+            <SearchablePointMenu
+              tile={tile}
+              title={TILE_TITLES[id]}
+              activePoint={activePoint}
+              menuOpen={menuOpenId === id}
+              category={category}
+              onCategoryChange={label => onCategoryChange(id, label)}
+              onToggle={() => onMenuToggle(id)}
+              onSelect={(name, fromMenu) => onPointSelect(id, name, fromMenu)}
+              onReset={() => onPointClear(id)}
+            />
           </div>
         </div>
       )}
@@ -905,7 +800,7 @@ export default function HeadEarPoints({ pick = null, onPointSelect = null }) {
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
-          gridTemplateRows: '1fr 1fr',
+          gridTemplateRows: '1fr',
           gap: '1rem',
           width: '100%',
           height: '100%',

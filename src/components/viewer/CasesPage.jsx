@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CASES, caseText } from '../../data/cases'
+import { CASES, POINT_WARNINGS, caseText } from '../../data/cases'
 import { SOURCES } from '../../data/sources'
 
 // The "Cases" tab: a searchable list of articles beside the open article.
@@ -8,6 +8,19 @@ import { SOURCES } from '../../data/sources'
 
 const H2 = 'text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 mt-5'
 const BODY = 'text-black dark:text-gray-300 text-sm leading-relaxed'
+
+// Small yellow warning triangle with an "!".
+function WarningIcon({ className = 'w-4 h-4' }) {
+  return (
+    <svg viewBox="0 0 24 24" className={`inline-block flex-shrink-0 ${className}`} aria-hidden="true">
+      <path d="M12 2.5 L22.5 21 H1.5 Z" fill="#facc15" stroke="#a16207" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M12 9v5.5" stroke="#000" strokeWidth="2.2" strokeLinecap="round" />
+      <circle cx="12" cy="17.6" r="1.3" fill="#000" />
+    </svg>
+  )
+}
+
+const hasWarnings = c => c.points?.some(p => p.warnings?.length)
 
 function CaseList({ selectedId, onSelect }) {
   const [query, setQuery] = useState('')
@@ -35,9 +48,12 @@ function CaseList({ selectedId, onSelect }) {
               }`}
             >
               {c.title}
+              {hasWarnings(c) && (
+                <span title="Has a point with a safety warning"><WarningIcon className="w-3.5 h-3.5 ml-1.5 -mt-0.5" /></span>
+              )}
               {c.points?.length > 0 && (
                 <span className="block text-[11px] font-normal text-gray-500 dark:text-gray-400">
-                  {c.points.map(p => `${p.name} (${p.code})`).join(', ')}
+                  {c.points.map(p => (p.code ? `${p.name} (${p.code})` : p.name)).join(', ')}
                 </span>
               )}
             </button>
@@ -66,8 +82,13 @@ function Article({ c }) {
         <>
           <h2 className={H2}>{c.points.length > 1 ? 'Points' : 'Point'}</h2>
           {c.points.map(p => (
-            <div key={p.code} className="mb-2">
-              <p className="text-sm font-bold text-black dark:text-gray-100">{p.name} <span className="text-amber-600 dark:text-amber-400">({p.code})</span></p>
+            <div key={p.name} className="mb-2">
+              <p className="text-sm font-bold text-black dark:text-gray-100">{p.name}{p.code && <span className="text-amber-600 dark:text-amber-400"> ({p.code})</span>}</p>
+              {p.warnings?.map(w => (
+                <p key={w} className="flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400 my-1">
+                  <WarningIcon />{POINT_WARNINGS[w]}
+                </p>
+              ))}
               {p.location && <p className={BODY}><span className="font-semibold">Location: </span>{p.location}</p>}
             </div>
           ))}
@@ -119,6 +140,7 @@ function Article({ c }) {
       {src && (
         <p className="text-gray-500 text-xs leading-relaxed mt-6">
           Reference: <span className="italic">{src.title}</span> by {src.author}
+          {src.publisher && `, ${src.publisher}`}{src.year && `, ${src.year}`}.
         </p>
       )}
     </article>

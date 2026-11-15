@@ -6,7 +6,7 @@ export const AURICULOTHERAPY_CATEGORIES = [
     label: 'Nervous System',
     short: 'Nervous',
     points: [
-      'Shenmen', 'Occiput', 'Forehead', 'Temple', 'Subcortex', 'Sympathetic (sympathy)', 'Brain Stem',
+      'Shenmen', 'Occiput', 'Forehead', 'Temple', 'Subcortex', 'Sympathetic Nerve', 'Brain Stem',
       'Lesser Occipital Nerve Point', 'Sciatic Nerve', 'Thalamus', 'Exciting Point', 'Neurasthenia Area',
       'Neurasthenia Point', 'Great Auricular Nerve',
       'Ear Centre', 'External Sympathetic',
@@ -15,7 +15,7 @@ export const AURICULOTHERAPY_CATEGORIES = [
   {
     label: 'Endocrine System',
     short: 'Endocrine',
-    points: ['Brain Point', 'Endocrine', 'Adrenal Gland', 'Pancreas', 'Thyroid Gland', 'Ovary', 'Testicle', 'Prostate'],
+    points: ['Brain Point', 'Endocrine', 'Adrenal Gland', 'Pancreas / Gallbladder', 'Thyroid Gland', 'Ovary', 'Testicle', 'Prostate'],
   },
   {
     label: 'Special Points',

@@ -1,5 +1,5 @@
 <svg width="1207" height="1249" viewBox="0 0 1207 1249" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="ear-chin-3">
+<g id="ear-chin-3" clip-path="url(#clip0_19_9)">
 <rect width="1207" height="1249" fill="white"/>
 <g id="lobe lines">
 <path id="Line 11" d="M340 947.5H341.982M776 947.5H774.018M345.945 947.5H349.909M353.873 947.5H357.836M361.8 947.5H365.764M369.727 947.5H373.691M377.655 947.5H381.618M385.582 947.5H389.545M393.509 947.5H397.473M401.436 947.5H405.4M409.364 947.5H413.327M417.291 947.5H421.255M425.218 947.5H429.182M433.145 947.5H437.109M441.073 947.5H445.036M449 947.5H452.964M456.927 947.5H460.891M464.855 947.5H468.818M472.782 947.5H476.745M480.709 947.5H484.673M488.636 947.5H492.6M496.564 947.5H500.527M504.491 947.5H508.455M512.418 947.5H516.382M520.346 947.5H524.309M528.273 947.5H532.236M536.2 947.5H540.164M544.127 947.5H548.091M552.055 947.5H556.018M559.982 947.5H563.946M567.909 947.5H571.873M575.836 947.5H579.8M583.764 947.5H587.727M591.691 947.5H595.655M599.618 947.5H603.582M607.546 947.5H611.509M615.473 947.5H619.436M623.4 947.5H627.364M631.327 947.5H635.291M639.255 947.5H643.218M647.182 947.5H651.145M655.109 947.5H659.073M663.036 947.5H667M670.964 947.5H674.927M678.891 947.5H682.854M686.818 947.5H690.782M694.745 947.5H698.709M702.672 947.5H706.636M710.6 947.5H714.563M718.527 947.5H722.491M726.454 947.5H730.418M734.381 947.5H738.345M742.309 947.5H746.272M750.236 947.5H754.2M758.163 947.5H762.127M766.09 947.5H770.054" stroke="#737373"/>
@@ -92,7 +92,7 @@
 <circle id="Thirst Point" cx="401.5" cy="705.5" r="7.5" fill="black"/>
 <circle id="Adrenal Gland" cx="423.5" cy="752.5" r="7.5" fill="black"/>
 <circle id="Appex of the Tragus" cx="416.5" cy="681.5" r="7.5" fill="black"/>
-<circle id="Vision 1" cx="374.5" cy="888.5" r="7.5" fill="black"/>
+<circle id="Vision 1" cx="380.5" cy="883.5" r="7.5" fill="black"/>
 <circle id="External Nose" cx="374.5" cy="728.5" r="7.5" fill="black"/>
 <circle id="Hunger Point" cx="401.5" cy="738.5" r="7.5" fill="black"/>
 <path id="Throat" d="M422.5 651C425.963 651 428.908 653.226 430 656.333H426.211V661.667H430C428.908 664.774 425.963 667 422.5 667C419.037 667 416.092 664.774 415 661.667H418.789V656.333H415C416.092 653.226 419.037 651 422.5 651Z" fill="#4A9EF7"/>
@@ -116,14 +116,14 @@
 <path id="Exciting" d="M571.5 857C574.963 857 577.908 859.226 579 862.333H575.211V867.667H579C577.908 870.774 574.963 873 571.5 873C568.037 873 565.092 870.774 564 867.667H567.789V862.333H564C565.092 859.226 568.037 857 571.5 857Z" fill="#4A9EF7"/>
 <circle id="Wisdom Teeth" cx="706.5" cy="888.5" r="7.5" fill="black"/>
 <circle id="Internal Ear" cx="635.5" cy="1043.5" r="7.5" fill="black"/>
-<circle id="Vision 2" cx="457.5" cy="928.5" r="7.5" fill="black"/>
-<circle id="Ovary" cx="443.5" cy="920.5" r="7.5" fill="black"/>
+<circle id="Vision 2" cx="464.5" cy="924.5" r="7.5" fill="black"/>
+<circle id="Ovary" cx="441.5" cy="927.5" r="7.5" fill="black"/>
 <circle id="Lower Palate" cx="530.5" cy="948.5" r="7.5" fill="black"/>
 <circle id="Tongue" cx="562.5" cy="971.5" r="7.5" fill="black"/>
 <circle id="Upper Palate" cx="587.5" cy="994.5" r="7.5" fill="black"/>
 <circle id="Tonsil" cx="503.5" cy="1121.5" r="7.5" fill="black"/>
 <circle id="Anxious Point" cx="414.5" cy="1121.5" r="7.5" fill="black"/>
-<circle id="Raise Blood Pressure" cx="384.5" cy="932.5" r="7.5" fill="black"/>
+<circle id="Raise Blood Pressure" cx="392.5" cy="931.5" r="7.5" fill="black"/>
 <circle id="Tooth" cx="381.5" cy="990.5" r="7.5" fill="black"/>
 <circle id="Neurasthenia Point" cx="399.5" cy="1043.5" r="7.5" fill="black"/>
 <g id="Cheek" opacity="0.4">
@@ -169,11 +169,13 @@
 <path d="M733.482 723.595C733.691 722.537 733.894 721.46 734.094 720.365L730.844 720.365M732.108 730.005C731.596 732.205 731.06 734.323 730.499 736.369M728.623 742.655C727.932 744.791 727.207 746.848 726.449 748.841M723.951 754.91C723.052 756.938 722.111 758.905 721.128 760.831M717.995 766.594C716.906 768.484 715.772 770.347 714.591 772.202M710.969 777.671C710.355 778.566 709.73 779.464 709.094 780.365C708.281 779.9 707.398 779.413 706.501 778.93M701.243 776.19C699.674 775.395 698.594 774.865 698.594 774.865C699.226 774.073 699.841 773.284 700.44 772.499M703.964 767.66C705.133 765.974 706.227 764.304 707.252 762.649M710.26 757.468C711.234 755.672 712.129 753.889 712.95 752.117M715.289 746.6C716.017 744.706 716.667 742.82 717.246 740.938M718.811 735.156C719.27 733.2 719.66 731.244 719.989 729.282M720.807 723.348C720.915 722.356 721.01 721.362 721.094 720.365L724.344 720.365" stroke-linecap="round" stroke="#737373"/>
 </g>
 </g>
+<circle id="Stomach" cx="571.5" cy="660.5" r="7.5" fill="black"/>
+<circle id="Cardiac" cx="546.5" cy="658.5" r="7.5" fill="black"/>
+<circle id="Esophagus" cx="519.5" cy="655.5" r="7.5" fill="black"/>
+<circle id="Mouth" cx="467.5" cy="643.5" r="7.5" fill="black"/>
 </g>
 <g id="Upper Crus of Helix">
-<circle id="Sympathetic" cx="404.5" cy="418.5" r="7.5" fill="black"/>
 <circle id="External Genitals" cx="344.5" cy="411.5" r="7.5" fill="black"/>
-<circle id="External Sympathetic" cx="284.5" cy="404.5" r="7.5" fill="black"/>
 <circle id="Siatic" cx="474.5" cy="451.5" r="7.5" fill="black"/>
 <circle id="Hip" cx="550.5" cy="455.5" r="7.5" fill="black"/>
 <circle id="Shenmen" cx="531.5" cy="347.5" r="7.5" fill="black"/>
@@ -225,15 +227,6 @@
 <g id="Superior Concha">
 <circle id="Prostate" cx="411.5" cy="459.5" r="7.5" fill="black"/>
 <circle id="Urethra" cx="361.5" cy="466.5" r="7.5" fill="black"/>
-<circle id="Anus" cx="405.5" cy="204.5" r="7.5" fill="black"/>
-<circle id="Ear Apex" cx="599.5" cy="88.5" r="7.5" fill="black"/>
-<circle id="Helix 6" cx="503.5" cy="1172.5" r="7.5" fill="black"/>
-<circle id="Helix 5" cx="671.5" cy="1071.5" r="7.5" fill="black"/>
-<circle id="Helix 4" cx="869.5" cy="827.5" r="7.5" fill="black"/>
-<path id="Helix  3" d="M945 663.5C945 667.642 941.642 671 937.5 671C933.358 671 930 667.642 930 663.5C930 659.358 933.358 656 937.5 656C941.642 656 945 659.358 945 663.5Z" fill="black"/>
-<circle id="Helix  2" cx="937.5" cy="470.5" r="7.5" fill="black"/>
-<circle id="Helix  1" cx="877.5" cy="253.5" r="7.5" fill="black"/>
-<circle id="Liver Yang" cx="824.5" cy="268.5" r="7.5" fill="black"/>
 <circle id="Bladder" cx="458.5" cy="480.5" r="7.5" fill="black"/>
 <circle id="Ureter" cx="501.5" cy="488.5" r="7.5" fill="black"/>
 <g id="Abdominal Distention Area">
@@ -250,18 +243,14 @@
 <circle id="Liver" cx="624.5" cy="531.5" r="7.5" fill="black"/>
 <circle id="Bilary Duct" cx="598.5" cy="574.5" r="7.5" fill="black"/>
 <circle id="Duodendum" cx="582.5" cy="611.5" r="7.5" fill="black"/>
-<circle id="Stomach" cx="596.5" cy="636.5" r="7.5" fill="black"/>
-<circle id="Stomach_2" cx="571.5" cy="660.5" r="7.5" fill="black"/>
-<circle id="Cardiac" cx="546.5" cy="658.5" r="7.5" fill="black"/>
-<circle id="Esophagus" cx="519.5" cy="655.5" r="7.5" fill="black"/>
-<circle id="Mouth" cx="467.5" cy="643.5" r="7.5" fill="black"/>
+<circle id="Stomach_2" cx="596.5" cy="636.5" r="7.5" fill="black"/>
 <circle id="Diaphram" cx="480.5" cy="592.5" r="7.5" fill="black"/>
 <circle id="Ear Center" cx="525.5" cy="637.5" r="7.5" fill="black"/>
 <circle id="Small Intestine" cx="530.5" cy="582.5" r="7.5" fill="black"/>
 <circle id="Appendix" cx="495.5" cy="559.5" r="7.5" fill="black"/>
 <circle id="Large Intestine" cx="460.5" cy="536.5" r="7.5" fill="black"/>
 <circle id="Rectum" cx="406.5" cy="535.5" r="7.5" fill="black"/>
-<path id="Pancreas" d="M591.5 492C594.963 492 597.908 494.226 599 497.333H595.211V502.667H599C597.908 505.774 594.963 508 591.5 508C588.037 508 585.092 505.774 584 502.667H587.789V497.333H584C585.092 494.226 588.037 492 591.5 492Z" fill="#4A9EF7"/>
+<path id="Pancreas / Gallbladder" d="M591.5 492C594.963 492 597.908 494.226 599 497.333H595.211V502.667H599C597.908 505.774 594.963 508 591.5 508C588.037 508 585.092 505.774 584 502.667H587.789V497.333H584C585.092 494.226 588.037 492 591.5 492Z" fill="#4A9EF7"/>
 </g>
 <g id="Nervous system">
 <circle id="Decrease Blood Pressure Point" cx="418.5" cy="264.5" r="7.5" fill="black"/>
@@ -297,6 +286,19 @@
 <path d="M659.923 227.756L678.496 212.26L711.997 248.139L694.065 264.507L659.923 227.756Z" fill="#D9D9D9"/>
 <path d="M676.174 214.197L678.496 212.26L680.589 214.503M671.531 218.071L666.888 221.945M662.245 225.819L659.923 227.756L662.057 230.053M666.325 234.647L670.593 239.241M674.86 243.835L679.128 248.429M683.396 253.023L687.664 257.617M691.931 262.211L694.065 264.507L696.307 262.461M700.789 258.369L705.272 254.277M709.755 250.185L711.997 248.139L709.903 245.897M705.715 241.412L701.527 236.927M697.34 232.442L693.152 227.957M688.965 223.472L684.777 218.988" stroke="#737373"/>
 </g>
+</g>
+<g id="Helix">
+<circle id="Liver Yang" cx="824.5" cy="268.5" r="7.5" fill="black"/>
+<circle id="External Sympathetic" cx="284.5" cy="404.5" r="7.5" fill="black"/>
+<path id="Sympathetic Nerve" d="M353.5 376C356.963 376 359.908 378.226 361 381.333H357.211V386.667H361C359.908 389.774 356.963 392 353.5 392C350.037 392 347.092 389.774 346 386.667H349.789V381.333H346C347.092 378.226 350.037 376 353.5 376Z" fill="#4A9EF7"/>
+<circle id="Anus" cx="405.5" cy="204.5" r="7.5" fill="black"/>
+<circle id="Ear Apex" cx="599.5" cy="88.5" r="7.5" fill="black"/>
+<circle id="Helix 6" cx="503.5" cy="1172.5" r="7.5" fill="black"/>
+<circle id="Helix 5" cx="671.5" cy="1071.5" r="7.5" fill="black"/>
+<circle id="Helix 4" cx="869.5" cy="827.5" r="7.5" fill="black"/>
+<path id="Helix  3" d="M945 663.5C945 667.642 941.642 671 937.5 671C933.358 671 930 667.642 930 663.5C930 659.358 933.358 656 937.5 656C941.642 656 945 659.358 945 663.5Z" fill="black"/>
+<circle id="Helix  2" cx="937.5" cy="470.5" r="7.5" fill="black"/>
+<circle id="Helix  1" cx="877.5" cy="253.5" r="7.5" fill="black"/>
 </g>
 </g>
 <defs>
@@ -438,5 +440,8 @@
 <stop offset="0.199374" stop-color="#B6B6B6"/>
 <stop offset="0.770494" stop-color="#505050"/>
 </linearGradient>
+<clipPath id="clip0_19_9">
+<rect width="1207" height="1249" fill="white"/>
+</clipPath>
 </defs>
 </svg>

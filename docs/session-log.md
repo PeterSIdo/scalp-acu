@@ -776,3 +776,110 @@ the app's canonical codes instead:
 - Checked in the browser: crop, Endocrine filter (Western and Chinese),
   homunculus auto-on with Musculoskeletal. Not clicked through: solo point on
   menu pick, Back of Ear / Body Parts after the category move.
+
+---
+
+## 2026-11-15 — Western point texts, Ear Seeds tab, two-card ear grid, Cases
+
+**Status: committed.**
+
+### Western Auriculotherapy point texts
+- New `src/data/earWesternInfo.js` (84 points: musculoskeletal, internal organ,
+  endocrine, nervous system), **generated** by
+  `scripts/build_ear_western_info.py`. Edit the table there and re-run
+  `python scripts/build_ear_western_info.py`; don't hand-edit the .js.
+- Original wording (copyright-free), from commonly taught Nogier / Chinese-map
+  facts — not quoted from a book, so no `source` / Reference line.
+- Sections: Location, Functions & Uses ("Common uses"), Note on (C)/(E) pairs.
+  **28 points have no Location** (most (E) points, Master Shoulder, Lumbago, TMJ,
+  Muscle Relaxation, pituitary hormones, Pineal, brain points) — to fill from
+  the Oleson chart. Uses need a clinical read-through.
+- The 14 "Other Ear Points" in ear-acupoints.txt have no texts yet.
+- New `src/data/earPointInfo.js`: `earPointInfo(tile, name)` returns Huang's
+  card for the Chinese tile, the Western card otherwise. Used by
+  `HeadEarPoints.jsx` and the viewer search (`ViewerPage.jsx`). Kept out of the
+  component file so ESLint's react-refresh rule stays happy.
+
+### Chinese Auriculotherapy renames (follow the re-exported ear-chin-3.svg)
+- **Pancreas → Pancreas / Gallbladder** (Figma id `Pancreas / Gallbladder`):
+  point list, `MASTER_SVG_IDS`, info card key/name, formula name map in
+  `EarGuide.jsx` (`'Pancreas'` → it), `build_ear_info.py` alias (book heading
+  "Pancreas"). The separate Gall Bladder point (id `Gallbladder`) is unchanged.
+- **Sympathetic (sympathy) → Sympathetic Nerve** (Figma id `Sympathetic Nerve`):
+  point list, info card, formula map (`'Sympathetic'` → it), build-script alias.
+  The id now equals the name, so its `MASTER_RENAMES` entry was removed.
+
+### Ear Seeds tab (Auriculotherapy → Ear Seeds)
+- Beginner / home self-treatment version of the formulas, from
+  `docs/Ear Seeds.docx` (text shortened and rephrased). Data in
+  `src/data/earSeeds.js`: `EAR_SEEDS_GUIDE` (intro, benefits, supplies, how to
+  apply, daily care, precautions), `EAR_SEEDS_SAFETY`, `EAR_SEED_FORMULAS`.
+- Dropped the docx's absolute claims ("No side effects", "Safe"); Diabetes
+  formula has a "support only, don't change medication" note.
+- **23 formulas** in 5 families: Well-being, Head & senses, Digestion &
+  metabolism, Women's health, Pain. Edits from the docx list:
+  Anterior Ear Lobe → Neurasthenia Point; Headache / Migraine + Shenmen,
+  Temple, Forehead, Occiput; Menstrual Cramps and Menopause merged;
+  Lumbosacral Vertebrae split into Lumbar + Sacral Vertebrae; "Internal
+  Genital" typo fixed; added Back Pain, Sore Throat, Cold / Flu, Allergies,
+  Toothache.
+- Point names map to diagram names in `EarGuide.jsx` `DIAGRAM_NAMES`
+  (new: Eye Disorder 1/2 → Vision I/II, Cervical Vertebrae → Cervix Vertebrae).
+  Checked: every Ear Seeds point is on the Chinese diagram.
+- `EarGuide.jsx`: the Formulas page became a shared `FormulaPage({ formulas,
+  intro, footer })`; `EarFormulas` and the new `EarSeeds` both use it. Ear
+  Seeds shows the guide until a formula is picked, then a care reminder.
+- `ViewerPage.jsx`: new subgroup `ear-seeds` / view `EarSeeds`.
+
+### Formula diagrams show only the formula's points
+- Formulas and Ear Seeds: once a formula is picked, the other points are hidden
+  (`display: none`) instead of faded to 20%. Before a pick, all points show.
+
+### Ear Points grid: two cards
+- Removed the Musculoskeletal and Internal Organ cards. Grid is one row:
+  Chinese Auriculotherapy | Western Auriculotherapy (`TILE_IDS`,
+  `gridTemplateRows: '1fr'`). Their entries are gone from `TILE_TITLES`,
+  `DRAWN` and `EAR_SEARCH_INDEX`.
+- `MSK_GROUPS` / `ORG_GROUPS` / `*_SVG_IDS` stay — the Western card uses them.
+- Removed dead code: the group-based `PointMenu`, `MSK_VIEWBOX`, the
+  `searchable` flag (every tile is searchable now).
+- Deleted `src/assets/diagrams/ear-musculoskeletal.svg` and
+  `ear-internal-organs.svg` (unreferenced; still in git history if ever needed).
+
+### Notes / open items
+- `vite build` passes. ESLint: the two old `react-refresh` errors in
+  `HeadEarPoints.jsx` (`pointCentre`, `TCM_VIEWBOX`) and four
+  `react-hooks/static-components` errors in `ViewerPage.jsx` remain (pre-existing).
+### Cases: 12 more articles from Chen Decheng's single-point book
+- New source `chen-single-point` in `sources.js`: *100 Diseases Treated by
+  Single Point of Acupuncture and Moxibustion*, Chen Decheng, Foreign Languages
+  Press, Beijing, 2001. Set on **all 15 articles** (Headache, Stiff Neck and
+  Cervical Spondylosis are its sections 1.1, 1.6, 1.7).
+- Stiff Neck (GB 39 / SI 3) and Cervical Spondylosis (Chengshanxia) added from
+  `docs/Cases.docx`; then sections 1.10–1.21 from the PDF: Tennis Elbow,
+  Sprain of Wrist and Ankle, Shoulder and Back Pain, Intercostal Neuralgia,
+  Lumbar Transverse Process Syndrome, Acute Lumbar Muscle Sprain, Chronic
+  Lumbar Muscle Strain, Sciatica, Pain in Lower Back and Leg, Heel Pain, Knee
+  Pain, General Pain. Condensed in our own words, same shape as Headache.
+- Editorial choices: patient names dropped; musk removed from the Tennis Elbow
+  moxibustion; General Pain's "four times more potent than any analgesic"
+  claim dropped; Xiyan named "Xiyan – Eyes of the Knee"; Stiff Neck GB 39
+  total corrected 74 → 47 (sum of its breakdown).
+- Results whose breakdown doesn't match the stated total are kept as printed
+  and marked "(figures as published)": Tennis Elbow moxa (100 vs 105),
+  Shoulder and Back Pain (246 vs 264), Sciatica (44 vs 40), Knee Pain
+  (146 vs 153), General Pain (87 vs 107). To check against the print book.
+- `CasesPage.jsx`: point `code` is optional (Ashi / relative points); the
+  Reference line adds publisher and year.
+- **Point safety warnings:** `POINT_WARNINGS` in `cases.js` — `danger`
+  ("Dangerous point - requires extra caution") and `shallow` ("Deep needling
+  contraindicated - shallow insertion only"); a point lists them in
+  `warnings`. Shown under the point name with a yellow "!" triangle
+  (`WarningIcon`); the case list shows a small triangle on articles that have
+  one. Marked: Fengchi GB 20 (danger), Shangshandian (danger + shallow),
+  Pigen EX-B 4 (danger), Xiyan EX-LE 5 (danger).
+
+### Notes / open items (continued)
+- Not checked in the browser: Western info cards, Ear Seeds tab, two-card grid,
+  hidden points on formula diagrams (check that the ear outline still shows),
+  new Cases articles and warning icons.

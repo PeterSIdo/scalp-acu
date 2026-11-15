@@ -4,8 +4,6 @@ import { AURICULOTHERAPY_POINTS } from './earAuriculotherapy'
 
 export const TILE_TITLES = {
   master: 'Chinese Auriculotherapy',
-  musculoskeletal: 'Musculoskeletal Points',
-  internal: 'Internal Organ Points',
   western: 'Western Auriculotherapy',
 }
 
@@ -18,7 +16,7 @@ export const MSK_GROUPS = [
   { label: 'Other points on this chart', points: ['Muscle Relaxation'] },
 ]
 
-// ear-musculoskeletal.svg element id -> point name. Most ids equal the
+// Musculoskeletal element id -> point name (same ids in western-ear-complet.svg). Most ids equal the
 // point name; the rest are Figma renames/typos. The left leg figure is the
 // European one (Toes (E), Heel (E), Hip (E)), so its "Knee (C)_2" is Knee (E).
 // The two Inner Ear ids are swapped against the source chart: the boxed
@@ -49,7 +47,7 @@ export const ORG_GROUPS = [
   { label: 'Urogenital', points: ['Kidney (C)', 'Kidney (E)', 'Bladder', 'Prostate (C)', 'Uterus (C)', 'Uterus (E)', 'External Genitals (C)', 'External Genitals (E)'] },
 ]
 
-// ear-internal-organs.svg element id -> point name (the intestine ids are lower-case in Figma).
+// Internal organ element id -> point name, as in western-ear-complet.svg (the intestine ids are lower-case in Figma).
 const ORG_RENAMES = {
   'Small intestine': 'Small Intestine',
   'Large intestine': 'Large Intestine',
@@ -73,7 +71,6 @@ const MASTER_RENAMES = {
   'Helix  2': 'Helix 2',
   'Helix  3': 'Helix 3',
   'Stomach_2': 'Stomach',
-  'Sympathetic': 'Sympathetic (sympathy)',
   'Cervical Spine': 'Cervix Vertebrae',
   'Thoracic Spine': 'Thoracic Vertebrae',
   'Lumbar Spine': 'Lumbar Vertebrae',
@@ -134,7 +131,7 @@ export const MASTER_SVG_IDS = Object.fromEntries([
   // Inferior concha
   'Heart', 'Tripple Heater Point', 'Spleen', 'Lung', 'Lung_2', 'San Jiao', 'Bronchus', 'Bronchus_2', 'Trachea', 'Endocrine Area',
   // Upper crus of helix / triangular fossa
-  'Sympathetic', 'External Sympathetic', 'Rectum', 'Anus', 'Urethra', 'Ovary', 'External Genitals', 'Ear Apex',
+  'Sympathetic Nerve', 'External Sympathetic', 'Rectum', 'Anus', 'Urethra', 'Ovary', 'External Genitals', 'Ear Apex',
   'Siatic', 'Hip', 'Shenmen', 'Popliteal Fossa', 'Heel', 'Sole', 'Toe', 'Calf', 'External Knee', 'Hip Joint',
   'Ankle', 'Instep', 'Knee Joint', 'Thigh Muscles Area',
   'Decrease Blood Pressure Point', 'Hepatitis Point', 'Pelvis', 'Groin', 'Constipation', 'Adnexa', 'Cervix', 'Internal Genitals',
@@ -143,7 +140,7 @@ export const MASTER_SVG_IDS = Object.fromEntries([
   'Lumbar Muscles Area', 'Intercostals Area', 'Diziness Area', 'Cervical Vertebrae Area', 'Thyroid', 'Neck', 'Chest', 'Mamma',
   'External Abdomen', 'External Knee_2', 'Coccyx', 'Hot Point', 'Abdomen', 'Upper Back', 'Intercostals',
   // Superior concha
-  'Prostate', 'Bladder', 'Ureter', 'Kidney', 'Gallbladder', 'Liver', 'Bilary Duct', 'Duodendum', 'Stomach', 'Stomach_2', 'Cardiac', 'Pancreas', 'Diaphram',
+  'Prostate', 'Bladder', 'Ureter', 'Kidney', 'Gallbladder', 'Liver', 'Bilary Duct', 'Duodendum', 'Stomach', 'Stomach_2', 'Cardiac', 'Pancreas / Gallbladder', 'Diaphram',
   'Ear Center', 'Small Intestine', 'Appendix', 'Large Intestine', 'Abdominal Distention Area',
   'Mouth', 'Esophagus', 'Liver Yang', 'Ascites Point', 'Throat', 'Drunk Point',
   // Scaphoid fossa
@@ -226,14 +223,10 @@ export const WESTERN_SVG_IDS = {
 // group; `drawn` is false for points listed but not on the diagram yet.
 const DRAWN = {
   master: new Set([...Object.values(MASTER_SVG_IDS), ...Object.values(POSTERIOR_SVG_IDS)]),
-  musculoskeletal: new Set(Object.values(MSK_SVG_IDS)),
-  internal: new Set(Object.values(ORG_SVG_IDS)),
   western: new Set(Object.values(WESTERN_SVG_IDS)),
 }
 export const EAR_SEARCH_INDEX = [
   ...AURICULOTHERAPY_POINTS.map(({ name, categories }) => ({ tile: 'master', name, groups: categories })),
-  ...MSK_GROUPS.flatMap(g => g.points.map(name => ({ tile: 'musculoskeletal', name, groups: [g.label] }))),
-  ...ORG_GROUPS.flatMap(g => g.points.map(name => ({ tile: 'internal', name, groups: [g.label] }))),
   ...WESTERN_POINTS.map(({ name, categories }) => ({ tile: 'western', name, groups: categories })),
 ].map(entry => ({
   ...entry,
