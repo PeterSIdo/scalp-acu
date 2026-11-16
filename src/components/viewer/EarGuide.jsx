@@ -239,7 +239,15 @@ function FormulaDiagram({ points, focus, onFocus }) {
   }
 
   return (
-    <div ref={hostRef} onClick={handleClick} className="relative w-full h-full bg-white rounded-lg shadow">
+    // The frame keeps the crop's exact proportions (and clips), so the parts of
+    // the full page outside the crop never show when the card's shape differs.
+    <div className="w-full h-full bg-white rounded-lg shadow flex items-center justify-center" style={{ containerType: 'size' }}>
+    <div
+      ref={hostRef}
+      onClick={handleClick}
+      className="relative overflow-hidden"
+      style={{ width: `min(100cqw, calc(100cqh * ${box.w / box.h}))`, aspectRatio: `${box.w} / ${box.h}` }}
+    >
       <EarTcmSvg viewBox={viewBox} style={FILL} />
       <svg viewBox={viewBox} style={{ ...FILL, pointerEvents: 'none' }} xmlns="http://www.w3.org/2000/svg">
         {marks.map(m => {
@@ -259,6 +267,7 @@ function FormulaDiagram({ points, focus, onFocus }) {
         })}
         <PointLabels marks={marks} points={points} focus={focus} box={box} />
       </svg>
+    </div>
     </div>
   )
 }
