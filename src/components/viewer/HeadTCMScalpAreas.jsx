@@ -9,6 +9,7 @@ import HamburgerMenu from '../ui/HamburgerMenu'
 import TileTitle from '../ui/TileTitle'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
 import { TCM_AREA_INFO } from '../../data/tcmAreaInfo'
+import { TCM_MERIDIAN_POINT_INFO, TCM_MERIDIAN_POINT_NAMES } from '../../data/tcmMeridianPointInfo'
 import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
@@ -73,19 +74,30 @@ const FRONT_AREAS = [
   { name: 'Large Intestine Area',       menuLabel: 'Intestines',             color: '#EE1E7B', lines: ['M272.5 383V408', 'M509.5 383V408'], label: [84.6, 320.9, 91.5, 15.3] },
 ]
 
-// `color` = legend circle fill, `lineColor` = the meridian's line stroke on
-// the head. They match except TB, whose line is drawn in blue-violet
-// (confirmed with user).
+// `color` = legend circle fill (also used for the points). The meridian's
+// line is the path whose id is its code (its stroke colour is read from it);
+// its points are the elements named "<svgPrefix> <n>" (e.g. "BL 1", "DU 20"
+// for the Governing Vessel), listed in `points`. Re-check both lists if the
+// diagram is re-exported with points added or removed.
+const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i)
 const TCM_MERIDIANS = [
-  { code: 'BL', name: 'Bladder',           color: '#6A0E55', lineColor: '#6A0E55' },
-  { code: 'GB', name: 'Gallbladder',       color: '#BA750D', lineColor: '#BA750D' },
-  { code: 'ST', name: 'Stomach',           color: '#0F7F3D', lineColor: '#0F7F3D' },
-  { code: 'SI', name: 'Small Intestine',   color: '#CB4C4E', lineColor: '#CB4C4E' },
-  { code: 'TB', name: 'Triple Burner',     color: '#F40A1A', lineColor: '#5D4EE3' },
-  { code: 'LI', name: 'Large Intestine',   color: '#78C7DB', lineColor: '#78C7DB' },
-  { code: 'CV', name: 'Conception Vessel', color: '#5CF76B', lineColor: '#5CF76B' },
-  { code: 'GV', name: 'Governing Vessel',  color: '#F2E413', lineColor: '#F2E413' },
+  { code: 'BL', name: 'Bladder',           color: '#6A0E55', points: range(1, 10) },
+  { code: 'GB', name: 'Gallbladder',       color: '#BA750D', points: range(1, 20) },
+  { code: 'ST', name: 'Stomach',           color: '#0F7F3D', points: range(1, 8) },
+  { code: 'SI', name: 'Small Intestine',   color: '#5D4EE3', points: range(16, 19) },
+  { code: 'TB', name: 'Triple Burner',     color: '#F40A1A', points: range(16, 23) },
+  { code: 'LI', name: 'Large Intestine',   color: '#78C7DB', points: range(18, 20) },
+  { code: 'CV', name: 'Conception Vessel', color: '#5CF76B', points: range(23, 24) },
+  { code: 'GV', name: 'Governing Vessel',  color: '#F2E413', points: range(15, 27), svgPrefix: 'DU' },
 ]
+
+// Every meridian point as { key: 'BL 1', code: 'BL', svgId: 'BL 1' }.
+const MERIDIAN_POINTS = TCM_MERIDIANS.flatMap(m => m.points.map(n => ({
+  key: `${m.code} ${n}`,
+  code: m.code,
+  svgId: `${m.svgPrefix ?? m.code} ${n}`,
+})))
+const MERIDIAN_OF_POINT = Object.fromEntries(MERIDIAN_POINTS.map(p => [p.key, p.code]))
 
 // Scoped so it only affects transitions started while this screen is mounted.
 const TRANSITION_STYLE = `
@@ -178,8 +190,8 @@ function TCMMenu({ items, placeholder, activeKey, menuOpen, onToggle, onSelect, 
               ref={dropdownRef}
               className={`tcm-dropdown-scroll absolute top-full left-0 right-0 mt-1 py-1 ${GLASS_DROPDOWN} overflow-y-auto z-20 ${compact ? 'max-h-40' : 'max-h-96'}`}
             >
-              {items.map(({ key, label }) => (
-                <button key={key} type="button" onClick={() => onSelect(key)} className={DROPDOWN_ITEM_CLASS(activeKey === key)}>
+              {items.map(({ key, label, indent }) => (
+                <button key={key} type="button" onClick={() => onSelect(key)} className={DROPDOWN_ITEM_CLASS(activeKey === key)} style={indent ? { paddingLeft: 28 } : undefined}>
                   {label}
                 </button>
               ))}
@@ -207,7 +219,11 @@ const AREA_ITEMS = [
   ...TCM_AREAS.map(a => a.name),
   ...Object.keys(TCM_AREA_INFO).filter(name => !TCM_AREAS.some(a => a.name === name)),
 ].map(name => ({ key: name, label: name }))
-const MERIDIAN_ITEMS = TCM_MERIDIANS.map(m => ({ key: m.code, label: `${m.name} (${m.code})` }))
+// Each meridian followed by its points, indented.
+const MERIDIAN_ITEMS = TCM_MERIDIANS.flatMap(m => [
+  { key: m.code, label: `${m.name} (${m.code})` },
+  ...MERIDIAN_POINTS.filter(p => p.code === m.code).map(p => ({ key: p.key, label: `${p.key} ${TCM_MERIDIAN_POINT_NAMES[p.key] ?? ''}`.trim(), indent: true })),
+])
 const FRONT_ITEMS = FRONT_AREAS.map(a => ({ key: a.name, label: a.menuLabel }))
 
 // Search entries, one per TCM_AREA_INFO area: its name plus the phrases of
@@ -296,21 +312,26 @@ function AreasDiagram({ activeArea, onSelect, Svg = ScalpAreasSvg, areas = TCM_A
   )
 }
 
-// The meridians SVG with the same kind of overlay. Line paths and legend
-// circles are read from the rendered SVG by colour on mount (the file has no
-// ids), so a Figma re-export keeps working as long as the colours stay. The
-// legend label text sits directly above each circle.
-function MeridiansDiagram({ activeMeridian, onSelect }) {
+// Point marker sizes, in diagram units.
+const POINT_MARK = { dot: 4.5, hit: 10, ring: 9, pulse: 18, font: 15, pad: 6, charW: 8.6, gap: 14 }
+
+// The meridians SVG with the same kind of overlay. Each meridian's line is
+// the path with its code as id, and its points are found by name (see
+// TCM_MERIDIANS); the legend circle is found by colour, with its label text
+// directly above it. Selecting a meridian veils the rest and glows its line
+// and points; selecting a point also pulses it and shows its name.
+function MeridiansDiagram({ activeMeridian, activePoint, onSelect }) {
   const hostRef = useRef(null)
   const [shapes, setShapes] = useState({})
+  const [points, setPoints] = useState({})
 
   useEffect(() => {
     const svg = hostRef.current?.querySelector('svg')
     if (!svg) return
     const next = {}
     for (const m of TCM_MERIDIANS) {
-      const lines = [...svg.querySelectorAll(`path[stroke="${m.lineColor}" i]`)].map(p => p.getAttribute('d'))
-      const c = svg.querySelector(`circle[fill="${m.color}" i]`)
+      const line = svg.querySelector(`path[id="${m.code}"]`)
+      const c = [...svg.querySelectorAll(`circle[fill="${m.color}" i]`)].find(el => Number(el.getAttribute('r')) > 10)
       let legend = null
       if (c) {
         const cx = Number(c.getAttribute('cx'))
@@ -319,13 +340,37 @@ function MeridiansDiagram({ activeMeridian, onSelect }) {
         // Circle plus the label text above it (~30 units tall).
         legend = [cx - 32, cy - r - 30, 64, r * 2 + 34]
       }
-      next[m.code] = { lines, legend }
+      next[m.code] = {
+        lines: line ? [line.getAttribute('d')] : [],
+        lineColor: line?.getAttribute('stroke') ?? m.color,
+        legend,
+      }
     }
     setShapes(next)
+    // The diagram has no transforms, so a bbox is already in viewBox units.
+    const found = {}
+    for (const p of MERIDIAN_POINTS) {
+      const el = svg.querySelector(`[id="${p.svgId}"]`)
+      if (!el) continue
+      const b = el.getBBox()
+      found[p.key] = { x: b.x + b.width / 2, y: b.y + b.height / 2 }
+    }
+    setPoints(found)
   }, [])
 
   const active = TCM_MERIDIANS.find(m => m.code === activeMeridian)
   const activeShapes = active && shapes[active.code]
+  const activePos = activePoint && points[activePoint]
+
+  let label = null
+  if (activePos) {
+    const { font, pad, charW, gap } = POINT_MARK
+    const w = activePoint.length * charW + pad * 2
+    const h = font + pad * 2
+    const right = Number(MERIDIANS_VIEWBOX.split(' ')[0]) + Number(MERIDIANS_VIEWBOX.split(' ')[2])
+    const x = activePos.x + gap + w > right ? activePos.x - gap - w : activePos.x + gap
+    label = { x, y: activePos.y - h / 2, w, h }
+  }
 
   return (
     <div ref={hostRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -336,12 +381,18 @@ function MeridiansDiagram({ activeMeridian, onSelect }) {
             viewBox={MERIDIANS_VIEWBOX}
             hole={activeShapes.legend ?? [0, 0, 0, 0]}
             lines={activeShapes.lines}
-            color={active.lineColor}
+            color={activeShapes.lineColor}
             lineWidth={3.5}
             glowWidth={9}
           />
         )}
 
+        {/* The selected meridian's points, above the veil. */}
+        {active && MERIDIAN_POINTS.filter(p => p.code === active.code && points[p.key]).map(p => (
+          <circle key={p.key} cx={points[p.key].x} cy={points[p.key].y} r={POINT_MARK.dot} fill={active.color} stroke="white" strokeWidth="1.2" pointerEvents="none" />
+        ))}
+
+        {/* Line and legend click targets: select the meridian. */}
         {TCM_MERIDIANS.map(m => {
           const s = shapes[m.code]
           if (!s) return null
@@ -358,6 +409,35 @@ function MeridiansDiagram({ activeMeridian, onSelect }) {
             </g>
           )
         })}
+
+        {/* Point click targets, above the lines so a dot wins. */}
+        {MERIDIAN_POINTS.filter(p => points[p.key]).map(p => (
+          <circle
+            key={p.key}
+            cx={points[p.key].x}
+            cy={points[p.key].y}
+            r={POINT_MARK.hit}
+            fill="transparent"
+            pointerEvents="all"
+            style={{ cursor: 'pointer' }}
+            onClick={e => { e.stopPropagation(); onSelect(p.key) }}
+          >
+            <title>{p.key}</title>
+          </circle>
+        ))}
+
+        {activePos && label && (
+          <g pointerEvents="none">
+            <circle cx={activePos.x} cy={activePos.y} r={POINT_MARK.ring} fill="none" stroke="#000" strokeWidth="2">
+              <animate attributeName="r" values={`${POINT_MARK.ring};${POINT_MARK.pulse};${POINT_MARK.ring}`} dur="1.6s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
+            </circle>
+            <rect x={label.x} y={label.y} width={label.w} height={label.h} rx="5" fill="rgba(0,0,0,0.72)" />
+            <text x={label.x + POINT_MARK.pad} y={label.y + POINT_MARK.pad + POINT_MARK.font * 0.8} fontSize={POINT_MARK.font} fill="white" fontFamily="system-ui, sans-serif">
+              {activePoint}
+            </text>
+          </g>
+        )}
       </svg>
     </div>
   )
@@ -372,7 +452,7 @@ const NAV_ITEMS = [
 
 // Both diagram tiles use the same layout (menu row above the diagram, same
 // viewBox size), so the heads render at the same size in 1/1 and 1/2.
-function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMeridianChange, openMenu, onMenuToggle, onMenuClose, onPointSelect, navMode, onNavSelect, onNavModeChange }, expanded = false) {
+function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMeridianChange, activeMeridianPoint, onMeridianPointChange, openMenu, onMenuToggle, onMenuClose, onPointSelect, navMode, onNavSelect, onNavModeChange }, expanded = false) {
   let menu, diagram
   const selectArea = area => { onAreaChange(area); onPointSelect?.(area ? TCM_AREA_INFO[area] ?? null : null) }
   const toggleArea = area => { onMenuClose(); selectArea(activeArea === area ? null : area) }
@@ -412,20 +492,36 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
       break
     }
     case 'meridians': {
-      const toggleMeridian = code => { onMenuClose(); onMeridianChange(activeMeridian === code ? null : code) }
+      // A meridian key ('BL') toggles the meridian; a point key ('BL 1')
+      // toggles the point and selects its meridian with it.
+      // A picked point also shows its description in the InfoPanel.
+      const toggleMeridian = key => {
+        onMenuClose()
+        const code = MERIDIAN_OF_POINT[key]
+        if (code) {
+          const point = activeMeridianPoint === key ? null : key
+          onMeridianPointChange(point)
+          onMeridianChange(code)
+          onPointSelect?.(point ? TCM_MERIDIAN_POINT_INFO[point] ?? null : null)
+        } else {
+          if (activeMeridianPoint) onPointSelect?.(null)
+          onMeridianPointChange(null)
+          onMeridianChange(activeMeridian === key && !activeMeridianPoint ? null : key)
+        }
+      }
       menu = (
         <TCMMenu
           items={MERIDIAN_ITEMS}
           placeholder="Meridian"
-          activeKey={activeMeridian}
+          activeKey={activeMeridianPoint ?? activeMeridian}
           menuOpen={openMenu === 'meridians'}
           compact={!expanded}
           onToggle={() => onMenuToggle('meridians')}
           onSelect={toggleMeridian}
-          onReset={() => onMeridianChange(null)}
+          onReset={() => { if (activeMeridianPoint) onPointSelect?.(null); onMeridianPointChange(null); onMeridianChange(null) }}
         />
       )
-      diagram = <MeridiansDiagram activeMeridian={activeMeridian} onSelect={toggleMeridian} />
+      diagram = <MeridiansDiagram activeMeridian={activeMeridian} activePoint={activeMeridianPoint} onSelect={toggleMeridian} />
       break
     }
     // No menu of its own; its Motor and Sensory lines/labels select the same
@@ -484,7 +580,8 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
   const [expandedId,     setExpandedId]     = useState(null)
   const [activeArea,     setActiveArea]     = useState(null)
   const [activeMeridian, setActiveMeridian] = useState(null)
-  const [openMenu,       setOpenMenu]       = useState(null)
+  const [activeMeridianPoint, setActiveMeridianPoint] = useState(null)
+  const [openMenu,      setOpenMenu]       = useState(null)
   const [navMode,        setNavMode]        = useState(null) // null | 'areas'
 
   // Hamburger picks: TCM Areas shows its menu beside the
@@ -522,6 +619,8 @@ export default function HeadTCMScalpAreas({ onPointSelect }) {
     onAreaChange: setActiveArea,
     activeMeridian,
     onMeridianChange: setActiveMeridian,
+    activeMeridianPoint,
+    onMeridianPointChange: setActiveMeridianPoint,
     openMenu,
     onMenuToggle: id => setOpenMenu(open => (open === id ? null : id)),
     onMenuClose: () => setOpenMenu(null),

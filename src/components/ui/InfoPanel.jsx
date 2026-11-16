@@ -89,6 +89,7 @@ export default function InfoPanel({ point, isSubscribed, emptyHint = true }) {
     return (
       <div className="p-6">
         <h2 className="text-xl font-bold text-black dark:text-white leading-tight mb-1">{point.name}</h2>
+        {point.subtitle && <p className="text-sm italic text-gray-600 dark:text-gray-400 mb-1">{point.subtitle}</p>}
         <div className="flex gap-2 mb-4">
           <span className="bg-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-semibold px-2 py-0.5 rounded">
             {point.system}
