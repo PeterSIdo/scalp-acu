@@ -370,9 +370,38 @@ function FormulaPage({ formulas, intro, footer }) {
   const [formula, setFormula] = useState(null)
   const [focus, setFocus] = useState(null)
   const points = useMemo(() => (formula ? formulaPoints(formula) : []), [formula])
+  const scrollRef = useRef(null)
+
+  // Phones only (stacked layout): after a formula is picked, glide down to the
+  // diagram at the bottom. Any touch/wheel by the user cancels the glide.
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!formula || !el || window.matchMedia('(min-width: 768px)').matches) return
+    const start = el.scrollTop
+    const distance = el.scrollHeight - el.clientHeight - start
+    if (distance <= 0) return
+    const duration = 1200
+    const t0 = performance.now()
+    let frame
+    const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
+    const step = now => {
+      const t = Math.min((now - t0) / duration, 1)
+      el.scrollTop = start + distance * ease(t)
+      if (t < 1) frame = requestAnimationFrame(step)
+    }
+    const cancel = () => cancelAnimationFrame(frame)
+    frame = requestAnimationFrame(step)
+    el.addEventListener('touchstart', cancel, { passive: true })
+    el.addEventListener('wheel', cancel, { passive: true })
+    return () => {
+      cancel()
+      el.removeEventListener('touchstart', cancel)
+      el.removeEventListener('wheel', cancel)
+    }
+  }, [formula])
 
   return (
-    <div className="h-full overflow-y-auto scroll-touch">
+    <div ref={scrollRef} className="h-full overflow-y-auto scroll-touch">
       <div className="flex flex-col md:flex-row gap-4 md:h-full">
         {/* Menu + details */}
         <div className="md:w-80 lg:w-96 flex-shrink-0 bg-white dark:bg-gray-950 rounded-lg shadow p-4 md:overflow-y-auto scroll-touch">
