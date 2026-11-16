@@ -411,11 +411,20 @@ function renderTileContent(id, { activeArea, onAreaSelect, meridianSelection, on
   )
 }
 
-export default function HeadZSAPoints({ onPointSelect }) {
+// `pick` ({ kind: 'area', key: area code, n }) is a search-panel pick to
+// select here; ViewerPage already shows its InfoPanel entry.
+export default function HeadZSAPoints({ onPointSelect, pick }) {
   const [expandedId, setExpandedId] = useState(null)
   const [activeArea, setActiveArea] = useState(null)
   const [openMenu,   setOpenMenu]   = useState(null)
   const [navMode,    setNavMode]    = useState(null) // null | 'areas'
+
+  useEffect(() => {
+    if (pick?.subgroup !== 'zsa-zones' || pick.kind !== 'area') return
+    setOpenMenu(null)
+    setNavMode('areas')
+    setActiveArea(pick.key)
+  }, [pick])
   // Back-meridians tile: { meridian, point } or null, shared with its expanded card.
   const [meridianSelection, setMeridianSelection] = useState(null)
 

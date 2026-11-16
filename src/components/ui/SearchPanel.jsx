@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import { allPoints } from '../../data/points'
 import { EAR_SEARCH_INDEX } from '../../data/earPoints'
+import { TCM_SEARCH, ZSA_SEARCH, searchEntries, phrases } from '../../data/systemSearch'
+import { earPointInfo } from '../../data/earPointInfo'
 
 // YNSA: point names, meridians, indications and tags. The detail line shows
 // the indication that matched.
@@ -18,26 +20,46 @@ function ynsaResults(q) {
     .map(p => ({ key: p.id, name: p.name, detail: p.indications?.find(i => i.toLowerCase().includes(q)), item: p, enabled: true }))
 }
 
-// Ear: point names and their categories / groups. Name matches come first,
-// those starting with the query ahead of the rest. The detail line names the
-// tile and the point's categories, since a point can be on more than one tile.
-function earResults(q) {
-  const rank = e => {
-    const name = e.name.toLowerCase()
-    return name.startsWith(q) ? 0 : name.includes(q) ? 1 : 2
-  }
-  return EAR_SEARCH_INDEX
-    .filter(e => rank(e) < 2 || e.groups.some(g => g.toLowerCase().includes(q)))
-    .sort((a, b) => rank(a) - rank(b))
-    .map(e => ({ key: e.key, name: e.name, detail: [e.tileTitle, ...e.groups].join(' · '), item: e, enabled: e.drawn }))
+// Each ear point's Indications phrases (from its description card), built once.
+let earIndications = null
+function earIndicationsOf(e) {
+  earIndications ??= new Map(EAR_SEARCH_INDEX.map(x => {
+    const info = earPointInfo(x.tile, x.name)
+    // Items are split into phrases like paragraphs, so a hit shows just the
+    // matching phrase (labels such as "Sleep:" are dropped).
+    const sections = (info?.sections ?? []).map(s => ({ ...s, paragraphs: [...(s.paragraphs ?? []), ...(s.items ?? []).map(it => it.text)], items: [] }))
+    return [x.key, phrases({ sections }, ['Indications'])]
+  }))
+  return earIndications.get(e.key)
 }
 
-// `system` picks what's searched: 'ear' for the Ear tab, YNSA otherwise.
+// Ear: point names, their categories / groups, then their indications. Name
+// matches come first, those starting with the query ahead of the rest. The
+// detail line names the tile and categories (a point can be on more than one
+// tile), or for an indication match, the indication that matched.
+function earResults(q) {
+  return EAR_SEARCH_INDEX
+    .map(e => {
+      const name = e.name.toLowerCase()
+      const rank = name.startsWith(q) ? 0 : name.includes(q) ? 1 : e.groups.some(g => g.toLowerCase().includes(q)) ? 2 : 3
+      const hit = rank === 3 ? earIndicationsOf(e).find(t => t.toLowerCase().includes(q)) : null
+      return rank < 3 || hit ? { e, rank, detail: hit ?? [e.tileTitle, ...e.groups].join(' · ') } : null
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.rank - b.rank)
+    .map(({ e, detail }) => ({ key: e.key, name: e.name, detail, item: e, enabled: e.drawn }))
+}
+
+// `system` picks what's searched: the active tab ('ynsa', 'tcm', 'zsa',
+// 'ear'). TCM and ZSA results carry a search entry ({ item, pick }) as `item`.
 export default function SearchPanel({ query, onSelect, system = 'ynsa' }) {
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
     if (!q) return []
-    return system === 'ear' ? earResults(q) : ynsaResults(q)
+    if (system === 'ear') return earResults(q)
+    if (system === 'tcm') return searchEntries(TCM_SEARCH, q)
+    if (system === 'zsa') return searchEntries(ZSA_SEARCH, q)
+    return ynsaResults(q)
   }, [query, system])
 
   if (!query.trim()) return null

@@ -23,6 +23,14 @@ import InfoPanel from '../components/ui/InfoPanel'
 import SearchPanel from '../components/ui/SearchPanel'
 import CrossIcon from '../components/ui/CrossIcon'
 
+// Search box text per tab.
+const SEARCH_BY_SYSTEM = {
+  ynsa: { placeholder: 'Search by points, indication, meridian…', hint: 'Type an indication to find matching points' },
+  tcm:  { placeholder: 'Search areas, meridian points, brain zones…', hint: 'Type a point, area or indication' },
+  zsa:  { placeholder: 'Search ZSA areas, indications…', hint: 'Type an area or indication' },
+  ear:  { placeholder: 'Search ear points, categories…', hint: 'Type a point or category name' },
+}
+
 const SYSTEMS = [
   {
     id: 'ynsa',
@@ -178,6 +186,9 @@ export default function ViewerPage() {
   const [resetKey, setResetKey] = useState(0)
   // Last ear point picked from the search panel, handed to the Ear grid.
   const [earPick, setEarPick] = useState(null)
+  // Last TCM / ZSA result picked from the search panel ({ subgroup, kind,
+  // key, n }), handed to the grid that shows it.
+  const [gridPick, setGridPick] = useState(null)
 
   const navigate = useNavigate()
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
@@ -279,7 +290,9 @@ export default function ViewerPage() {
   // Cases is a full-width reading page with its own list search, so the
   // desktop side panel (point search + info) is hidden.
   const isCases = activeSystem === 'cases'
-  const searchPlaceholder = isEar ? 'Search ear points, categories…' : 'Search by points, indication, meridian…'
+  // Each tab searches its own content (see SearchPanel); Cases has its own.
+  const searchSystem = SEARCH_BY_SYSTEM[activeSystem] ? activeSystem : 'ynsa'
+  const { placeholder: searchPlaceholder, hint: searchHint } = SEARCH_BY_SYSTEM[searchSystem]
 
   // Bumping resetKey remounts ZoomableView and the grid inside it, which clears
   // the zoom plus every tile's selections, menus and magnification.
@@ -289,6 +302,7 @@ export default function ViewerPage() {
     setHighlightJsonId(null)
     setSearchQuery('')
     setEarPick(null)
+    setGridPick(null)
   }
 
   function handleSystemChange(systemId) {
@@ -296,6 +310,7 @@ export default function ViewerPage() {
     const firstSg = sys.subgroups?.[0] ?? null
     setActiveSystem(systemId)
     setEarPick(null)
+    setGridPick(null)
     setActiveSubgroup(firstSg?.id ?? null)
     setActiveView(firstSg?.views[0] ?? 'Lateral')
     setSelectedPoint(null)
@@ -321,6 +336,20 @@ export default function ViewerPage() {
     if (isEar) {
       setEarPick({ tile: point.tile, name: point.name, n: Date.now() })
       setSelectedPoint(earPointInfo(point.tile, point.name))
+      setSearchQuery('')
+      setMobileSearchOpen(false)
+      return
+    }
+    // TCM / ZSA results: open the sub-tab that shows it and select it there.
+    if (point.pick) {
+      const sg = system.subgroups.find(s => s.id === point.pick.subgroup)
+      if (sg && activeSubgroup !== sg.id) {
+        setActiveSubgroup(sg.id)
+        setActiveView(sg.views[0])
+      }
+      setGridPick({ ...point.pick, n: Date.now() })
+      setSelectedPoint(point.item)
+      setHighlightJsonId(null)
       setSearchQuery('')
       setMobileSearchOpen(false)
       return
@@ -472,10 +501,10 @@ export default function ViewerPage() {
               {activeView === 'SensoryGrid' && <HeadSensoryPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-sensory']} />}
               {activeView === 'BrainGrid' && <HeadBrainPoints onPointSelect={handlePointSelect} highlightJsonId={highlightJsonId} pointFilter={SUBGROUP_POINT_IDS['ynsa-brain']} />}
               {activeView === 'Neck'      && <NeckDiagnosis onPointSelect={handlePointSelect} />}
-              {activeView === 'TCMGrid'   && <HeadTCMScalpAreas onPointSelect={handlePointSelect} />}
-              {activeView === 'BrainZonesGrid' && <HeadBrainZones onPointSelect={handlePointSelect} />}
+              {activeView === 'TCMGrid'   && <HeadTCMScalpAreas onPointSelect={handlePointSelect} pick={gridPick} />}
+              {activeView === 'BrainZonesGrid' && <HeadBrainZones onPointSelect={handlePointSelect} pick={gridPick} />}
               {activeView === 'EarGrid'   && <HeadEarPoints pick={earPick} onPointSelect={handlePointSelect} />}
-              {activeView === 'ZSAGrid'   && <HeadZSAPoints onPointSelect={handlePointSelect} />}
+              {activeView === 'ZSAGrid'   && <HeadZSAPoints onPointSelect={handlePointSelect} pick={gridPick} />}
             </ZoomableView>
           ) : (
             <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
@@ -518,7 +547,7 @@ export default function ViewerPage() {
 
               {/* Results or info panel */}
               {searchQuery.trim() ? (
-                <SearchPanel query={searchQuery} onSelect={handleSearchSelect} system={isEar ? 'ear' : 'ynsa'} />
+                <SearchPanel query={searchQuery} onSelect={handleSearchSelect} system={searchSystem} />
               ) : (
                 <div className="flex-1 overflow-y-auto scroll-touch">
                   <InfoPanel point={selectedPoint} isSubscribed={isActive} emptyHint={activeSystem === 'ynsa'} />
@@ -611,9 +640,9 @@ export default function ViewerPage() {
           </div>
           <div className="flex-1 overflow-y-auto">
             {!searchQuery.trim() ? (
-              <p className="text-gray-400 dark:text-gray-600 text-sm p-4 text-center">{isEar ? 'Type a point or category name' : 'Type an indication to find matching points'}</p>
+              <p className="text-gray-400 dark:text-gray-600 text-sm p-4 text-center">{searchHint}</p>
             ) : (
-              <SearchPanel query={searchQuery} onSelect={handleSearchSelect} system={isEar ? 'ear' : 'ynsa'} />
+              <SearchPanel query={searchQuery} onSelect={handleSearchSelect} system={searchSystem} />
             )}
           </div>
         </div>

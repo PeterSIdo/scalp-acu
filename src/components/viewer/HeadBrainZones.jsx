@@ -28,7 +28,7 @@ const ZONES2_VIEWBOX = '99 52 681 594'
 // carries no ids or labels, so each zone is matched by its unique fill colour
 // (assigned by anatomical position). Re-check these if the SVG is re-exported.
 // `region` (lobe / structure) is optional and shows as the panel's grey badge.
-const BRAIN_ZONES = [
+export const BRAIN_ZONES = [
   { num: 1,  name: 'Visual Area',                    fill: '#9CDCEE', region: 'Occipital lobe',  functions: 'Sight, Image recognition, Image perception' },
   { num: 2,  name: 'Association Area',               fill: '#6ECC9D', region: 'Temporal lobe',   functions: 'Short-term memory, Equilibrium, Emotion' },
   { num: 3,  name: 'Motor Function Area',            fill: '#FB5762',                            functions: 'Initiation of voluntary muscles' },
@@ -47,7 +47,7 @@ const BRAIN_ZONES = [
 // InfoPanel's "TCM Scalp Acupuncture" section. `area` = Jiao Shunfa area
 // and/or WHO standard line (MS1–MS14); `note` flags weaker correspondences.
 // Drafted by Claude from general knowledge — pending user verification.
-const BRAIN_ZONE_TCM = {
+export const BRAIN_ZONE_TCM = {
   1:  { area: 'Vision Area; MS13 (Upper-Lateral Line of Occiput)', points: 'DU17 Naohu, BL9 Yuzhen, GB20 Fengchi', uses: ['Cortical visual loss', 'Visual disturbance'] },
   2:  { area: 'MS10 / MS11 (Anterior / Posterior Temporal Lines); Jin\'s Temporal Three Needles', points: 'GB8 Shuaigu, GB4–GB6', uses: ['Memory', 'Dizziness', 'Emotional problems'], note: 'Correspondence varies between sources.' },
   3:  { area: 'Motor Area; MS6 (Anterior Oblique Line of Vertex-Temporal)', points: 'EX-HN1 Qianshencong → GB6 Xuanli', uses: ['Contralateral paralysis: upper 1/5 leg, middle 2/5 arm, lower 2/5 face'] },
@@ -64,7 +64,7 @@ const BRAIN_ZONE_TCM = {
 
 // Shapes a zone like a point entry so InfoPanel can show it: title = name,
 // badge = region, description = functions, plus the TCM section.
-const zoneToPanelItem = zone => ({
+export const zoneToPanelItem = zone => ({
   id: `BrainZone-${zone.num}`,
   name: zone.name,
   system: 'Brain Zones',
@@ -426,12 +426,21 @@ function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartCha
   }
 }
 
-export default function HeadBrainZones({ onPointSelect }) {
+// `pick` ({ kind: 'zone', key: zone number, n }) is a search-panel pick to
+// select here; ViewerPage already shows its InfoPanel entry.
+export default function HeadBrainZones({ onPointSelect, pick }) {
   const [expandedId, setExpandedId] = useState(null)
   const [activeZone, setActiveZone] = useState(null)
   const [activePart, setActivePart] = useState(null)
   const [openMenu,   setOpenMenu]   = useState(null)
   const [navMode,    setNavMode]    = useState(null) // null | 'zones' | 'parts'
+
+  useEffect(() => {
+    if (pick?.subgroup !== 'brain-zones' || pick.kind !== 'zone') return
+    setOpenMenu(null)
+    setNavMode('zones')
+    setActiveZone(pick.key)
+  }, [pick])
 
   // Hamburger picks swap the control beside the hamburger and open it.
   function selectNav(item) {

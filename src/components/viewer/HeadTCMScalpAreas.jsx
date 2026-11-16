@@ -75,23 +75,25 @@ const FRONT_AREAS = [
 ]
 
 // `color` = legend circle fill (also used for the points). The meridian's
-// line is the path whose id is its code (its stroke colour is read from it);
-// its points are the elements named "<svgPrefix> <n>" (e.g. "BL 1", "DU 20"
-// for the Governing Vessel), listed in `points`. Re-check both lists if the
+// line is the path whose id is `svgLine` or its code (its stroke colour is
+// read from it); its points are the elements named "<svgPrefix or code> <n>"
+// (e.g. "BL 1", "DU 20" for GV, "TB 17" for SJ), listed in `points`. Re-check both lists if the
 // diagram is re-exported with points added or removed.
 const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i)
 const TCM_MERIDIANS = [
   { code: 'BL', name: 'Bladder',           color: '#6A0E55', points: range(1, 10) },
-  { code: 'GB', name: 'Gallbladder',       color: '#BA750D', points: range(1, 20) },
+  { code: 'GB', name: 'Gallbladder',       color: '#BA750D', points: range(1, 21) },
   { code: 'ST', name: 'Stomach',           color: '#0F7F3D', points: range(1, 8) },
   { code: 'SI', name: 'Small Intestine',   color: '#5D4EE3', points: range(16, 19) },
-  { code: 'TB', name: 'Triple Burner',     color: '#F40A1A', points: range(16, 23) },
+  { code: 'SJ', name: 'Triple Heater',     color: '#F40A1A', points: range(16, 23), svgLine: 'TB', svgPrefix: 'TB' },
   { code: 'LI', name: 'Large Intestine',   color: '#78C7DB', points: range(18, 20) },
   { code: 'CV', name: 'Conception Vessel', color: '#5CF76B', points: range(23, 24) },
   { code: 'GV', name: 'Governing Vessel',  color: '#F2E413', points: range(15, 27), svgPrefix: 'DU' },
 ]
 
-// Every meridian point as { key: 'BL 1', code: 'BL', svgId: 'BL 1' }.
+// Every meridian point as { key: 'BL 1', code: 'BL', svgId: 'BL 1' }. The key
+// (also the label) uses the app's code; svgId the diagram's own layer name
+// ('GV 20' is 'DU 20' in the SVG, 'SJ 17' is 'TB 17').
 const MERIDIAN_POINTS = TCM_MERIDIANS.flatMap(m => m.points.map(n => ({
   key: `${m.code} ${n}`,
   code: m.code,
@@ -330,7 +332,8 @@ function MeridiansDiagram({ activeMeridian, activePoint, onSelect }) {
     if (!svg) return
     const next = {}
     for (const m of TCM_MERIDIANS) {
-      const line = svg.querySelector(`path[id="${m.code}"]`)
+      // Either name works, so renaming the layers in Figma later is safe.
+      const line = svg.querySelector(`path[id="${m.svgLine ?? m.code}"]`) ?? svg.querySelector(`path[id="${m.code}"]`)
       const c = [...svg.querySelectorAll(`circle[fill="${m.color}" i]`)].find(el => Number(el.getAttribute('r')) > 10)
       let legend = null
       if (c) {
@@ -350,7 +353,7 @@ function MeridiansDiagram({ activeMeridian, activePoint, onSelect }) {
     // The diagram has no transforms, so a bbox is already in viewBox units.
     const found = {}
     for (const p of MERIDIAN_POINTS) {
-      const el = svg.querySelector(`[id="${p.svgId}"]`)
+      const el = svg.querySelector(`[id="${p.svgId}"]`) ?? svg.querySelector(`[id="${p.key}"]`)
       if (!el) continue
       const b = el.getBBox()
       found[p.key] = { x: b.x + b.width / 2, y: b.y + b.height / 2 }
@@ -576,13 +579,27 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
   )
 }
 
-export default function HeadTCMScalpAreas({ onPointSelect }) {
+// `pick` ({ kind: 'area' | 'meridianPoint', key, n }) is a search-panel pick
+// to select here; ViewerPage already shows its InfoPanel entry.
+export default function HeadTCMScalpAreas({ onPointSelect, pick }) {
   const [expandedId,     setExpandedId]     = useState(null)
   const [activeArea,     setActiveArea]     = useState(null)
   const [activeMeridian, setActiveMeridian] = useState(null)
   const [activeMeridianPoint, setActiveMeridianPoint] = useState(null)
   const [openMenu,      setOpenMenu]       = useState(null)
   const [navMode,        setNavMode]        = useState(null) // null | 'areas'
+
+  useEffect(() => {
+    if (pick?.subgroup !== 'tcm-scalp-areas') return
+    setOpenMenu(null)
+    if (pick.kind === 'area') {
+      setNavMode('areas')
+      setActiveArea(pick.key)
+    } else if (pick.kind === 'meridianPoint') {
+      setActiveMeridian(MERIDIAN_OF_POINT[pick.key] ?? null)
+      setActiveMeridianPoint(pick.key)
+    }
+  }, [pick])
 
   // Hamburger picks: TCM Areas shows its menu beside the
   // hamburger, opened straight away; About shows the intro in the InfoPanel.
