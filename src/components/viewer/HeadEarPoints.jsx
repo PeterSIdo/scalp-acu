@@ -390,7 +390,7 @@ function PointDiagram({ tile, activePoint, onSelect, rect, zoom, showLayer = tru
 }
 
 // ear-chin-3.svg is a 1207x1249 page, cropped to the ear.
-export const TCM_VIEWBOX = { x: 285, y: 30, w: 737, h: 1160 }
+export const TCM_VIEWBOX = { x: 255, y: 50, w: 740, h: 1162 }
 // western-ear-complet.svg is a 1200x1200 page, cropped to the ear.
 const WESTERN_VIEWBOX = { x: 260, y: 60, w: 720, h: 1090 }
 // posterior-ear.svg is a 1200x1200 page, cropped to the ear.
