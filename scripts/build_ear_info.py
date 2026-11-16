@@ -195,8 +195,15 @@ def build(name, e):
         sections.append({'title': 'Also Known As', 'paragraphs': [', '.join(names)]})
     if intro:
         sections.append({'title': 'TCM Role', 'paragraphs': intro})
-    if uses:
-        sections.append({'title': 'Functions & Uses', 'items': uses})
+    # 'Actions' items get their own section; the rest are the Indications
+    # (the 'Common uses' label is dropped, the section title says it).
+    actions = [{'text': u['text']} for u in uses if u.get('label') == 'Actions']
+    indications = [{'text': u['text']} if u.get('label') in (None, 'Common uses') else u
+                   for u in uses if u.get('label') != 'Actions']
+    if actions:
+        sections.append({'title': 'Actions', 'items': actions})
+    if indications:
+        sections.append({'title': 'Indications', 'items': indications})
     if assessment and (assessment['paragraphs'] or assessment['items']):
         if not assessment['items']:
             del assessment['items']

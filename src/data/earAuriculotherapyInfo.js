@@ -10,10 +10,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Enteritis, constipation, period pain, pain after childbirth and excess weight."
           }
         ]
@@ -47,10 +46,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Moves qi and relieves wind and bloating. A reference point for assessing and treating bloating."
           }
         ]
@@ -76,10 +74,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Appendicitis, abnormal vaginal discharge, inflammation of the ovaries or tubes (adnexitis) and period pain."
           }
         ]
@@ -113,7 +110,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Adrenal and stress support",
@@ -147,10 +144,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing and treating allergies, including asthma, hives, itchy skin, contact dermatitis, allergic colitis and hay fever (allergic rhinitis)."
           }
         ]
@@ -176,10 +172,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Ankle sprain, bruising and arthritis."
           }
         ]
@@ -199,10 +194,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Haemorrhoids (internal, external and mixed), rectal prolapse and anal itching."
           }
         ]
@@ -222,10 +216,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Acute and long-term appendicitis, as support only. Acute appendicitis is a medical emergency."
           }
         ]
@@ -257,10 +250,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Armpit pain and excessive underarm sweating."
           }
         ]
@@ -274,10 +266,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "The main point for fluid retention. Used for fluid in the abdomen (ascites), general swelling (oedema), angioedema, hormone-related fluid retention and swelling from poor circulation in the legs. Also used for excess weight."
           }
         ]
@@ -291,10 +282,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Mainly trigeminal neuralgia, especially pain along the jaw (mandibular) branch. Also used for ear pain, migraine, and dizziness from cranial nerve problems."
           }
         ]
@@ -314,10 +304,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "The main point for assessing and treating bile duct inflammation."
           }
         ]
@@ -337,7 +326,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Urination",
@@ -374,10 +363,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "As support for brain-related conditions, including poor blood supply to the brain, poor coordination from the cerebellum (cerebellar ataxia), epilepsy, hyperactivity and learning difficulties."
           }
         ]
@@ -397,7 +385,7 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Corresponds to",
@@ -426,14 +414,17 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Calms internal \"wind\" (the Chinese medicine pattern behind tremors, spasms and dizziness), stops spasms, supports brain function, settles over-excitement, eases cough and brings down fever."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "As support for meningeal irritation, epilepsy, schizophrenia, anxiety-type disorders, bronchitis and persistent low-grade fever."
           }
         ]
@@ -447,10 +438,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Stops cough and wheeze and clears phlegm. Used for tracheitis, asthma and bronchiectasis."
           }
         ]
@@ -482,10 +472,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Hip and sacral pain, and nerve pain."
           }
         ]
@@ -505,10 +494,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Calf cramps, tight or knotted calf muscles, and sciatic nerve inflammation."
           }
         ]
@@ -522,10 +510,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Problems where the oesophagus meets the stomach, such as achalasia, nausea, vomiting and chest discomfort."
           }
         ]
@@ -554,10 +541,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Cervicitis, cervical erosion (ectropion) and abnormal vaginal discharge."
           }
         ]
@@ -595,10 +581,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Neck pain from cervical spondylosis or other causes, such as a stiff neck from sleeping awkwardly, and tight, knotted muscles in the shoulders and upper back."
           }
         ]
@@ -618,10 +603,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Chest pain, chest tightness, pleurisy, costochondritis, rib nerve pain and shingles."
           }
         ]
@@ -647,10 +631,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Frozen shoulder, pain in the shoulder, upper back and neck, and Takayasu's arteritis (\"pulseless disease\")."
           }
         ]
@@ -676,10 +659,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Tailbone pain."
           }
         ]
@@ -699,10 +681,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "The specific point for assessing and treating constipation."
           }
         ]
@@ -742,10 +723,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing and treating pain around the navel. Also used for abdominal pain, period pain, parasitic infection of the bile duct (biliary ascariasis), prostatitis and urinary stones."
           }
         ]
@@ -765,7 +745,7 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "text": "The specific point for assessing and treating high blood pressure. A reference point for judging whether blood pressure is normal."
@@ -781,10 +761,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Stops bleeding, cools the blood (a TCM idea, often used for hot, red skin), relieves spasm and eases pain. Used for hiccups (diaphragm spasm) and bleeding problems such as heavy periods, abnormal uterine bleeding and blood in the stool. Also used for skin conditions such as psoriasis, eczema and acne."
           }
         ]
@@ -798,10 +777,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "The main point for assessing and treating dizziness."
           }
         ]
@@ -821,10 +799,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Duodenal ulcer and duodenitis."
           }
         ]
@@ -844,14 +821,17 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Anti-inflammatory, lowers fever and blood pressure, calming, anti-allergy, clears the mind and supports vision."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "Fever, high blood pressure, nervous exhaustion, headache, dizziness, skin conditions and eye problems."
           }
         ]
@@ -871,10 +851,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Balances the internal organs. Used for digestive and cardiovascular problems and for needing to urinate at night."
           }
         ]
@@ -888,10 +867,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Elbow sprain, tennis elbow and rheumatic arthritis of the elbow."
           }
         ]
@@ -905,7 +883,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Hormone balance",
@@ -940,10 +918,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing epilepsy, and as support in treating it."
           }
         ]
@@ -957,10 +934,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Inflamed oesophagus, tight feeling in the chest, the feeling of a lump in the throat (globus), and related breathing discomfort."
           }
         ]
@@ -980,14 +956,17 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Stimulates the brain's cortex. It energises rather than calms."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "Tiredness and low energy, needing to urinate at night, weight gain, and low hormonal or sexual function such as erectile dysfunction. Also used for Sheehan's syndrome and missed periods (amenorrhoea)."
           }
         ]
@@ -1001,10 +980,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing and treating urinary stones."
           }
         ]
@@ -1018,10 +996,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Ear problems such as tinnitus, deafness, hearing loss, chilblains on the ear, ear skin conditions and ear nerve pain."
           },
           {
@@ -1039,10 +1016,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Urethritis, inflamed glans (balanitis), scrotal eczema, vulval itching, erectile dysfunction and low back pain."
           }
         ]
@@ -1068,10 +1044,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Knee problems."
           }
         ]
@@ -1091,10 +1066,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Skin problems on the nose, such as boils, spots, rosacea, inflamed nostrils and pigmentation (chloasma)."
           }
         ]
@@ -1108,10 +1082,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Dizziness and headache."
           }
         ]
@@ -1125,10 +1098,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Conjunctivitis, styes, chalazion, keratitis, iritis, short-sightedness and glaucoma."
           }
         ]
@@ -1142,10 +1114,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "A key point for skin and appearance. Also used for facial palsy, facial twitching, trigeminal neuralgia and facial skin conditions."
           }
         ]
@@ -1165,10 +1136,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Sprained finger joints, Raynaud's, sweaty hands, skin conditions, and finger numbness from neck or spine problems."
           }
         ]
@@ -1182,7 +1152,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Brain support and focus",
@@ -1215,10 +1185,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "The Gallbladder stores bile and is paired with the Liver. Used for bile duct problems, a bitter taste in the mouth, tightness under the ribs and shingles."
           },
           {
@@ -1236,10 +1205,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Frozen shoulder, numbness in the arms or legs, neck spondylosis, and nerve pain around the ear."
           }
         ]
@@ -1253,10 +1221,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Lower abdominal pain, swollen groin lymph nodes, varicocele and inflamed veins of the spermatic cord."
           }
         ]
@@ -1316,10 +1283,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "A reference point for assessing and treating both high and low blood pressure."
           }
         ]
@@ -1339,7 +1305,7 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Circulation",
@@ -1392,10 +1358,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Palpitations, insomnia, dream-filled sleep, high blood pressure and headache."
           }
         ]
@@ -1415,10 +1380,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "A main supporting point for heart rhythm problems such as atrial fibrillation and episodes of fast heartbeat (paroxysmal tachycardia)."
           }
         ]
@@ -1438,10 +1402,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Heel pain from a heel spur, or from Kidney deficiency (TCM)."
           }
         ]
@@ -1461,14 +1424,17 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Anti-inflammatory and fever-reducing."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "Inflammation and fever of many kinds."
           }
         ]
@@ -1482,14 +1448,17 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Anti-inflammatory and fever-reducing."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "Inflammation and fever of many kinds."
           }
         ]
@@ -1503,14 +1472,17 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Anti-inflammatory and fever-reducing."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "Inflammation and fever of many kinds."
           }
         ]
@@ -1524,14 +1496,17 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Anti-inflammatory and fever-reducing."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "Inflammation and fever of many kinds."
           }
         ]
@@ -1545,14 +1520,17 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Anti-inflammatory and fever-reducing."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "Inflammation and fever of many kinds."
           }
         ]
@@ -1566,14 +1544,17 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Anti-inflammatory and fever-reducing."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "Inflammation and fever of many kinds."
           }
         ]
@@ -1587,10 +1568,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "The main point for liver and gallbladder problems."
           }
         ]
@@ -1616,10 +1596,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing and treating an enlarged liver (hepatomegaly)."
           }
         ]
@@ -1633,10 +1612,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Lower back and hip pain, and sciatica."
           }
         ]
@@ -1656,10 +1634,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Improves circulation to the hands and feet and warms the body. Used for Buerger's disease, phlebitis and Raynaud's."
           }
         ]
@@ -1673,10 +1650,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Helps control appetite. The key point for weight management. Also used for high blood pressure and stress or emotional eating."
           }
         ]
@@ -1690,10 +1666,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing and treating pain on the top of the foot."
           }
         ]
@@ -1713,10 +1688,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Chest sprain or bruising, shingles, and rib-area tightness or pain linked to stress."
           }
         ]
@@ -1730,10 +1704,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Tinnitus, hearing loss, middle ear infection and inner-ear vertigo."
           }
         ]
@@ -1779,10 +1752,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Irregular, painful or missed periods, abnormal discharge, abnormal uterine bleeding, endometriosis, thickened womb lining and low sexual function."
           }
         ]
@@ -1820,10 +1792,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Rhinitis, sinusitis, nosebleeds and colds."
           }
         ]
@@ -1865,7 +1836,7 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Strengthening",
@@ -1908,10 +1879,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Headaches of all kinds, dizziness, nervous exhaustion, poor sleep, autonomic imbalance, low mood and anxiety."
           }
         ]
@@ -1925,10 +1895,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Knee inflammation from any cause, sprain or bruising of the knee, and knee pain."
           }
         ]
@@ -1956,7 +1925,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Bowels",
@@ -1977,10 +1946,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing throat problems. Also a specific point for toothache."
           }
         ]
@@ -1994,14 +1962,17 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Clears the energy channels, calms the mind and relieves pain."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "Headache at the back of the head, greater occipital neuralgia, ear pain, numbness on one side of the body or head caused by blood vessel spasm, post-concussion symptoms, hardened arteries in the brain, anxiety-type disorders, and spinal problems (spondylosis)."
           }
         ]
@@ -2021,7 +1992,7 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Smooth flow",
@@ -2056,10 +2027,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Gallbladder inflammation, gallstones, and pain over the liver or ribs."
           }
         ]
@@ -2073,10 +2043,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Rising Liver yang (a TCM pattern often linked with headache, irritability and high blood pressure), and chronic hepatitis."
           }
         ]
@@ -2090,10 +2059,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Low blood pressure and hormonal imbalance."
           }
         ]
@@ -2107,7 +2075,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Common uses and assessment",
@@ -2124,10 +2092,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "As for Upper Palate."
           }
         ]
@@ -2155,10 +2122,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Lower back muscle strain."
           }
         ]
@@ -2192,10 +2158,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Lower back pain from lumbar spondylosis or other causes."
           }
         ]
@@ -2233,7 +2198,7 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Water metabolism",
@@ -2268,10 +2233,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Bronchitis, asthma and itchy skin."
           }
         ]
@@ -2291,10 +2255,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Mastitis, breast lumpiness and thickened ducts, milk flow problems, and as support for breast lumps. The outer (lateral) point is used most."
           }
         ]
@@ -2320,10 +2283,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Gallstones, gallbladder inflammation, biliary ascariasis, blocked nose, fast heartbeat, diarrhoea, stomach ulcers, duodenitis and headache."
           }
         ]
@@ -2351,10 +2313,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Mouth problems, including an inflamed tongue, mouth ulcers, gum disease, bleeding gums, jaw joint (TMJ) problems, sore throat and laryngitis."
           },
           {
@@ -2392,10 +2353,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Neck problems such as swollen lymph nodes, and an overactive thyroid."
           }
         ]
@@ -2409,10 +2369,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "The main point for assessing and treating kidney inflammation (nephritis)."
           }
         ]
@@ -2438,10 +2397,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Nervous exhaustion, especially trouble falling asleep. For a stronger effect, treat both the Neurasthenia Point on the front of the ear and this area just behind it on the back of the ear."
           }
         ]
@@ -2467,10 +2425,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Poor sleep from nervous exhaustion, including vivid dreams, light sleep, waking easily, sleeping too little, waking too early, and trouble getting back to sleep."
           }
         ]
@@ -2490,7 +2447,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Dizziness and vertigo",
@@ -2531,10 +2488,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Menstrual problems, inflammation of the ovaries or fallopian tubes, fertility problems, and abnormal uterine bleeding."
           }
         ]
@@ -2560,10 +2516,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Pancreatitis and diabetes."
           }
         ]
@@ -2583,10 +2538,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Diabetes and pancreatitis. The main reference point for diabetes."
           }
         ]
@@ -2612,10 +2566,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Treating and helping prevent mumps (parotitis). Also used for itchy skin and neurodermatitis."
           }
         ]
@@ -2629,10 +2582,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Pelvic inflammation, prostatitis, lower abdominal pain and period pain."
           }
         ]
@@ -2670,10 +2622,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Pain behind the knee from sciatic nerve irritation."
           }
         ]
@@ -2699,10 +2650,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Prostatitis, enlarged prostate, urethritis and sexual dysfunction."
           }
         ]
@@ -2728,7 +2678,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "text": "The specific point for assessing and treating low blood pressure. A reference point for judging whether blood pressure is normal."
@@ -2744,10 +2694,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Internal and external haemorrhoids, rectal prolapse, bowel incontinence, dysentery and enteritis."
           }
         ]
@@ -2767,10 +2716,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing and treating rheumatic conditions."
           }
         ]
@@ -2796,10 +2744,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Pain in the liver area. Also traditionally used to judge whether the liver is a normal size."
           }
         ]
@@ -2819,10 +2766,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Sacral problems, pain at the base of the spine and bedwetting."
           }
         ]
@@ -2856,10 +2802,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing and treating sacroiliac joint pain, such as strain and sacroiliitis."
           }
         ]
@@ -2879,10 +2824,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Combines the functions of all the organs. Used for urinary and digestive problems such as bloating, pain under the ribs, swelling, constipation and tinnitus."
           },
           {
@@ -2906,14 +2850,17 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Clears the energy channels and relieves pain."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "Sciatica. Combine the Sciatic Nerve point on the front of the ear with the matching points on the back of the ear that correspond to where the pain is."
           }
         ]
@@ -2927,7 +2874,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Pain relief",
@@ -2962,10 +2909,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Works much like Shoulder Joint, for assessing and treating frozen shoulder. Mainly used for arm pain and trouble lifting the arm out to the side or overhead."
           }
         ]
@@ -2979,10 +2925,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Cervical spondylosis, neck-and-shoulder syndrome, and shoulder and upper back pain from tight, knotted muscles."
           }
         ]
@@ -3002,10 +2947,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Frozen shoulder and shoulder sprain."
           }
         ]
@@ -3025,7 +2969,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Digestion",
@@ -3062,10 +3006,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing and treating pain in the sole."
           }
         ]
@@ -3137,7 +3080,7 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Digestion",
@@ -3187,10 +3130,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Gastritis, stomach pain from stomach or duodenal ulcers, indigestion and poor appetite."
           }
         ]
@@ -3210,10 +3152,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing and treating an enlarged spleen (splenomegaly)."
           }
         ]
@@ -3227,7 +3168,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Digestion",
@@ -3264,10 +3205,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "The main point for assessing and treating asthma."
           }
         ]
@@ -3293,7 +3233,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Brain regulation",
@@ -3324,7 +3264,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Autonomic balance",
@@ -3356,7 +3296,7 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
             "label": "Calming and headache relief",
@@ -3392,10 +3332,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Inflamed testicles, erectile dysfunction, fertility problems and prostatitis."
           }
         ]
@@ -3421,14 +3360,17 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Corresponds to the hypothalamus, the body's control centre for the autonomic nervous system."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "Regulates the internal organs and body functions including temperature, appetite, fluid and electrolyte balance, hormones and emotional responses."
           }
         ]
@@ -3442,10 +3384,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "An important point for assessing and treating pain in the front thigh muscle (quadriceps)."
           }
         ]
@@ -3459,10 +3400,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Helps control thirst. Used for diabetes, diabetes insipidus and drinking excessively from nervous habit."
           }
         ]
@@ -3482,10 +3422,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Mid-back problems such as spondylosis, pain or strain."
           }
         ]
@@ -3513,10 +3452,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Throat problems, including sore throat, hoarseness, tonsillitis, tracheitis, bronchitis, asthma and globus."
           }
         ]
@@ -3536,10 +3474,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Thyroid problems such as an overactive thyroid, and as support for thyroid lumps."
           }
         ]
@@ -3553,10 +3490,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Sprained, bruised or frostbitten toes, poor circulation to the hands and feet, feeling the cold, numbness in the limbs, and athlete's foot."
           }
         ]
@@ -3570,10 +3506,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Tongue problems, such as inflamed tongue, tongue ulcers and a cracked tongue."
           }
         ]
@@ -3593,10 +3528,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Tonsillitis and sore throat."
           }
         ]
@@ -3624,10 +3558,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Toothache."
           }
         ]
@@ -3641,10 +3574,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Stops cough and clears phlegm. Used for acute and long-term throat inflammation and tracheitis."
           }
         ]
@@ -3670,14 +3602,17 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Actions",
         "items": [
           {
-            "label": "Actions",
             "text": "Anti-inflammatory, brings down fever, calming and pain-relieving."
-          },
+          }
+        ]
+      },
+      {
+        "title": "Indications",
+        "items": [
           {
-            "label": "Common uses",
             "text": "High or low-grade fever from any cause. Usually treated by bleeding a few drops."
           }
         ]
@@ -3722,10 +3657,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Nosebleeds."
           }
         ]
@@ -3739,10 +3673,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Toothache, gum disease, bleeding gums, jaw joint (TMJ) problems and trigeminal neuralgia."
           }
         ]
@@ -3778,10 +3711,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Cracked lips, mouth ulcers, gum disease and trigeminal neuralgia."
           }
         ]
@@ -3809,10 +3741,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing and treating ureter stones."
           }
         ]
@@ -3826,10 +3757,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Urinary infections, prostatitis, night-time urination, frequent urination and leaking urine."
           }
         ]
@@ -3871,10 +3801,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Headache at the top of the head and nervous exhaustion."
           }
         ]
@@ -3900,10 +3829,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Glaucoma, retinitis and iritis."
           }
         ]
@@ -3923,10 +3851,9 @@ export const AURICULOTHERAPY_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Short-sightedness, conjunctivitis, styes and iritis. Also a reference point for short-sightedness."
           }
         ]
@@ -3940,10 +3867,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Assessing and treating wisdom tooth pain."
           }
         ]
@@ -3957,10 +3883,9 @@ export const AURICULOTHERAPY_INFO = {
     "source": "huang-auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Wrist problems and tendon sheath inflammation (tenosynovitis)."
           }
         ]

@@ -193,7 +193,7 @@ def entry(name, loc, uses, note):
     sections = []
     if loc:
         sections.append({"title": "Location", "paragraphs": [loc]})
-    sections.append({"title": "Functions & Uses", "items": [{"label": "Common uses", "text": uses}]})
+    sections.append({"title": "Indications", "items": [{"text": uses}]})
     if note:
         sections.append({"title": "Note", "paragraphs": [note]})
     return {"id": slug(name), "name": name, "system": "Western Auriculotherapy", "sections": sections}

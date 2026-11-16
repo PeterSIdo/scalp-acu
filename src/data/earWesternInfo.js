@@ -14,10 +14,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Toe pain and sprains, gout, bunions, numbness or cold in the toes."
           }
         ]
@@ -36,10 +35,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Toe pain and sprains, gout, bunions, numbness or cold in the toes."
           }
         ]
@@ -64,10 +62,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Heel pain, plantar fasciitis, heel spurs, Achilles tendon problems."
           }
         ]
@@ -86,10 +83,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Heel pain, plantar fasciitis, heel spurs, Achilles tendon problems."
           }
         ]
@@ -114,10 +110,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Ankle sprains, ankle arthritis, swelling and stiffness of the ankle."
           }
         ]
@@ -136,10 +131,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Ankle sprains, ankle arthritis, swelling and stiffness of the ankle."
           }
         ]
@@ -164,10 +158,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Knee pain, osteoarthritis of the knee, ligament and meniscus injuries, sports injuries."
           }
         ]
@@ -186,10 +179,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Knee pain, osteoarthritis of the knee, ligament and meniscus injuries, sports injuries."
           }
         ]
@@ -214,10 +206,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Hip pain and arthritis, groin pain, sciatica felt in the hip."
           }
         ]
@@ -236,10 +227,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Hip pain and arthritis, groin pain, sciatica felt in the hip."
           }
         ]
@@ -264,10 +254,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Finger pain and stiffness, arthritis of the finger joints, numbness or tingling, cold fingers (Raynaud's)."
           }
         ]
@@ -286,10 +275,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Hand pain, arthritis, weak grip, numbness of the hand, carpal tunnel symptoms."
           }
         ]
@@ -308,10 +296,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Wrist sprain, tendonitis, carpal tunnel syndrome, repetitive strain injury."
           }
         ]
@@ -330,10 +317,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Tennis elbow, golfer's elbow, elbow arthritis and sprains."
           }
         ]
@@ -352,10 +338,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Upper arm pain, muscle strain of the biceps or triceps."
           }
         ]
@@ -374,10 +359,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Shoulder pain, frozen shoulder, rotator cuff injury, shoulder arthritis."
           }
         ]
@@ -390,10 +374,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "A general point for shoulder pain and stiffness of any cause; usually combined with the Shoulder point."
           }
         ]
@@ -412,10 +395,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Neck pain, stiff neck, whiplash, cervical arthritis, headaches that start in the neck, arm pain from neck nerves."
           }
         ]
@@ -434,10 +416,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Neck pain and stiffness; used when one point is wanted rather than the whole neck segment."
           }
         ]
@@ -456,10 +437,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Upper and middle back pain, rib pain, intercostal neuralgia, postural back strain."
           }
         ]
@@ -478,10 +458,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Low back pain, lumbar disc problems, lumbar stiffness, sciatica from the lower back."
           }
         ]
@@ -500,10 +479,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Sacral and sacroiliac pain, tailbone (coccyx) pain, pelvic pain."
           }
         ]
@@ -516,10 +494,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Acute and chronic low back pain (lumbago), low back strain."
           }
         ]
@@ -538,10 +515,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Stiff neck, wry neck (torticollis), neck sprain, neck muscle tension."
           }
         ]
@@ -560,10 +536,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Chest wall pain, rib pain, breast pain, shingles pain over the chest, tight chest."
           }
         ]
@@ -582,10 +557,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Abdominal pain and cramps, bloating, period pain, pain after abdominal surgery."
           }
         ]
@@ -604,10 +578,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Headache at the back of the head, neck stiffness, dizziness, insomnia. Also used as a calming point."
           }
         ]
@@ -626,10 +599,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Headache at the temples, migraine, one-sided headache."
           }
         ]
@@ -648,10 +620,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Frontal headache, sinus headache, dizziness, poor concentration."
           }
         ]
@@ -670,10 +641,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Facial pain, trigeminal neuralgia, facial paralysis (Bell's palsy), facial twitching, acne."
           }
         ]
@@ -692,10 +662,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Eye strain, red or sore eyes, conjunctivitis, dry eyes, poor vision."
           }
         ]
@@ -714,10 +683,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Eye problems: short sight, glaucoma, conjunctivitis, eye strain. Usually used together with Eye Disorder 2."
           }
         ]
@@ -736,10 +704,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Eye problems: short sight, glaucoma, conjunctivitis, eye strain. Usually used together with Eye Disorder 1."
           }
         ]
@@ -758,10 +725,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Toothache of the upper teeth, upper jaw pain, sinus pain felt in the teeth."
           }
         ]
@@ -780,10 +746,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Toothache of the lower teeth, lower jaw pain, jaw stiffness."
           }
         ]
@@ -796,10 +761,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Jaw joint (TMJ) pain, clicking jaw, teeth grinding (bruxism), difficulty opening the mouth."
           }
         ]
@@ -818,10 +782,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Toothache and pain relief for dental treatment."
           }
         ]
@@ -840,10 +803,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Tinnitus, hearing loss, vertigo, dizziness, middle ear infections."
           }
         ]
@@ -868,10 +830,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Tinnitus, hearing loss, vertigo, dizziness, middle ear infections."
           }
         ]
@@ -896,10 +857,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Blocked or runny nose, rhinitis, hay fever, sinusitis, nosebleeds."
           }
         ]
@@ -918,10 +878,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Tinnitus, hearing loss, earache, outer ear inflammation, dizziness."
           }
         ]
@@ -934,10 +893,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Muscle tension, spasms and cramps, stiffness from stress. Often added to formulas for musculoskeletal pain."
           }
         ]
@@ -956,10 +914,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Mouth ulcers, sore mouth or tongue, facial paralysis, taste problems. Widely used in smoking-cessation formulas."
           }
         ]
@@ -978,10 +935,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Indigestion, nausea and vomiting, gastritis, stomach ulcers, heartburn. Used in appetite and weight-control formulas."
           }
         ]
@@ -1000,10 +956,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Poor digestion and absorption, bloating, diarrhoea, abdominal pain."
           }
         ]
@@ -1022,10 +977,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Constipation, diarrhoea, irritable bowel syndrome, bloating and wind."
           }
         ]
@@ -1044,10 +998,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Liver and gallbladder problems, digestive upset, muscle tension and cramps, eye problems, irritability, hangover. Used in detox formulas."
           }
         ]
@@ -1066,10 +1019,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Indigestion of fats, blood-sugar problems (as a support for diabetes care), pancreatitis."
           }
         ]
@@ -1088,10 +1040,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Poor appetite, bloating, loose stools, fatigue, anaemia, easy bruising or bleeding."
           }
         ]
@@ -1110,10 +1061,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Immune support, anaemia, fatigue, digestive weakness."
           }
         ]
@@ -1138,10 +1088,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Palpitations, irregular heartbeat, high blood pressure, anxiety, insomnia, night sweats."
           }
         ]
@@ -1160,10 +1109,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Palpitations, irregular heartbeat, high blood pressure, anxiety."
           }
         ]
@@ -1188,10 +1136,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Cough, asthma, bronchitis, colds, skin conditions. A core point for smoking cessation and addiction formulas; also used for pain relief."
           }
         ]
@@ -1210,10 +1157,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Cough, asthma, bronchitis, colds, skin conditions. A core point for smoking cessation and addiction formulas; also used for pain relief."
           }
         ]
@@ -1232,10 +1178,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Sore throat, tonsillitis, laryngitis, hoarse voice."
           }
         ]
@@ -1254,10 +1199,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Sore throat, tonsillitis, laryngitis, hoarse voice."
           }
         ]
@@ -1282,10 +1226,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Hiccups, spasm of the diaphragm or stomach, bleeding problems, itchy skin. In the European map this spot is Point Zero, a general balancing point."
           }
         ]
@@ -1304,10 +1247,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Kidney and urinary problems, low back pain, tinnitus and hearing loss, fatigue, hair loss, bone health."
           }
         ]
@@ -1326,10 +1268,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Kidney and urinary problems, fluid balance, low back pain."
           }
         ]
@@ -1354,10 +1295,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Bladder infection (cystitis), frequent or urgent urination, bed-wetting, urine retention."
           }
         ]
@@ -1376,10 +1316,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Prostatitis, enlarged prostate, difficult or frequent urination, impotence."
           }
         ]
@@ -1398,10 +1337,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Period pain, irregular periods, premenstrual syndrome, infertility, menopausal symptoms."
           }
         ]
@@ -1420,10 +1358,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Period pain, irregular periods, premenstrual syndrome, infertility."
           }
         ]
@@ -1448,10 +1385,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Genital itching or inflammation, impotence, low libido, painful intercourse."
           }
         ]
@@ -1470,10 +1406,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Genital itching or inflammation, impotence, low libido."
           }
         ]
@@ -1492,10 +1427,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "The master gland: hormone imbalance in general, and support for thyroid, adrenal and reproductive hormone problems. A common point in endocrine formulas."
           }
         ]
@@ -1508,10 +1442,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Sleep–wake rhythm: insomnia, jet lag, shift-work tiredness, winter low mood."
           }
         ]
@@ -1530,10 +1463,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Over- or underactive thyroid (as a support), goitre, metabolism and weight problems, fatigue."
           }
         ]
@@ -1552,10 +1484,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Over- or underactive thyroid (as a support), metabolism and weight problems, fatigue."
           }
         ]
@@ -1580,10 +1511,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Inflammation, allergies, asthma, itchy skin, fever, low blood pressure, rheumatic pain, stress."
           }
         ]
@@ -1602,10 +1532,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Stress and burnout, fatigue, inflammation, allergies."
           }
         ]
@@ -1624,10 +1553,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Irregular periods, infertility, menopausal symptoms, low libido, sexual problems."
           }
         ]
@@ -1646,10 +1574,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Regulating the sex hormones: irregular periods, ovulation problems, infertility, menopausal symptoms."
           }
         ]
@@ -1668,10 +1595,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "The pituitary hormone that drives the adrenals: stress, inflammation, allergies, rheumatic conditions."
           }
         ]
@@ -1684,10 +1610,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "The pituitary hormone that drives the thyroid: support for thyroid imbalance."
           }
         ]
@@ -1700,10 +1625,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Brain and pituitary function: poor concentration, poor memory, dizziness, insomnia, bed-wetting, developmental and hormonal problems."
           }
         ]
@@ -1722,10 +1646,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Headache, dizziness, neck stiffness, tremors and spasms, after concussion. Calms the nervous system."
           }
         ]
@@ -1738,10 +1661,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Concentration, planning and impulse control: poor focus, ADHD, cravings in addiction, worry."
           }
         ]
@@ -1754,10 +1676,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Emotional balance and inflammation: mood swings, premenstrual symptoms, inflammatory pain."
           }
         ]
@@ -1770,10 +1691,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Memory and learning problems, forgetfulness, and trauma-related memories (PTSD)."
           }
         ]
@@ -1786,10 +1706,9 @@ export const WESTERN_INFO = {
     "system": "Western Auriculotherapy",
     "sections": [
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Fear, anger and aggression, anxiety, panic, PTSD."
           }
         ]
@@ -1808,10 +1727,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Nerve pain spreading from the spine, numbness and tingling in the limbs, support after spinal cord injury."
           }
         ]
@@ -1830,10 +1748,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Sciatica, pain spreading down the back of the leg, buttock pain."
           }
         ]
@@ -1852,10 +1769,9 @@ export const WESTERN_INFO = {
         ]
       },
       {
-        "title": "Functions & Uses",
+        "title": "Indications",
         "items": [
           {
-            "label": "Common uses",
             "text": "Headache at the back and side of the head, migraine, neck pain, numbness of the scalp. As Wind Stream: allergies, hives, hay fever, itching."
           }
         ]
