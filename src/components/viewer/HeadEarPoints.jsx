@@ -254,8 +254,15 @@ const DRAG_SLOP = { mouse: 3, touch: 10, pen: 6 }
 // Centre of a point element in the SVG's own (viewBox) units. Spine segments
 // are curves, so their midpoint along the path is used rather than the bbox
 // centre, which can fall off the line.
+// The element's own transforms are walked up to the root <svg> instead of
+// using getScreenCTM, which mobile browsers can get wrong (CSS transforms,
+// scrolled or zoomed containers) and which shifted the marker off the point.
 export function pointCentre(svg, el, lineIds) {
-  const m = svg.getScreenCTM().inverse().multiply(el.getScreenCTM())
+  let m = new DOMMatrix()
+  for (let n = el; n && n !== svg; n = n.parentNode) {
+    const t = n.transform?.baseVal?.consolidate()?.matrix
+    if (t) m = new DOMMatrix([t.a, t.b, t.c, t.d, t.e, t.f]).multiply(m)
+  }
   let p
   if (lineIds.has(el.id) && el.getTotalLength) {
     p = el.getPointAtLength(el.getTotalLength() / 2)
