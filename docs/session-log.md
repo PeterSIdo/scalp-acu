@@ -1162,3 +1162,29 @@ mentioned anywhere in the app for now.
   controller (user chose to leave it as is); no in-app account deletion.
 - Build passes; screenshots at 390px (privacy, register) and 1280px look right,
   no horizontal scroll.
+- Committed and pushed: 638e6f8 (scalp-app), 96efa39 (acumap-site).
+
+## 2026-11-17 — Visitor flow check at phone width (beta plan step 6)
+Headless Playwright, iPhone 13 profile, against the live sites after deploy.
+- acumap.net?ref=flowtest: all app links carry the tag; "Join the beta" →
+  app /register, tag stored, address bar cleaned. No horizontal scroll.
+- Register → "privacy note & disclaimer" link → /privacy: fine.
+- /viewer first visit: welcome tip shows, "Got it" closes it.
+- Header menu (visitor): About / Feedback / Contact / Log in. About opens
+  in the bottom sheet; Feedback form full screen, no sideways scroll;
+  Contact fires the mailto (page stays put).
+- Tapping a point opens its description sheet (A Yang).
+- Search "headache": 10 results — A Yin and A Yang each listed twice
+  (probably once per diagram view). Cosmetic, left for the user to decide.
+- With 20 descriptions already used, the next tap shows "Enjoying AcuMap?"
+  sign-up popup.
+- Cases as visitor: "All cases (3)".
+- No JavaScript errors on any page.
+- Real sign-up via acumap.net/?ref=test done by the user on 2026-11-17:
+  `signupRef` = "test" in Railway. Tracking confirmed end to end.
+
+## 2026-11-17 — YNSA search: one result per point name
+- A Yin / A Yang each have two records in ynsa.json (YNSA-A1-* and
+  YNSA-A8-*, same name and indications), so they were listed twice.
+  `ynsaResults` in SearchPanel.jsx now keeps the first record per name.
+  "headache" now gives 8 results instead of 10. Build passes.

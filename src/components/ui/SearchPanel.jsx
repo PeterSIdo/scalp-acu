@@ -9,6 +9,9 @@ import { earPointInfo } from '../../data/earPointInfo'
 function ynsaResults(q) {
   // Y points have four identical records per meridian (yin/yang ×
   // strong/soft) — list only the strong yin one so each appears once.
+  // A Yin / A Yang also have two records each (A1 and A8 ends of the A
+  // line, same name and indications): keep the first per name.
+  const seen = new Set()
   return allPoints
     .filter(p =>
       (!p.id.startsWith('YNSA-Y-') || /-yin$/.test(p.id)) && (
@@ -17,6 +20,7 @@ function ynsaResults(q) {
       p.indications?.some(ind => ind.toLowerCase().includes(q)) ||
       p.tags?.some(tag => tag.toLowerCase().includes(q))
     ))
+    .filter(p => !seen.has(p.name) && seen.add(p.name))
     .map(p => ({ key: p.id, name: p.name, detail: p.indications?.find(i => i.toLowerCase().includes(q)), item: p, enabled: true }))
 }
 
