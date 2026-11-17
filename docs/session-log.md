@@ -883,3 +883,145 @@ the app's canonical codes instead:
 - Not checked in the browser: Western info cards, Ear Seeds tab, two-card grid,
   hidden points on formula diagrams (check that the ear outline still shows),
   new Cases articles and warning icons.
+
+---
+
+## 2026-11-16 — Phone fixes, TCM meridian points, per-tab search, ear Indications
+
+**Status: committed and pushed** (`6994491`, `0bf919d`, `4af0cff`, `ce3de17`,
+`e6d6534`, `a44de67`, `f963f5a`).
+
+### Ear formulas and Chinese ear on phones
+- `EarGuide.jsx` `FormulaPage`: on phones (< 768px, stacked layout) picking a
+  formula glides the page to the diagram at the bottom (~1.2 s ease-in-out,
+  rAF). A touch or wheel cancels it, so the page stays scrollable.
+- `FormulaDiagram` sits in a frame with the crop's exact aspect ratio
+  (container-query units) and `overflow: hidden`. Before, a phone-shaped card
+  showed parts of the full 1207×1249 page beyond the crop.
+- `TCM_VIEWBOX` (`HeadEarPoints.jsx`) widened to `255 50 740 1162`: the ear
+  drawing spans x≈271–977, and the old crop (x from 285) cut its left edge.
+  Shared by the Chinese ear in the main viewer and the formula diagrams.
+- `pointCentre` no longer uses `getScreenCTM`. It walks the element's own
+  `transform`s up to the root `<svg>`. On a phone the Thoracic Vertebrae
+  marker sat off the diagram, though it looked right in desktop Chrome; the
+  user confirmed the fix on the phone.
+
+### TCM Meridians on the Head: points
+- `tcm-scalp-meridians.svg` re-exported with ids: lines `BL`, `GB`, `ST`,
+  `SI`, `TB`, `LI`, `CV`, `GV`; point layers `"BL 1"`…, Governing Vessel as
+  `"DU n"`. Some point groups hold stacked duplicate circles at one spot,
+  which is harmless.
+- `HeadTCMScalpAreas.jsx`: `TCM_MERIDIANS` lists each meridian's point
+  numbers; `svgPrefix` / `svgLine` map the SVG's `DU` / `TB` names, and either
+  name is accepted. Lines are now found by id, not stroke colour. In the new
+  export SI's line is blue-violet `#5D4EE3` and TB/SJ's is red `#CB4C4E`
+  (dots `#F40A1A`); worth a check.
+- Meridian menu: each meridian followed by its points, indented, e.g.
+  `GB 20 Fengchi`. A point selects its meridian too. The diagram veils the
+  rest, redraws that meridian's points on top, and pulses the point with a
+  short label. Dots are tappable (r=10 hit circles).
+- 69 points: BL 1–10, GB 1–21, ST 1–8, SI 16–19, SJ 16–23, LI 18–20,
+  CV 23–24, GV 15–27. The point lists are typed into `TCM_MERIDIANS`; update
+  them if points are added in Figma (GB 21 was added this way).
+- **Convention:** app text uses **GV / CV** and **SJ "Triple Heater"** (not
+  DU / REN / TB), matching the YNSA meridian list. The SVG legend label "TB"
+  should be changed to SJ in Figma; layer names can stay.
+
+### Meridian point descriptions
+- New `src/data/tcmMeridianPointInfo.js`: all 69 points as InfoPanel
+  `sections` entries. Name `"GB 20 Fengchi"`, `subtitle` with the English
+  name, badge with the meridian, then Location (WHO standard positions),
+  Actions, Indications, and Caution for needling-risk points (BL 1, ST 1,
+  BL 10, GB 20, GV 15, GV 16, LI 18, SI 17, GV 22, GB 21, …).
+- Written by Claude from standard TCM references, in our own words, with **no
+  book source**, at the user's choice. **Needs a clinical read-through**,
+  especially Locations and Cautions.
+- `InfoPanel.jsx`: sectioned entries show an optional italic `subtitle`
+  under the title.
+
+### Search per tab
+- The side-panel / mobile search now searches the active tab
+  (`SEARCH_BY_SYSTEM` in `ViewerPage.jsx` sets placeholder and hint per tab):
+  - **TCM:** scalp areas, meridian points (code, `GB20`, pinyin, English,
+    meridian, actions, indications) and brain zones.
+  - **ZSA:** areas by name, code, functions and indications.
+  - **Auriculotherapy:** as before, plus indications (see below).
+  - **YNSA:** unchanged. **Cases:** keeps its own list search.
+- New `src/data/systemSearch.js`: `TCM_SEARCH`, `ZSA_SEARCH`,
+  `searchEntries` (name / alias matches first, then the matching phrase) and
+  `phrases()`. `HeadBrainZones.jsx` now exports `BRAIN_ZONES`,
+  `BRAIN_ZONE_TCM` and `zoneToPanelItem` for it.
+- Picking a TCM / ZSA result sets `gridPick` (`{ subgroup, kind, key, n }`),
+  switches sub-tab if needed, and the grid selects it through its new `pick`
+  prop (`HeadTCMScalpAreas`, `HeadBrainZones`, `HeadZSAPoints`).
+
+### Ear points: Indications instead of Functions & Uses
+- `earAuriculotherapyInfo.js` (155) and `earWesternInfo.js` (84): the
+  "Functions & Uses" section is now **Indications**. Wording is kept and the
+  redundant "Common uses" label dropped. For the 13 Chinese points with
+  "Actions" items, those move to their own **Actions** section above. Other
+  topic labels ("Sleep:", "Airways:", …) stay.
+- Both generators updated. `build_ear_western_info.py` re-run (reproduces
+  its file exactly).
+- **Do not re-run `build_ear_info.py`**: it has drifted from
+  `earAuriculotherapyInfo.js` (134 entries generated vs 155 in the file), so
+  that file was changed directly.
+- Ear search indexes each point's Indications phrases. A result shows just
+  the matching phrase, e.g. "Hip Joint — sciatica".
+- An automatic split into short YNSA-style items was tried and dropped: it
+  garbled indications. A hand rewrite in batches is still possible.
+
+### Notes / open items
+- Brain Zones TCM text (`BRAIN_ZONE_TCM`) still says `DU20`, `DU17`, `TB21`…;
+  to switch to GV / SJ if wanted.
+- Checked in desktop Chrome: meridian menu, dots, info panel, all four tab
+  searches and result picks. On phones only the marker fix was confirmed
+  (by the user).
+- `vite build` passes. A dev-only fast-refresh warning is expected from
+  `HeadBrainZones.jsx` now exporting non-components.
+
+---
+
+## 2026-11-17 — TCM Meridians tile: magnifier
+
+**Status: not yet committed** (files: `src/components/viewer/Magnifier.jsx`
+(new), `src/components/viewer/HeadEarPoints.jsx`,
+`src/components/viewer/HeadTCMScalpAreas.jsx`).
+
+### Magnifier on "TCM Meridians on the Head" (TCM card 2/1)
+- Same magnifier as the Auriculotherapy cards: −/+ slider (1×–2×) at the
+  bottom left, orange × to reset, drag to pan while zoomed. A drag doesn't
+  expand the tile or select a point.
+- The zoom is shared by the tile and its expanded view
+  (`meridianView` state in `HeadTCMScalpAreas`). It resets with the viewer's
+  reset (remount).
+- The selected point's pulsing ring and name label are divided by the zoom,
+  so they stay the same size on screen. The label is kept inside the visible
+  window. Lines and dots scale with the diagram.
+- Unlike the ear cards, no strip is reserved under the diagram for the
+  slider. It floats over the bottom-left corner so the head stays the same
+  size as in the other three TCM tiles.
+
+### Shared `Magnifier.jsx`
+- `MagnifiedDiagram`, `ZoomSlider`, `defaultView`, `clampView` (plus
+  `DRAG_SLOP`, `MAX_ZOOM`) moved out of `HeadEarPoints.jsx` unchanged. Both
+  grids import them; the ear cards behave as before.
+- `MERIDIANS_VIEWBOX` string replaced by `MERIDIANS_BOX`
+  `{ x: 66.83, y: 211, w: 689, h: 719 }`.
+
+### Fix: selection veil didn't cover the whole card when zoomed
+- Symptom: with a meridian point selected and the diagram magnified, the
+  white veil covered only part of the card. Panning showed bright,
+  unveiled areas.
+- Cause: the tile's aspect differs from the diagram's, so the SVG also draws
+  outside its viewBox (letterbox bands). The veil and its mask were sized to
+  the viewBox only.
+- Fix: `SelectionHighlight` now extends the veil and mask (`maskUnits=
+  "userSpaceOnUse"`) by 2× the viewBox's larger side on every side. It is
+  shared by all four TCM tiles, so any unveiled edges there are covered too.
+- Confirmed working by the user.
+
+### Notes
+- `vite build` passes. ESLint shows the usual fast-refresh warning for
+  `Magnifier.jsx` exporting helper functions, the same kind
+  `HeadEarPoints.jsx` already had.

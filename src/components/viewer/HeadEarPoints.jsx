@@ -12,6 +12,7 @@ import { AURICULOTHERAPY_CATEGORIES, AURICULOTHERAPY_POINTS } from '../../data/e
 import { earPointInfo } from '../../data/earPointInfo'
 import { TILE_TITLES, MSK_GROUPS, MSK_LINE_IDS, MASTER_LINE_IDS, MASTER_SVG_IDS, POSTERIOR_SVG_IDS, TURNED_SVG_IDS, WESTERN_CATEGORIES, WESTERN_POINTS, WESTERN_SVG_IDS } from '../../data/earPoints'
 import { TOUCH_REACH, targetAt } from './touchHit'
+import { MagnifiedDiagram, ZoomSlider, defaultView } from './Magnifier'
 
 // One row of two tiles: Chinese Auriculotherapy | Western Auriculotherapy.
 const TILE_IDS = ['master', 'western']
@@ -247,10 +248,6 @@ function SearchablePointMenu({ tile, title, activePoint, menuOpen, category, onC
 // numbers are scaled up 2x to look the same on screen.
 const MARK = { ring: 22, pulse: 44, stroke: 3, gap: 32, pad: 12, font: 22, charW: 12.4 }
 
-// Movement (screen px) before a press on a magnified diagram counts as a pan;
-// a finger wobbles more than a mouse, so a tap isn't mistaken for a drag.
-const DRAG_SLOP = { mouse: 3, touch: 10, pen: 6 }
-
 // Centre of a point element in the SVG's own (viewBox) units. Spine segments
 // are curves, so their midpoint along the path is used rather than the bbox
 // centre, which can fall off the line.
@@ -441,118 +438,9 @@ const TILE_BOXES = {
 // the magnifier row; the diagram shrinks into the rest and moves up.
 const BOTTOM_GAP = 30
 
-const MAX_ZOOM = 2
-
 // Crop of a tile's diagram at a point of view (0 = the tile's own diagram).
 function tileBox(id, angle = 0) {
   return angle > 0 ? EXTRA_VIEWS[id][angle - 1].box : TILE_BOXES[id]
-}
-
-function defaultView(box) {
-  return { zoom: 1, cx: box.x + box.w / 2, cy: box.y + box.h / 2 }
-}
-
-// Clamp the view centre so the zoomed window stays inside the crop.
-function clampView(box, { zoom, cx, cy }) {
-  const w = box.w / zoom
-  const h = box.h / zoom
-  return {
-    zoom,
-    cx: Math.min(Math.max(cx, box.x + w / 2), box.x + box.w - w / 2),
-    cy: Math.min(Math.max(cy, box.y + h / 2), box.y + box.h - h / 2),
-  }
-}
-
-// A diagram with its own magnification: the slider shrinks the viewBox
-// around the view centre, and dragging pans it while zoomed in. Mouse-downs
-// are stopped while zoomed so ZoomableView doesn't pan the whole grid too,
-// and a click after a drag is swallowed so it doesn't toggle the tile or
-// select a point. `children` renders the diagram for the visible window.
-function MagnifiedDiagram({ box, view, onViewChange, children }) {
-  const hostRef = useRef(null)
-  const drag = useRef(null)
-  const dragged = useRef(false)
-  const w = box.w / view.zoom
-  const h = box.h / view.zoom
-  const zoomed = view.zoom > 1
-
-  function onPointerDown(e) {
-    if (!zoomed || e.button !== 0) return
-    drag.current = { x: e.clientX, y: e.clientY, slop: DRAG_SLOP[e.pointerType] ?? 3 }
-    dragged.current = false
-  }
-
-  function onPointerMove(e) {
-    if (!drag.current) return
-    const dx = e.clientX - drag.current.x
-    const dy = e.clientY - drag.current.y
-    // Capture only once it's really a drag: capturing on pointer-down would
-    // retarget the click to this wrapper, so points couldn't be selected.
-    if (!dragged.current) {
-      if (Math.abs(dx) <= drag.current.slop && Math.abs(dy) <= drag.current.slop) return
-      dragged.current = true
-      e.currentTarget.setPointerCapture(e.pointerId)
-    }
-    const rect = hostRef.current.getBoundingClientRect()
-    // Pixels per SVG unit under preserveAspectRatio="xMidYMid meet".
-    const scale = Math.min(rect.width / w, rect.height / h)
-    drag.current = { ...drag.current, x: e.clientX, y: e.clientY }
-    onViewChange(v => clampView(box, { ...v, cx: v.cx - dx / scale, cy: v.cy - dy / scale }))
-  }
-
-  function onPointerUp() {
-    drag.current = null
-  }
-
-  return (
-    <div
-      ref={hostRef}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
-      onMouseDown={e => { if (zoomed) e.stopPropagation() }}
-      onClickCapture={e => { if (dragged.current) { e.stopPropagation(); dragged.current = false } }}
-      style={{ position: 'relative', width: '100%', height: '100%', cursor: zoomed ? 'grab' : undefined, touchAction: zoomed ? 'none' : undefined }}
-    >
-      {children({ x: view.cx - w / 2, y: view.cy - h / 2, w, h })}
-    </div>
-  )
-}
-
-// Magnification slider, styled like the point menus' trigger.
-function ZoomSlider({ box, view, compact, onViewChange }) {
-  return (
-    <div
-      className={`flex items-center gap-2 text-xs font-semibold px-2 py-1 ${GLASS_TRIGGER} text-black`}
-      onClick={e => e.stopPropagation()}
-      onMouseDown={e => e.stopPropagation()}
-      onPointerDown={e => e.stopPropagation()}
-    >
-      <span aria-hidden="true">−</span>
-      <input
-        type="range"
-        min={1}
-        max={MAX_ZOOM}
-        step={0.1}
-        value={view.zoom}
-        onChange={e => { const zoom = Number(e.target.value); onViewChange(v => clampView(box, { ...v, zoom })) }}
-        aria-label="Magnification"
-        className={`${compact ? 'w-16' : 'w-28'} accent-amber-500 cursor-pointer`}
-      />
-      <span aria-hidden="true">+</span>
-      {view.zoom > 1 && (
-        <button
-          type="button"
-          onClick={() => onViewChange(defaultView(box))}
-          aria-label="Reset magnification"
-          className="flex items-center justify-center w-5 h-5 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm transition duration-150 ease-out hover:scale-110 active:scale-90"
-        >
-          <CrossIcon size={10} strokeWidth={4} />
-        </button>
-      )}
-    </div>
-  )
 }
 
 // Up/down arrows that step through a tile's points of view, with "n/total".

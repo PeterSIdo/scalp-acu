@@ -12,6 +12,7 @@ import { TCM_AREA_INFO } from '../../data/tcmAreaInfo'
 import { TCM_MERIDIAN_POINT_INFO, TCM_MERIDIAN_POINT_NAMES } from '../../data/tcmMeridianPointInfo'
 import CrossIcon from '../ui/CrossIcon'
 import MenuSizer from '../ui/MenuSizer'
+import { MagnifiedDiagram, ZoomSlider, defaultView } from './Magnifier'
 import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 
 // 2x2 grid, row-major: areas diagram (with the TCM Area menu) | motor area
@@ -55,7 +56,7 @@ const MOTOR_DIAGRAM_AREAS = [
 // areas SVG, just shifted (head outline at x+12.83, y-4). Using a same-size
 // viewBox at that offset makes both heads render identically in their tiles
 // (y nudged 2 up so the legend text at y≈212 isn't clipped).
-const MERIDIANS_VIEWBOX = '66.83 211 689 719'
+const MERIDIANS_BOX = { x: 66.83, y: 211, w: 689, h: 719 }
 
 // Same-size viewBox for front-anthony-shaded.svg (tile 2/2), see 'front' tile.
 const FRONT_VIEWBOX = '46 162 689 719'
@@ -256,12 +257,17 @@ function searchAreas(query) {
 // selected line(s) above the veil with a pulsing glow.
 function SelectionHighlight({ viewBox, hole, lines, color, lineWidth, glowWidth }) {
   const maskId = `tcm-mask-${useId().replace(/:/g, '')}`
-  const [vx, vy, vw, vh] = viewBox.split(' ').map(Number)
+  // The veil reaches well past the viewBox: when the tile's aspect differs
+  // from the diagram's, the SVG also draws outside the viewBox (letterbox
+  // bands), which a magnified, panned view brings into sight.
+  const [bx, by, bw, bh] = viewBox.split(' ').map(Number)
+  const m = Math.max(bw, bh) * 2
+  const [vx, vy, vw, vh] = [bx - m, by - m, bw + m * 2, bh + m * 2]
   const [hx, hy, hw, hh] = hole
   return (
     <g pointerEvents="none">
       <defs>
-        <mask id={maskId}>
+        <mask id={maskId} maskUnits="userSpaceOnUse" x={vx} y={vy} width={vw} height={vh}>
           <rect x={vx} y={vy} width={vw} height={vh} fill="white" />
           <rect x={hx} y={hy} width={hw} height={hh} rx="6" fill="black" />
         </mask>
@@ -314,7 +320,8 @@ function AreasDiagram({ activeArea, onSelect, Svg = ScalpAreasSvg, areas = TCM_A
   )
 }
 
-// Point marker sizes, in diagram units.
+// Point marker sizes, in diagram units at 1x. The ring and label are divided
+// by the magnification so they stay the same size on screen.
 const POINT_MARK = { dot: 4.5, hit: 10, ring: 9, pulse: 18, font: 15, pad: 6, charW: 8.6, gap: 14 }
 
 // The meridians SVG with the same kind of overlay. Each meridian's line is
@@ -322,7 +329,8 @@ const POINT_MARK = { dot: 4.5, hit: 10, ring: 9, pulse: 18, font: 15, pad: 6, ch
 // TCM_MERIDIANS); the legend circle is found by colour, with its label text
 // directly above it. Selecting a meridian veils the rest and glows its line
 // and points; selecting a point also pulses it and shows its name.
-function MeridiansDiagram({ activeMeridian, activePoint, onSelect }) {
+// `rect` is the visible (possibly magnified) window, see Magnifier.
+function MeridiansDiagram({ activeMeridian, activePoint, onSelect, rect, zoom }) {
   const hostRef = useRef(null)
   const [shapes, setShapes] = useState({})
   const [points, setPoints] = useState({})
@@ -365,23 +373,26 @@ function MeridiansDiagram({ activeMeridian, activePoint, onSelect }) {
   const activeShapes = active && shapes[active.code]
   const activePos = activePoint && points[activePoint]
 
+  const viewBox = `${rect.x} ${rect.y} ${rect.w} ${rect.h}`
+  const mark = Object.fromEntries(Object.entries(POINT_MARK).map(([k, v]) => [k, v / zoom]))
   let label = null
   if (activePos) {
-    const { font, pad, charW, gap } = POINT_MARK
+    const { font, pad, charW, gap } = mark
     const w = activePoint.length * charW + pad * 2
     const h = font + pad * 2
-    const right = Number(MERIDIANS_VIEWBOX.split(' ')[0]) + Number(MERIDIANS_VIEWBOX.split(' ')[2])
-    const x = activePos.x + gap + w > right ? activePos.x - gap - w : activePos.x + gap
-    label = { x, y: activePos.y - h / 2, w, h }
+    // To the right of the point, flipped left if it would leave the window.
+    const x = activePos.x + gap + w > rect.x + rect.w ? activePos.x - gap - w : activePos.x + gap
+    const y = Math.min(Math.max(activePos.y - h / 2, rect.y), rect.y + rect.h - h)
+    label = { x, y, w, h }
   }
 
   return (
     <div ref={hostRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <ScalpMeridiansSvg viewBox={MERIDIANS_VIEWBOX} style={FILL} />
-      <svg viewBox={MERIDIANS_VIEWBOX} style={FILL}>
+      <ScalpMeridiansSvg viewBox={viewBox} style={FILL} />
+      <svg viewBox={viewBox} style={FILL}>
         {activeShapes && (
           <SelectionHighlight
-            viewBox={MERIDIANS_VIEWBOX}
+            viewBox={viewBox}
             hole={activeShapes.legend ?? [0, 0, 0, 0]}
             lines={activeShapes.lines}
             color={activeShapes.lineColor}
@@ -431,12 +442,12 @@ function MeridiansDiagram({ activeMeridian, activePoint, onSelect }) {
 
         {activePos && label && (
           <g pointerEvents="none">
-            <circle cx={activePos.x} cy={activePos.y} r={POINT_MARK.ring} fill="none" stroke="#000" strokeWidth="2">
-              <animate attributeName="r" values={`${POINT_MARK.ring};${POINT_MARK.pulse};${POINT_MARK.ring}`} dur="1.6s" repeatCount="indefinite" />
+            <circle cx={activePos.x} cy={activePos.y} r={mark.ring} fill="none" stroke="#000" strokeWidth={2 / zoom}>
+              <animate attributeName="r" values={`${mark.ring};${mark.pulse};${mark.ring}`} dur="1.6s" repeatCount="indefinite" />
               <animate attributeName="opacity" values="0.75;0;0.75" dur="1.6s" repeatCount="indefinite" />
             </circle>
-            <rect x={label.x} y={label.y} width={label.w} height={label.h} rx="5" fill="rgba(0,0,0,0.72)" />
-            <text x={label.x + POINT_MARK.pad} y={label.y + POINT_MARK.pad + POINT_MARK.font * 0.8} fontSize={POINT_MARK.font} fill="white" fontFamily="system-ui, sans-serif">
+            <rect x={label.x} y={label.y} width={label.w} height={label.h} rx={5 / zoom} fill="rgba(0,0,0,0.72)" />
+            <text x={label.x + mark.pad} y={label.y + mark.pad + mark.font * 0.8} fontSize={mark.font} fill="white" fontFamily="system-ui, sans-serif">
               {activePoint}
             </text>
           </g>
@@ -455,8 +466,8 @@ const NAV_ITEMS = [
 
 // Both diagram tiles use the same layout (menu row above the diagram, same
 // viewBox size), so the heads render at the same size in 1/1 and 1/2.
-function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMeridianChange, activeMeridianPoint, onMeridianPointChange, openMenu, onMenuToggle, onMenuClose, onPointSelect, navMode, onNavSelect, onNavModeChange }, expanded = false) {
-  let menu, diagram
+function renderTileContent(id, { meridianView, onMeridianViewChange, activeArea, onAreaChange, activeMeridian, onMeridianChange, activeMeridianPoint, onMeridianPointChange, openMenu, onMenuToggle, onMenuClose, onPointSelect, navMode, onNavSelect, onNavModeChange }, expanded = false) {
+  let menu, diagram, magnifier
   const selectArea = area => { onAreaChange(area); onPointSelect?.(area ? TCM_AREA_INFO[area] ?? null : null) }
   const toggleArea = area => { onMenuClose(); selectArea(activeArea === area ? null : area) }
   switch (id) {
@@ -524,7 +535,14 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
           onReset={() => { if (activeMeridianPoint) onPointSelect?.(null); onMeridianPointChange(null); onMeridianChange(null) }}
         />
       )
-      diagram = <MeridiansDiagram activeMeridian={activeMeridian} activePoint={activeMeridianPoint} onSelect={toggleMeridian} />
+      // Magnifiable like the Ear diagrams; the zoom is shared by the tile and
+      // its expanded view.
+      diagram = (
+        <MagnifiedDiagram box={MERIDIANS_BOX} view={meridianView} onViewChange={onMeridianViewChange}>
+          {rect => <MeridiansDiagram activeMeridian={activeMeridian} activePoint={activeMeridianPoint} onSelect={toggleMeridian} rect={rect} zoom={meridianView.zoom} />}
+        </MagnifiedDiagram>
+      )
+      magnifier = <ZoomSlider box={MERIDIANS_BOX} view={meridianView} compact={!expanded} onViewChange={onMeridianViewChange} />
       break
     }
     // No menu of its own; its Motor and Sensory lines/labels select the same
@@ -575,6 +593,14 @@ function renderTileContent(id, { activeArea, onAreaChange, activeMeridian, onMer
           </div>
         </div>
       )}
+      {/* Bottom left, below the menu's z-20 so an open dropdown covers it.
+          It floats over the diagram (no reserved gap) so the head stays the
+          same size as in the other tiles. */}
+      {magnifier && (
+        <div className="absolute left-0 bottom-0 px-3 pb-1 z-10 flex items-stretch">
+          {magnifier}
+        </div>
+      )}
     </div>
   )
 }
@@ -588,6 +614,7 @@ export default function HeadTCMScalpAreas({ onPointSelect, pick }) {
   const [activeMeridianPoint, setActiveMeridianPoint] = useState(null)
   const [openMenu,      setOpenMenu]       = useState(null)
   const [navMode,        setNavMode]        = useState(null) // null | 'areas'
+  const [meridianView,   setMeridianView]   = useState(() => defaultView(MERIDIANS_BOX))
 
   useEffect(() => {
     if (pick?.subgroup !== 'tcm-scalp-areas') return
@@ -632,6 +659,8 @@ export default function HeadTCMScalpAreas({ onPointSelect, pick }) {
   }
 
   const tileCtx = {
+    meridianView,
+    onMeridianViewChange: setMeridianView,
     activeArea,
     onAreaChange: setActiveArea,
     activeMeridian,
