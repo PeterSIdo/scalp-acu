@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import BrainZonesSvg from '../../assets/diagrams/brain-zones.svg?react'
-import BrainZones2Svg from '../../assets/diagrams/brain-zones2.svg?react'
 import HamburgerMenu from '../ui/HamburgerMenu'
 import TileTitle from '../ui/TileTitle'
 import CrossIcon from '../ui/CrossIcon'
@@ -10,17 +9,16 @@ import { GLASS_TRIGGER, GLASS_DROPDOWN } from '../ui/menuStyles'
 
 // 2x2 grid like TCM Scalp Areas, so tiles are the same size there and here.
 // Row 1: brain-zones diagram with clickable zones + motor-strip body parts
-// (Brain Zone and Body Part menus in its top-left corner) | brain-zones2
-// photo for reference. Row 2 is left empty until more content arrives —
-// add ids to TILE_IDS to fill it.
-const TILE_IDS = ['zones', 'zones2']
+// (Brain Zone and Body Part menus in its top-left corner). The rest of the
+// grid is left empty until more content arrives — add ids to TILE_IDS to
+// fill it.
+const TILE_IDS = ['zones']
 
-// Both SVGs sit on 900x700 canvases with wide margins; crop each to its
+// The SVG sits on a 900x700 canvas with wide margins; crop it to its
 // drawing's visible bounds (+~16px padding) so it fills the tile. The
 // overlay shares ZONES_VIEWBOX, and zoneAt maps clicks via getScreenCTM, so
 // coordinates stay in the SVG's own units.
 const ZONES_VIEWBOX = '65 50 766 659'
-const ZONES2_VIEWBOX = '99 52 681 594'
 
 // `num` is the conventional zone number (not shown in the menu). Zones 6–8
 // are deep-layer zones and are intentionally left off the menu for now.
@@ -129,7 +127,6 @@ const DROPDOWN_ITEM_CLASS = (active) => `block w-full text-left px-3 py-1.5 text
 // drawing's own canvas. Only tiles with a real diagram get one.
 const TILE_TITLES = {
   zones: 'Brain Zones and Functions',
-  zones2: 'Brain Zones',
 }
 
 
@@ -419,8 +416,6 @@ function renderTileContent(id, { activeZone, onZoneChange, activePart, onPartCha
         </div>
       )
     }
-    case 'zones2':
-      return <BrainZones2Svg viewBox={ZONES2_VIEWBOX} style={{ width: '100%', height: '100%' }} />
     default:
       return null
   }
@@ -504,7 +499,7 @@ export default function HeadBrainZones({ onPointSelect, pick }) {
         }}
       >
         {TILE_IDS.map(id => {
-          const expandable = id === 'zones' || id === 'zones2'
+          const expandable = id === 'zones'
           const isExpanded = expandedId === id
           const content = renderTileContent(id, tileCtx, false)
           return (
@@ -526,7 +521,7 @@ export default function HeadBrainZones({ onPointSelect, pick }) {
                 flexDirection: 'column',
                 alignItems: 'stretch',
                 justifyContent: TILE_TITLES[id] ? 'flex-start' : 'center',
-                background: (id === 'zones' || id === 'zones2') ? '#ffffff' : expandable ? '#ffffff' : 'transparent',
+                background: expandable ? '#ffffff' : 'transparent',
                 cursor: expandable ? 'pointer' : 'default',
                 overflow: 'hidden',
                 transition: 'transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease',
@@ -562,7 +557,7 @@ export default function HeadBrainZones({ onPointSelect, pick }) {
               position: 'relative',
               width: '100%',
               height: '100%',
-              background: (expandedId === 'zones' || expandedId === 'zones2') ? '#ffffff' : '#f1f5f9',
+              background: '#ffffff',
               borderRadius: 12,
               display: 'flex',
               flexDirection: 'column',
@@ -596,7 +591,9 @@ export default function HeadBrainZones({ onPointSelect, pick }) {
                 justifyContent: 'center',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.35)',
                 cursor: 'pointer',
-                zIndex: 1,
+                // Above the zones tile's full-width z-20 menu row, which
+                // otherwise covers the button and swallows its clicks.
+                zIndex: 30,
               }}
             ><CrossIcon size={22} strokeWidth={3.5} /></button>
           </div>

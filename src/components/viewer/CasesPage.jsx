@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { CASES, POINT_WARNINGS, caseText } from '../../data/cases'
 import { SOURCES } from '../../data/sources'
 
@@ -20,12 +21,27 @@ function WarningIcon({ className = 'w-4 h-4' }) {
   )
 }
 
+// Cases open to visitors without an account; the rest need a (free) account.
+const FREE_CASES = 3
+
+// Below the visitor's cases: how many more there are and how to get them.
+function MoreCasesNote({ count }) {
+  if (count <= 0) return null
+  return (
+    <div className="mt-3 rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2 text-xs text-gray-700 dark:text-gray-300">
+      {count} more {count === 1 ? 'case is' : 'cases are'} available with a free account.{' '}
+      <Link to="/register" className="font-semibold text-amber-600 dark:text-amber-400 hover:underline">Create an account</Link>
+      {' '}— no card needed.
+    </div>
+  )
+}
+
 const hasWarnings = c => c.points?.some(p => p.warnings?.length)
 
-function CaseList({ selectedId, onSelect }) {
+function CaseList({ cases, lockedCount, selectedId, onSelect }) {
   const [query, setQuery] = useState('')
   const q = query.trim().toLowerCase()
-  const list = q ? CASES.filter(c => caseText(c).includes(q)) : CASES
+  const list = q ? cases.filter(c => caseText(c).includes(q)) : cases
   return (
     <div>
       <input
@@ -61,6 +77,7 @@ function CaseList({ selectedId, onSelect }) {
         ))}
         {list.length === 0 && <li className="px-2 py-2 text-xs text-gray-400">No cases match</li>}
       </ul>
+      <MoreCasesNote count={lockedCount} />
     </div>
   )
 }
@@ -147,10 +164,15 @@ function Article({ c }) {
   )
 }
 
-export default function CasesPage() {
-  const [selectedId, setSelectedId] = useState(CASES[0]?.id ?? null)
+// Anyone logged in sees every case; a visitor without an account sees the
+// first FREE_CASES, with a note about the rest.
+export default function CasesPage({ isGuest = false }) {
+  const cases = isGuest ? CASES.slice(0, FREE_CASES) : CASES
+  const lockedCount = CASES.length - cases.length
+  const [selectedId, setSelectedId] = useState(cases[0]?.id ?? null)
   const [listOpen, setListOpen] = useState(false)
-  const selected = CASES.find(c => c.id === selectedId)
+  const selected = cases.find(c => c.id === selectedId)
+  const listProps = { cases, lockedCount, selectedId, onSelect: select }
 
   function select(id) {
     setSelectedId(id)
@@ -162,7 +184,7 @@ export default function CasesPage() {
       <div className="flex flex-col md:flex-row gap-4 md:h-full">
         {/* Desktop list */}
         <aside className="hidden md:block md:w-64 lg:w-72 flex-shrink-0 bg-white dark:bg-gray-950 rounded-lg shadow p-3 overflow-y-auto scroll-touch">
-          <CaseList selectedId={selectedId} onSelect={select} />
+          <CaseList {...listProps} />
         </aside>
 
         {/* Phone list toggle */}
@@ -172,10 +194,10 @@ export default function CasesPage() {
             onClick={() => setListOpen(o => !o)}
             className="w-full flex justify-between items-center text-sm font-semibold text-black dark:text-gray-100"
           >
-            <span>All cases ({CASES.length})</span>
+            <span>All cases ({cases.length})</span>
             <span>{listOpen ? '▲' : '▼'}</span>
           </button>
-          {listOpen && <div className="mt-2"><CaseList selectedId={selectedId} onSelect={select} /></div>}
+          {listOpen && <div className="mt-2"><CaseList {...listProps} /></div>}
         </div>
 
         <div className="md:flex-1 md:min-h-0 md:overflow-y-auto scroll-touch">

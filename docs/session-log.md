@@ -1025,3 +1025,53 @@ the app's canonical codes instead:
 - `vite build` passes. ESLint shows the usual fast-refresh warning for
   `Magnifier.jsx` exporting helper functions, the same kind
   `HeadEarPoints.jsx` already had.
+
+---
+
+## 2026-11-17 (cont.) — Brain Zones fixes, guest limit for the beta
+
+**Status: committed** (files: `src/components/viewer/HeadBrainZones.jsx`,
+`src/hooks/useGuestAllowance.js` (new), `src/components/ui/SignupGate.jsx`
+(new), `src/pages/ViewerPage.jsx`, `src/components/viewer/CasesPage.jsx`).
+
+### Brain Zones (TCM)
+- **Close (X) on card 1/1 didn't work.** The zones tile's menu row spans the
+  full width at `z-20` and covered the button (`zIndex: 1`), swallowing its
+  clicks. The button is now `zIndex: 30`.
+- **Card 1/2 ("Brain Zones", `brain-zones2.svg`) removed.** `TILE_IDS` is
+  just `['zones']`; the grid stays 2x2 so card 1/1 keeps its size. The SVG
+  file is still in `src/assets/diagrams/` but no longer used.
+
+### Guest limit (early-tester beta)
+Plan: share app.acumap.net on Facebook; visitors use the viewer straight
+away and are asked to create a free account (no card) after a while.
+Testers are counted from the users table. No paid subscription is
+mentioned anywhere in the app for now.
+- **20 free point descriptions** for visitors without an account
+  (`GUEST_POINT_LIMIT` in `useGuestAllowance.js`). Counted per different
+  point (`system|id or name`), from diagrams and search alike; re-opening a
+  seen point is free. About and the category intros don't count.
+- Stored in `localStorage` (`acumap.guestPoints`), so clearing browser data
+  resets it — a nudge, not a lock. `isGuest` is `user === null`, so nobody
+  is stopped while the login check is still loading.
+- From 5 left (`GUEST_WARN_AT`), a note above the description: "N free
+  descriptions left. Create a free account to keep going — no card needed."
+- Past the limit, picking a new point opens the `SignupGate` popup
+  ("Enjoying AcuMap?", Create a free account / Log in). The point still
+  highlights on the diagram; the description stays empty. Diagrams remain
+  fully usable.
+- All description openings go through `showPoint()` in `ViewerPage`
+  (`handlePointSelect` and the three search paths).
+- **Cases:** visitors see the first 3 cases (`FREE_CASES` in
+  `CasesPage.jsx`) plus "N more cases are available with a free account".
+  Anyone logged in sees all 15.
+- Checked in desktop Chrome as a visitor (counter pre-filled to 18):
+  reminder note, popup on the 21st point, 3-case list. Not yet checked on a
+  phone.
+
+### Next steps (discussed)
+- First-visit welcome line ("Tap any point…").
+- `?ref=` source tracking on sign-up.
+- Contact item in the menu once the 123-reg mailbox is active.
+- Privacy note and medical disclaimer; phone check before posting.
+- No password reset exists yet — handle by hand during the beta.

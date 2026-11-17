@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import HamburgerMenu from '../components/ui/HamburgerMenu'
 import FeedbackForm from '../components/ui/FeedbackForm'
+import { SignupGate, GuestNotice } from '../components/ui/SignupGate'
+import { useGuestAllowance } from '../hooks/useGuestAllowance'
 import { useSubscription } from '../hooks/useSubscription'
 import { useAuth } from '../hooks/useAuth'
 import { useTheme } from '../providers/ThemeProvider'
@@ -177,6 +179,21 @@ export default function ViewerPage() {
   const { isActive } = useSubscription()
   const { dark, toggle: toggleTheme } = useTheme()
   const [selectedPoint, setSelectedPoint] = useState(null)
+  // Visitors (not logged in) get GUEST_POINT_LIMIT free descriptions; after
+  // that a point picked on a diagram or in search opens the sign-up popup
+  // instead. The diagrams themselves stay fully usable.
+  const isGuest = user === null
+  const { allow, remaining } = useGuestAllowance(isGuest)
+  const [gateOpen, setGateOpen] = useState(false)
+  function showPoint(point) {
+    if (allow(point)) {
+      setSelectedPoint(point)
+      return true
+    }
+    setSelectedPoint(null)
+    setGateOpen(true)
+    return false
+  }
   const [highlightJsonId, setHighlightJsonId] = useState(null)
   const [activeSystem, setActiveSystem] = useState('ynsa')
   const [activeSubgroup, setActiveSubgroup] = useState('ynsa-basic')
@@ -335,7 +352,7 @@ export default function ViewerPage() {
     // Ear results select the point on its tile in the Ear grid.
     if (isEar) {
       setEarPick({ tile: point.tile, name: point.name, n: Date.now() })
-      setSelectedPoint(earPointInfo(point.tile, point.name))
+      showPoint(earPointInfo(point.tile, point.name))
       setSearchQuery('')
       setMobileSearchOpen(false)
       return
@@ -348,7 +365,7 @@ export default function ViewerPage() {
         setActiveView(sg.views[0])
       }
       setGridPick({ ...point.pick, n: Date.now() })
-      setSelectedPoint(point.item)
+      showPoint(point.item)
       setHighlightJsonId(null)
       setSearchQuery('')
       setMobileSearchOpen(false)
@@ -358,7 +375,7 @@ export default function ViewerPage() {
     const sg = SYSTEMS.find(s => s.id === 'ynsa').subgroups.find(s => s.id === targetSubgroup)
     setActiveSystem('ynsa')
     setActiveSubgroup(targetSubgroup)
-    setSelectedPoint(point)
+    showPoint(point)
     setHighlightJsonId(point.id)
     setActiveView(sg?.views[0] ?? 'Lateral')
     setSearchQuery('')
@@ -366,7 +383,7 @@ export default function ViewerPage() {
   }
 
   function handlePointSelect(point) {
-    setSelectedPoint(point)
+    showPoint(point)
     setHighlightJsonId(null)
   }
 
@@ -491,7 +508,7 @@ export default function ViewerPage() {
 
         {/* Diagram */}
         <div className="flex-1 min-h-0 bg-gray-300 dark:bg-gray-900 overflow-hidden p-4" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-          {activeView === 'Cases' ? <CasesPage />
+          {activeView === 'Cases' ? <CasesPage isGuest={isGuest} />
           : activeView === 'EarDescription' ? <EarDescription />
           : activeView === 'EarFormulas' ? <EarFormulas />
           : activeView === 'EarSeeds' ? <EarSeeds />
@@ -550,6 +567,7 @@ export default function ViewerPage() {
                 <SearchPanel query={searchQuery} onSelect={handleSearchSelect} system={searchSystem} />
               ) : (
                 <div className="flex-1 overflow-y-auto scroll-touch">
+                  {isGuest && selectedPoint && <GuestNotice remaining={remaining} />}
                   <InfoPanel point={selectedPoint} isSubscribed={isActive} emptyHint={activeSystem === 'ynsa'} />
                 </div>
               )}
@@ -596,10 +614,13 @@ export default function ViewerPage() {
             ><CrossIcon size={18} strokeWidth={3.5} /></button>
           </div>
           <div className="overflow-y-auto flex-1 min-h-0 scroll-touch">
+            {isGuest && <GuestNotice remaining={remaining} />}
             <InfoPanel point={selectedPoint} isSubscribed={isActive} />
           </div>
         </div>
       )}
+
+      {gateOpen && <SignupGate onClose={() => setGateOpen(false)} />}
 
       {feedbackOpen && (
         <FeedbackForm
