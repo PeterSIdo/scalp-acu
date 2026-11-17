@@ -15,6 +15,12 @@ export const ABOUT_APP = {
       ],
     },
     {
+      title: 'About the author',
+      paragraphs: [
+        'AcuMap was created by Peter, an acupuncture therapist at Lothian Massage & Acupuncture in East Lothian, Scotland. Years in clinic showed how valuable a quick reference is when choosing points or building a treatment plan, and how well scalp and ear acupuncture work alongside traditional Chinese acupuncture. AcuMap grew out of that experience.',
+      ],
+    },
+    {
       title: 'Our focus',
       paragraphs: [
         'The app concentrates on scalp and ear acupuncture. These points can be reached easily, with the patient seated and fully clothed. That makes them especially suitable for elderly patients and anyone who finds lying down or undressing difficult.',
@@ -29,7 +35,7 @@ export const ABOUT_APP = {
     {
       title: 'Work in progress',
       paragraphs: [
-        'AcuMap is still being developed, and new systems, points and features are added regularly.',
+        'AcuMap is still being developed, and new systems, points and features are added regularly. Master Tung’s acupuncture points are coming soon.',
       ],
     },
     {

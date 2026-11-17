@@ -1188,3 +1188,11 @@ Headless Playwright, iPhone 13 profile, against the live sites after deploy.
   YNSA-A8-*, same name and indications), so they were listed twice.
   `ynsaResults` in SearchPanel.jsx now keeps the first record per name.
   "headache" now gives 8 results instead of 10. Build passes.
+
+## 2026-11-17 — About: author + Master Tung
+- `src/data/aboutApp.js`: new "About the author" section (Peter, acupuncture
+  therapist at Lothian Massage & Acupuncture, East Lothian, Scotland) after
+  "A pocket reference"; "Work in progress" now says Master Tung's points are
+  coming soon. Shows in the viewer's About and the app landing page.
+- Context: matches the user's Facebook intro and video script (2026-11-17).
+  Clinic name as written there — user to confirm the exact official name.
