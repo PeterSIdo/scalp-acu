@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react'
 import { api } from '../lib/api'
+import { getSignupRef } from '../lib/signupRef'
 
 export const AuthContext = createContext(null)
 
@@ -22,7 +23,7 @@ export function useAuthState() {
   }
 
   async function register(email, password, fullName) {
-    const { user } = await api.auth.register({ email, password, fullName })
+    const { user } = await api.auth.register({ email, password, fullName, ref: getSignupRef() })
     setUser(user)
   }
 

@@ -12,7 +12,9 @@ const COOKIE_OPTS = {
 }
 
 router.post('/register', async (req, res) => {
-  const { email, password, fullName } = req.body
+  const { email, password, fullName, ref } = req.body
+  // Same rule as src/lib/signupRef.js; anything else is dropped.
+  const signupRef = typeof ref === 'string' && /^[a-z0-9_-]{1,40}$/.test(ref) ? ref : null
   if (!email || !password || !fullName) return res.status(400).json({ error: 'All fields required' })
   if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' })
 
@@ -21,7 +23,7 @@ router.post('/register', async (req, res) => {
 
   const passwordHash = await bcrypt.hash(password, 12)
   const user = await prisma.user.create({
-    data: { email: email.toLowerCase(), passwordHash, fullName },
+    data: { email: email.toLowerCase(), passwordHash, fullName, signupRef },
   })
 
   const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' })

@@ -1131,3 +1131,18 @@ mentioned anywhere in the app for now.
 - acumap-site/index.html: address in the footer and in step 3 of
   "Help shape AcuMap". Not pushed yet (separate repo).
 - `vite build` passes. Not yet checked in the browser.
+- Committed and pushed: 19e544f (scalp-app), b7933ca (acumap-site).
+
+## 2026-11-17 — Sign-up source tracking (beta plan step 3)
+- Links carry `?ref=<tag>` (letters, digits, `-`, `_`, max 40; lowercased),
+  e.g. `https://app.acumap.net/?ref=fb-ynsa-uk`.
+- `src/lib/signupRef.js`: `captureSignupRef()` runs once in `main.jsx`; first
+  tag wins, stored in localStorage `acumap.ref`, then removed from the address
+  bar. `getSignupRef()` is sent with register (`useAuth.js`).
+- Server `routes/auth.js` re-checks the tag and stores it in new nullable
+  `User.signupRef` (prisma/schema.prisma; added on deploy by `prisma db push`).
+- acumap-site: small script copies `?ref=` onto every app.acumap.net link.
+- Checked headless on `vite preview`: tag saved and lowercased, second tag
+  ignored, URL cleaned, invalid tag dropped. Server side not run locally (DB
+  blocked by Norton); check after deploy with a test sign-up.
+- Reading results: Railway → Postgres → Data → User table, `signupRef` column.
