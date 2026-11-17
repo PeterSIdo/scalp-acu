@@ -1120,3 +1120,14 @@ mentioned anywhere in the app for now.
 - Next session: step 3 (`?ref=` source tracking), then step 5 (privacy note
   and medical disclaimer), then step 6 (phone check). Step 4 (Contact)
   when the user has the 123-reg mailbox address.
+
+## 2026-11-17 — Contact (beta plan step 4)
+- Mailbox info@acumap.net is live (123-reg). Single source:
+  `src/data/contact.js` (`CONTACT_EMAIL`, `CONTACT_MAILTO` with subject "AcuMap").
+- Viewer: "Contact" link in the desktop top bar (after Feedback) and a
+  "Contact" item in both phone menus (account + guest); opens the mail app.
+- About AcuMap: new "Contact" section before the Disclaimer.
+- App landing page footer: address added as a mailto link.
+- acumap-site/index.html: address in the footer and in step 3 of
+  "Help shape AcuMap". Not pushed yet (separate repo).
+- `vite build` passes. Not yet checked in the browser.

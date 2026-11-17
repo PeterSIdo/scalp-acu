@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import HamburgerMenu from '../components/ui/HamburgerMenu'
 import FeedbackForm from '../components/ui/FeedbackForm'
+import { CONTACT_MAILTO } from '../data/contact'
 import { SignupGate, GuestNotice } from '../components/ui/SignupGate'
 import { useGuestAllowance } from '../hooks/useGuestAllowance'
 import WelcomeTip from '../components/ui/WelcomeTip'
@@ -90,6 +91,7 @@ const SYSTEMS = [
 const ACCOUNT_MENU = [
   { id: 'about', label: 'About' },
   { id: 'feedback', label: 'Feedback' },
+  { id: 'contact', label: 'Contact' },
   { id: 'account', label: 'Account' },
   { id: 'signout', label: 'Sign out' },
 ]
@@ -97,6 +99,7 @@ const ACCOUNT_MENU = [
 const GUEST_MENU = [
   { id: 'about', label: 'About' },
   { id: 'feedback', label: 'Feedback' },
+  { id: 'contact', label: 'Contact' },
   { id: 'login', label: 'Log in' },
 ]
 
@@ -229,6 +232,7 @@ export default function ViewerPage() {
     setAccountMenuOpen(false)
     if (id === 'about') handlePointSelect(ABOUT_APP)
     else if (id === 'feedback') setFeedbackOpen(true)
+    else if (id === 'contact') window.location.href = CONTACT_MAILTO
     else if (id === 'account') navigate('/account')
     else if (id === 'signout') handleSignOut()
     else if (id === 'login') navigate('/login')
@@ -488,6 +492,7 @@ export default function ViewerPage() {
           </div>
           <button onClick={() => handlePointSelect(ABOUT_APP)} className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">About</button>
           <button onClick={() => setFeedbackOpen(true)} className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Feedback</button>
+          <a href={CONTACT_MAILTO} className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Contact</a>
           {user ? (
             <>
               <Link to="/account" className="hidden md:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">Account</Link>

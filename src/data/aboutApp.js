@@ -1,6 +1,8 @@
 // "About AcuMap" text, shared by the viewer's header link (shown in the
 // InfoPanel, so it uses the same `sections` shape as TCM_AREA_INFO) and the
 // landing page.
+import { CONTACT_EMAIL } from './contact'
+
 export const ABOUT_APP = {
   id: 'about-app',
   name: 'About AcuMap',
@@ -28,6 +30,12 @@ export const ABOUT_APP = {
       title: 'Work in progress',
       paragraphs: [
         'AcuMap is still being developed, and new systems, points and features are added regularly.',
+      ],
+    },
+    {
+      title: 'Contact',
+      paragraphs: [
+        `Questions, corrections or ideas? Use the Feedback link, or email us at ${CONTACT_EMAIL}.`,
       ],
     },
     {
