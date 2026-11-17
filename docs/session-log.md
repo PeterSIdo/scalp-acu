@@ -1196,3 +1196,7 @@ Headless Playwright, iPhone 13 profile, against the live sites after deploy.
   coming soon. Shows in the viewer's About and the app landing page.
 - Context: matches the user's Facebook intro and video script (2026-11-17).
   Clinic name as written there — user to confirm the exact official name.
+- User confirmed the clinic name "Lothian Massage & Acupuncture".
+- acumap.net: same "About the author" text (plus the "made with love"
+  paragraph) as a new section above "Help shape AcuMap"; "Growing every
+  month" card mentions Master Tung's points. Checked at 390px and 1280px.
