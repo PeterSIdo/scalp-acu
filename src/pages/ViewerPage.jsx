@@ -4,6 +4,8 @@ import HamburgerMenu from '../components/ui/HamburgerMenu'
 import FeedbackForm from '../components/ui/FeedbackForm'
 import { SignupGate, GuestNotice } from '../components/ui/SignupGate'
 import { useGuestAllowance } from '../hooks/useGuestAllowance'
+import WelcomeTip from '../components/ui/WelcomeTip'
+import { useWelcomeTip } from '../hooks/useWelcomeTip'
 import { useSubscription } from '../hooks/useSubscription'
 import { useAuth } from '../hooks/useAuth'
 import { useTheme } from '../providers/ThemeProvider'
@@ -185,9 +187,12 @@ export default function ViewerPage() {
   const isGuest = user === null
   const { allow, remaining } = useGuestAllowance(isGuest)
   const [gateOpen, setGateOpen] = useState(false)
+  // First-visit welcome for visitors; closes for good once a point opens.
+  const welcome = useWelcomeTip()
   function showPoint(point) {
     if (allow(point)) {
       setSelectedPoint(point)
+      if (point) welcome.dismiss()
       return true
     }
     setSelectedPoint(null)
@@ -618,6 +623,12 @@ export default function ViewerPage() {
             <InfoPanel point={selectedPoint} isSubscribed={isActive} />
           </div>
         </div>
+      )}
+
+      {/* Only over the diagrams (not Cases or the ear text pages), and not
+          while a description or the search overlay is open. */}
+      {isGuest && welcome.open && isAvailable && !isCases && !selectedPoint && !mobileSearchOpen && !gateOpen && (
+        <WelcomeTip onDismiss={welcome.dismiss} />
       )}
 
       {gateOpen && <SignupGate onClose={() => setGateOpen(false)} />}

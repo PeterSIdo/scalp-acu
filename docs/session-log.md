@@ -1075,3 +1075,48 @@ mentioned anywhere in the app for now.
 - Contact item in the menu once the 123-reg mailbox is active.
 - Privacy note and medical disclaimer; phone check before posting.
 - No password reset exists yet — handle by hand during the beta.
+
+---
+
+## 2026-11-17 (cont.) — First-visit welcome tip
+
+**Status: committed** (files: `src/components/ui/WelcomeTip.jsx`
+(new), `src/hooks/useWelcomeTip.js` (new), `src/pages/ViewerPage.jsx`).
+
+- One-time card at the bottom of the screen for visitors without an
+  account: "Welcome to AcuMap — Click (Tap on phones) any point on a diagram
+  to see its location and indications. Click a card to enlarge it, and use
+  the tabs at the top to switch between YNSA, TCM, ZSA and ear acupuncture."
+  with a "Got it" button and an ×.
+- Closes for good on "Got it", on ×, or when the first point description
+  opens (`welcome.dismiss()` in `showPoint`). Remembered in `localStorage`
+  (`acumap.welcomeSeen`); clearing browser data shows it again.
+- Hidden for logged-in users, on Cases and the ear text pages, and while a
+  description, the phone search overlay or the sign-up popup is open.
+- On desktop it sits bottom-centre of the window, partly over the lower
+  diagram cards — fine for a one-time message; could be centred over the
+  diagram area instead.
+- Checked in desktop Chrome: shows on first visit, "Got it" closes it, stays
+  closed after reload. Not yet checked at phone width.
+
+### Beta plan status
+1. Guest limit — done (d3565a9).
+2. Welcome tip — done (this entry).
+3. `?ref=` source tracking on sign-up — next.
+4. Contact item in the menu — waits on the 123-reg mailbox (user handles it).
+5. Privacy note and medical disclaimer — before posting.
+6. Full visitor flow check at phone width.
+
+### End of session notes (2026-11-17)
+- Committed at close: welcome tip (`WelcomeTip.jsx`, `useWelcomeTip.js`,
+  `ViewerPage.jsx`) and the session-log entries since d3565a9.
+- Discussed: the user may set up their own Facebook group for testers.
+  Advice given: keep posting in existing groups to bring people in (with
+  `?ref=` links once step 3 is done), create a private "AcuMap Beta
+  Testers" group alongside, link it from the post and from the app (after
+  sign-up or next to Contact), seed it with a welcome post and weekly
+  updates, use membership questions. Group rather than Page for now.
+  Offered to draft the group description and welcome post.
+- Next session: step 3 (`?ref=` source tracking), then step 5 (privacy note
+  and medical disclaimer), then step 6 (phone check). Step 4 (Contact)
+  when the user has the 123-reg mailbox address.
