@@ -91,7 +91,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="border-t border-gray-200 dark:border-gray-800 px-8 py-6 text-center text-gray-400 dark:text-gray-600 text-sm space-y-1">
-        <p>© AcuMap 2026 · For educational use only · <a href={CONTACT_MAILTO} className="hover:text-gray-600 dark:hover:text-gray-400 underline">{CONTACT_EMAIL}</a></p>
+        <p>© AcuMap 2026 · For educational use only · <Link to="/privacy" className="hover:text-gray-600 dark:hover:text-gray-400 underline">Privacy &amp; disclaimer</Link> · <a href={CONTACT_MAILTO} className="hover:text-gray-600 dark:hover:text-gray-400 underline">{CONTACT_EMAIL}</a></p>
       </footer>
     </div>
   )

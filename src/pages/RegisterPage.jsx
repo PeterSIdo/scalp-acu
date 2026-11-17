@@ -73,6 +73,10 @@ export default function RegisterPage() {
               {loading ? 'Creating account…' : 'Create account'}
             </button>
           </form>
+          <p className="text-center text-gray-400 dark:text-gray-500 text-xs mt-4 leading-relaxed">
+            AcuMap is an educational reference for trained students and practitioners, not medical advice.
+            See our <Link to="/privacy" className="underline hover:text-gray-600 dark:hover:text-gray-300">privacy note &amp; disclaimer</Link>.
+          </p>
           <p className="text-center text-gray-400 dark:text-gray-500 text-sm mt-6">
             Already have an account?{' '}
             <Link to="/login" className="text-amber-500 dark:text-amber-400 hover:underline">Log in</Link>

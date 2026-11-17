@@ -1146,3 +1146,19 @@ mentioned anywhere in the app for now.
   ignored, URL cleaned, invalid tag dropped. Server side not run locally (DB
   blocked by Norton); check after deploy with a test sign-up.
 - Reading results: Railway → Postgres → Data → User table, `signupRef` column.
+- Committed and pushed: 163b1b8 (scalp-app), 0f257e7 (acumap-site).
+
+## 2026-11-17 — Privacy note & medical disclaimer (beta plan step 5)
+- New public page `/privacy` (`src/pages/PrivacyPage.jsx`, text in
+  `src/data/privacy.js`): what we store (account, ref tag, feedback), the one
+  login cookie + localStorage settings, why, who hosts it (Railway, GitHub
+  Pages, Google Fonts on acumap.net, 123-reg mail), how to ask for a copy or
+  deletion (by email — there is no delete button), medical disclaimer (reused
+  from About), contact.
+- Linked from: Register page (short disclaimer line under the button), About
+  "Contact" section, app landing footer, acumap.net footer.
+- Keep privacy.js in step with what the app stores when adding features.
+- Not covered yet: the note doesn't name a person/business as data
+  controller (user chose to leave it as is); no in-app account deletion.
+- Build passes; screenshots at 390px (privacy, register) and 1280px look right,
+  no horizontal scroll.

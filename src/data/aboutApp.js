@@ -35,7 +35,7 @@ export const ABOUT_APP = {
     {
       title: 'Contact',
       paragraphs: [
-        `Questions, corrections or ideas? Use the Feedback link, or email us at ${CONTACT_EMAIL}.`,
+        `Questions, corrections or ideas? Use the Feedback link, or email us at ${CONTACT_EMAIL}. How we handle your data is explained in our privacy note at app.acumap.net/privacy.`,
       ],
     },
     {

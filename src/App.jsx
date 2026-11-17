@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ViewerPage from './pages/ViewerPage'
 import AccountPage from './pages/AccountPage'
+import PrivacyPage from './pages/PrivacyPage'
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/viewer" element={<ViewerPage />} />
           <Route path="/account" element={
             <ProtectedRoute><AccountPage /></ProtectedRoute>
