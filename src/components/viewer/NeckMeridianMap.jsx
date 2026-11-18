@@ -28,18 +28,18 @@ function svgIdToMeridian(svgId) {
 // circle cx/cy where the point is a <circle>, bounding-box center for KD
 // (a stroke-only path outline). Keyed by svg id (see MERIDIAN_TO_SVG_ID above).
 export const DIAG_POINTS = {
-  SI:        { cx: 290.103,  cy: 37.1025 },
-  ST:        { cx: 281.851,  cy: 100.635 },
-  'SP/PANC': { cx: 258.701,  cy: 108.738 },
-  HT:        { cx: 199.669,  cy: 100.635 },
-  LV:        { cx: 207.771,  cy: 136.518 },
-  PC:        { cx: 184.621,  cy: 130.73 },
-  LU:        { cx: 152.211,  cy: 144.62 },
-  GB:        { cx: 171.889,  cy: 163.14 },
-  KD:        { cx: 240.1815, cy: 224.4875 },
-  UB:        { cx: 240.76,   cy: 243.008 },
-  LI:        { cx: 298.056,  cy: 164.298 },
-  SJ:        { cx: 286.481,  cy: 193.235 },
+  SI:        { cx: 292.102,  cy: 37.1025 },
+  ST:        { cx: 279.851,  cy: 100.635 },
+  'SP/PANC': { cx: 260.701,  cy: 108.738 },
+  HT:        { cx: 201.669,  cy: 100.635 },
+  LV:        { cx: 209.771,  cy: 136.518 },
+  PC:        { cx: 186.621,  cy: 130.73 },
+  LU:        { cx: 154.211,  cy: 144.62 },
+  GB:        { cx: 173.889,  cy: 163.14 },
+  KD:        { cx: 242.1815, cy: 224.4875 },
+  UB:        { cx: 242.76,   cy: 243.008 },
+  LI:        { cx: 294.056,  cy: 164.298 },
+  SJ:        { cx: 283.481,  cy: 193.235 },
 }
 
 // Point centers read directly from the baked-in <circle id="..."> elements

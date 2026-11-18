@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 import NeckRealSvg from '../../assets/diagrams/male-neck-real.svg?react'
-import AbdominalDiagSvg from '../../assets/diagrams/adbominal-diag-1.svg?react'
 import AbdominalRealSvg from '../../assets/diagrams/abdomial-real.svg?react'
 import YNSAYRealSvg from '../../assets/diagrams/YNSA-Y-real.svg?react'
 import HeadYPoints, { Y_REAL_POINTS, Y_REAL_VIEWBOX } from './HeadYPoints'
-import NeckMeridianMap, { REAL_POINTS, ABDOMEN_POINTS, ABDOMEN_REAL_POINTS } from './NeckMeridianMap'
+import NeckMeridianMap, { REAL_POINTS, ABDOMEN_REAL_POINTS } from './NeckMeridianMap'
 import { CATEGORY_INTROS } from '../../data/categoryIntros'
 import { CASE_STUDIES_ITEM } from '../../data/navItems'
 import TileTitle from '../ui/TileTitle'
@@ -15,13 +14,12 @@ import CrossIcon from '../ui/CrossIcon'
 // 3x2 grid of neck references, in row-major order. Ids with no case in
 // renderTileContent below render as "Coming soon" placeholders — drop in
 // more diagrams there as they're authored.
-const TILE_IDS = ['ynsa-y-side', 'ynsa-y-real', 'diag', 'real', 'abdomen', 'abdomen-real']
+const TILE_IDS = ['ynsa-y-side', 'ynsa-y-real', 'diag', 'real', 'abdomen-real']
 const TILE_LABELS = {
   'ynsa-y-side': 'YNSA Y-Side',
   'ynsa-y-real': 'YNSA Y-Side Reference Photo',
   diag: 'Diagnostic Map',
   real: 'Reference Photo',
-  abdomen: 'Abdominal Diagnostic Map',
   'abdomen-real': 'Abdominal Reference Photo',
 }
 
@@ -32,7 +30,6 @@ const TILE_TITLES = {
   'ynsa-y-real': 'Y-Points',
   diag: 'Y-Points Neck Diagnosis',
   real: 'Y-Points Neck Diagnosis',
-  abdomen: 'Y-Points Abdominal Diagnosis',
   'abdomen-real': 'Y-Points Abdominal Diagnosis',
 }
 const TILE_BODY_STYLE = { flex: 1, minHeight: 0, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }
@@ -91,14 +88,9 @@ function renderTileContent(id, { activeMeridian, onMeridianChange, onDiagMeridia
       )
     case 'diag':         return <NeckMeridianMap activeMeridian={activeMeridian} onMeridianChange={onDiagMeridianChange} />
     case 'real':         return <NeckMeridianMap activeMeridian={activeMeridian} onMeridianChange={onDiagMeridianChange} Background={NeckRealSvg} points={REAL_POINTS} />
-    // Abdominal diagnosis map — its own SVG already has point ids baked in
-    // using the same meridian abbreviations as male-neck-diag.svg, so it
-    // reuses NeckMeridianMap with a taller viewBox (410x539) rather than a
-    // bespoke component. Shares activeMeridian with the other tiles.
-    case 'abdomen':       return <NeckMeridianMap activeMeridian={activeMeridian} onMeridianChange={onDiagMeridianChange} Background={AbdominalDiagSvg} points={ABDOMEN_POINTS} viewBox="0 0 410 539" />
-    // Photo-reference companion to 'abdomen', same relationship as diag/real
-    // above — its own SVG already has point ids baked in with matching
-    // coordinates (see ABDOMEN_REAL_POINTS), its own viewBox (508x540).
+    // Abdominal reference photo — its own SVG already has point ids baked in
+    // (see ABDOMEN_REAL_POINTS), its own viewBox (508x540). Shares
+    // activeMeridian with the other tiles.
     case 'abdomen-real':  return <NeckMeridianMap activeMeridian={activeMeridian} onMeridianChange={onDiagMeridianChange} Background={AbdominalRealSvg} points={ABDOMEN_REAL_POINTS} viewBox="0 0 508 540" />
     default:             return null
   }
