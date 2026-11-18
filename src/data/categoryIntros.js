@@ -11,6 +11,7 @@ export const CATEGORY_INTROS = {
     linkLabel: 'About YNSA',
     name: 'Yamamoto New Scalp Acupuncture',
     system: 'YNSA',
+    source: 'yamamoto-ynsa',
     paragraphs: [
       'Yamamoto New Scalp Acupuncture (YNSA) was developed by the Japanese physician Dr Toshikatsu Yamamoto, who first presented it in the early 1970s. In his clinical work he noticed that small tender spots on the scalp matched complaints elsewhere in the body, and that needling them could bring quick relief. Over the following decades he built these observations into a complete system.',
       'YNSA is a microsystem, like ear acupuncture: the whole body is represented on one small area, in this case the scalp. Its points fall into groups. The Basic points map the body regions, the Sensory points relate to the eyes, nose, mouth and ears, the Brain points to the central nervous system, and the 12 Y points to the meridians and their organs. Each group has a Yin set at the front of the head and a mirror Yang set at the back, and all points appear on both sides.',
@@ -23,6 +24,7 @@ export const CATEGORY_INTROS = {
     linkLabel: 'About Basic Points',
     name: 'Basic Points',
     system: 'YNSA',
+    source: 'yamamoto-ynsa',
     paragraphs: [
       'The Basic points were the first group Dr Toshikatsu Yamamoto discovered and remain the foundation of YNSA. They form a somatotopic map of the body, meaning each point corresponds to a specific body region, such as the head, cervical spine, shoulders, arms, thoracic spine or lower back and legs.',
       'The Yin Basic points sit along the frontal hairline, and a mirror set of Yang Basic points lies at the back of the head. Like all YNSA points, they appear on both sides of the head. Treatment is usually given on the same side as the complaint, though both sides can be used.',
@@ -35,6 +37,7 @@ export const CATEGORY_INTROS = {
     linkLabel: 'About Sensory Points',
     name: 'Sensory Points',
     system: 'YNSA',
+    source: 'yamamoto-ynsa',
     paragraphs: [
       'The Sensory points are a group of four points relating to the sense organs: the Eye, Nose, Mouth and Ear points. They lie on the forehead close to the Basic A point at the frontal hairline (Yin), with a mirror set at the back of the head (Yang). Like all YNSA points, they appear on both sides of the head.',
       'Each Sensory point influences its corresponding organ and the surrounding area. They are used for conditions such as eye strain and visual disturbances, sinusitis, rhinitis and hay fever, toothache, mouth and jaw problems, tinnitus, hearing difficulties and dizziness. They can also help with facial pain and with headaches linked to these areas.',
@@ -46,6 +49,7 @@ export const CATEGORY_INTROS = {
     linkLabel: 'About Brain Points',
     name: 'Brain Points',
     system: 'YNSA',
+    source: 'yamamoto-ynsa',
     paragraphs: [
       'The Brain points are a group of three points, usually named the Cerebrum, Cerebellum and Basal Ganglia points. They sit near the midline of the forehead close to the frontal hairline (Yin), with a mirror set at the back of the head (Yang). Like all YNSA points, they appear on both sides of the head.',
       "They influence the central nervous system and are mainly used for neurological conditions and functions controlled by the brain. Typical uses include rehabilitation after stroke, Parkinson's disease and tremor, multiple sclerosis, balance and coordination problems, dizziness and vertigo, and cognitive and concentration difficulties. They are also used for sleep problems, depression, anxiety and emotional imbalance.",
@@ -57,6 +61,7 @@ export const CATEGORY_INTROS = {
     linkLabel: 'About Y Points',
     name: 'Y Points (Ypsilon Points)',
     system: 'YNSA',
+    source: 'yamamoto-ynsa',
     paragraphs: [
       'The Y points are a group of 12 points in Yamamoto New Scalp Acupuncture (YNSA), each linked to one of the 12 main meridians and their associated organ systems in Traditional Chinese Medicine. They are located in the temporal region of the scalp, with the Yin points in front of the ear and the Yang points behind it. Like all YNSA points, they are mirrored on both sides of the head.',
       'Each Y point influences the function of its corresponding meridian and organ. They are mainly used for internal and functional conditions such as digestive problems, respiratory complaints, sleep disturbance, stress, emotional imbalance and hormonal issues, and to support general wellbeing. This makes them a complement to the Basic points, which work mostly on pain and the locomotor system.',
@@ -75,6 +80,7 @@ export const CATEGORY_INTROS = {
     linkLabel: 'Diagnostic Flow',
     name: 'Diagnostic Flow',
     system: 'YNSA',
+    source: 'yamamoto-ynsa',
     steps: [
       { label: 'Take the history.', text: 'Note the main complaint, the affected area and any internal or emotional symptoms.' },
       { label: 'Palpate the diagnostic zones.', text: 'Use gentle, even pressure on both sides of the neck or abdomen, comparing left with right.' },

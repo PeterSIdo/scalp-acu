@@ -2,6 +2,10 @@
 // entries point here with `source: '<id>'`. The text itself is written in
 // our own words, not quoted.
 export const SOURCES = {
+  'yamamoto-ynsa': {
+    title: 'YNSA',
+    author: 'Toshikatsu Yamamoto, M.D., Ph.D., Helene Yamamoto, S.R.N.',
+  },
   'huang-auriculotherapy': {
     title: 'Auriculotherapy Diagnosis and Treatment',
     author: 'Dr Li-Chun Huang, MD, O.M.D.',
