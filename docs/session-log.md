@@ -1200,3 +1200,50 @@ Headless Playwright, iPhone 13 profile, against the live sites after deploy.
 - acumap.net: same "About the author" text (plus the "made with love"
   paragraph) as a new section above "Help shape AcuMap"; "Growing every
   month" card mentions Master Tung's points. Checked at 390px and 1280px.
+
+## 2026-11-18 — Landing page (acumap.net): where it lives and how to update it
+Reference notes for the user. No code changed.
+
+**Where it lives**
+- Local folder: `C:\Users\Peter\Scalp\acumap-site\` (separate from scalp-app)
+  - `index.html`: the whole page (text, layout, styles in one file)
+  - `img/`: app screenshots shown on the page
+  - `icon.svg`, `apple-touch-icon.png`: browser tab and phone home-screen icons
+  - `CNAME`: contains `acumap.net` and tells GitHub which domain to serve.
+    Don't delete or change it.
+- GitHub: public repo https://github.com/PeterSIdo/acumap-site, branch `main`.
+- Hosting: GitHub Pages (free). The domain is at 123-reg, whose DNS points
+  acumap.net to GitHub. HTTPS is enforced.
+- Completely separate from the app (scalp-app on Railway, app.acumap.net):
+  landing page changes can't break the app.
+
+**Changing it**
+1. Edit `acumap-site\index.html` in any editor (search for the visible text).
+2. Preview: double-click `index.html` to open it in a browser, and refresh
+   after each save.
+3. Images: replace the file in `img\` with one of the same name, or change
+   the `<img src="img/...">` line.
+
+**Publishing**
+Saving locally doesn't update the live site. It updates only after a push:
+```
+cd C:\Users\Peter\Scalp\acumap-site
+git add .
+git commit -m "Describe what you changed"
+git push
+```
+GitHub Pages rebuilds automatically, and the change is live in about 1–2 minutes
+(Ctrl+F5 if the browser shows the cached version). Or ask Claude to edit,
+commit and push it.
+
+Other option: edit `index.html` on github.com (pencil icon, then "Commit
+changes"). It publishes straight away. Run `git pull` in the local folder
+afterwards to keep it in sync.
+
+**Settings and checks**
+- Repo Settings → Pages: custom domain (acumap.net) and "Enforce HTTPS".
+  Normally no need to touch them.
+- Repo Actions tab: each publish run. Green means it's live.
+- DNS at 123-reg: leave it as it is unless DNS moves (e.g. to Cloudflare).
+- As of 2026-11-18 the local folder matches GitHub (latest commit fc8df42
+  "About the author section; Master Tung's points coming soon").
