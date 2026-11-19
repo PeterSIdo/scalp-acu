@@ -103,6 +103,11 @@ export default function InfoPanel({ point, isSubscribed, emptyHint = true }) {
             {section.paragraphs?.map((text, j) => (
               <p key={j} className="text-black dark:text-gray-300 text-sm leading-relaxed mb-2">{text}</p>
             ))}
+            {section.link && (
+              <p className="text-sm leading-relaxed mb-2">
+                <a href={section.link.href} target="_blank" rel="noopener noreferrer" className="text-amber-600 dark:text-amber-400 underline">{section.link.label}</a>
+              </p>
+            )}
             {section.items?.length > 0 && (
               <ul className="list-disc pl-5 mb-2 space-y-1.5">
                 {section.items.map((item, j) => (

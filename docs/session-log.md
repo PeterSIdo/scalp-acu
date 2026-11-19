@@ -1247,3 +1247,13 @@ afterwards to keep it in sync.
 - DNS at 123-reg: leave it as it is unless DNS moves (e.g. to Cloudflare).
 - As of 2026-11-18 the local folder matches GitHub (latest commit fc8df42
   "About the author section; Master Tung's points coming soon").
+
+## 2026-11-19 — Author details in About
+- "About the author" now names Peter Sidó, DRSM, Remedial and Sports Massage
+  Therapist, member of the Scottish Manual Therapists Organisation;
+  "alongside remedial massage and other hands-on therapies".
+- Link to the clinic site https://myacupuncture.uk: new optional `link`
+  field on an About section (`aboutApp.js`), rendered by InfoPanel (sections)
+  and LandingPage.
+- acumap-site/index.html: same text, clinic name links to myacupuncture.uk.
+- `vite build` passes. Not checked in the browser. Not committed.

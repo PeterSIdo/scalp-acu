@@ -17,8 +17,11 @@ export const ABOUT_APP = {
     {
       title: 'About the author',
       paragraphs: [
-        'AcuMap was created by Peter, an acupuncture therapist at Lothian Massage & Acupuncture in East Lothian, Scotland. Years in clinic showed how valuable a quick reference is when choosing points or building a treatment plan, and how well scalp and ear acupuncture work alongside traditional Chinese acupuncture. AcuMap grew out of that experience.',
+        'AcuMap was created by Peter Sidó, a massage and acupuncture therapist at Lothian Massage & Acupuncture in East Lothian, Scotland. Peter holds a Diploma in Remedial and Sports Massage (DRSM) and is a member of the Scottish Manual Therapists Organisation.',
+        'Years in clinic showed how valuable a quick reference is when choosing points or building a treatment plan, and how well scalp and ear acupuncture work alongside remedial massage and other hands-on therapies. AcuMap grew out of that experience.',
       ],
+      // Rendered as a link under the paragraphs (InfoPanel + LandingPage).
+      link: { href: 'https://myacupuncture.uk', label: 'Lothian Massage & Acupuncture – myacupuncture.uk' },
     },
     {
       title: 'Our focus',

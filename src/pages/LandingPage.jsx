@@ -61,8 +61,11 @@ export default function LandingPage() {
             <div key={section.title}>
               <h3 className="text-lg font-semibold text-amber-500 dark:text-amber-400 mb-2">{section.title}</h3>
               {section.paragraphs.map((text, i) => (
-                <p key={i} className="text-gray-600 dark:text-gray-400 leading-relaxed">{text}</p>
+                <p key={i} className="text-gray-600 dark:text-gray-400 leading-relaxed mb-2">{text}</p>
               ))}
+              {section.link && (
+                <a href={section.link.href} target="_blank" rel="noopener noreferrer" className="text-amber-600 dark:text-amber-400 underline">{section.link.label}</a>
+              )}
             </div>
           ))}
         </div>
