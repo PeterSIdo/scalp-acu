@@ -1287,3 +1287,13 @@ afterwards to keep it in sync.
 - Shared admin header `src/components/layout/AdminNav.jsx` (Users/Feedback
   tabs). Users page: feedback count links to `/admin/feedback?user=<id>`.
 - `vite build` passes. Not committed.
+
+## 2026-11-19 — Login attempt limit
+- Feedback page committed and pushed as d170b02; checked live by the user.
+- `server/middleware/loginLimiter.js`, used by `POST /api/auth/login`: after
+  5 failed attempts for one email, or 20 from one IP, within 15 minutes,
+  sign-in is refused (429, "try again in N minutes"). A successful sign-in
+  clears that email's count. In memory, so a server restart resets it.
+- Unknown emails count as failures too, so the limit can't be used to tell
+  which emails have accounts.
+- Logic tested with a node script; auth route imports fine. Not committed.

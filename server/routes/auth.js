@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import prisma from '../db.js'
 import { isAdminEmail } from '../middleware/requireAdmin.js'
+import { clientIp, loginBlockedFor, recordLoginFailure, clearLoginFailures } from '../middleware/loginLimiter.js'
 
 const router = Router()
 
@@ -46,11 +47,20 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' })
 
-  const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } })
-  if (!user) return res.status(401).json({ error: 'Invalid email or password' })
+  const key = String(email).toLowerCase()
+  const ip = clientIp(req)
+  const wait = loginBlockedFor(key, ip)
+  if (wait) {
+    return res.status(429).json({ error: `Too many failed sign-in attempts. Please try again in ${wait} minute${wait === 1 ? '' : 's'}.` })
+  }
 
-  const valid = await bcrypt.compare(password, user.passwordHash)
-  if (!valid) return res.status(401).json({ error: 'Invalid email or password' })
+  const user = await prisma.user.findUnique({ where: { email: key } })
+  const valid = user ? await bcrypt.compare(password, user.passwordHash) : false
+  if (!valid) {
+    recordLoginFailure(key, ip)
+    return res.status(401).json({ error: 'Invalid email or password' })
+  }
+  clearLoginFailures(key)
   if (user.disabled) return res.status(403).json({ error: 'This account has been disabled. Please contact support.' })
   touchLastSeen({ ...user, lastSeenAt: null })
 
