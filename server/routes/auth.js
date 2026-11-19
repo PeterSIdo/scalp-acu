@@ -2,8 +2,19 @@ import { Router } from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import prisma from '../db.js'
+import { isAdminEmail } from '../middleware/requireAdmin.js'
 
 const router = Router()
+
+function publicUser(user) {
+  return { id: user.id, email: user.email, fullName: user.fullName, isAdmin: isAdminEmail(user.email) }
+}
+
+const HOUR = 60 * 60 * 1000
+function touchLastSeen(user) {
+  if (user.lastSeenAt && Date.now() - user.lastSeenAt.getTime() < HOUR) return
+  prisma.user.update({ where: { id: user.id }, data: { lastSeenAt: new Date() } }).catch(() => {})
+}
 const COOKIE_OPTS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
@@ -23,12 +34,12 @@ router.post('/register', async (req, res) => {
 
   const passwordHash = await bcrypt.hash(password, 12)
   const user = await prisma.user.create({
-    data: { email: email.toLowerCase(), passwordHash, fullName, signupRef },
+    data: { email: email.toLowerCase(), passwordHash, fullName, signupRef, lastSeenAt: new Date() },
   })
 
   const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' })
   res.cookie('token', token, COOKIE_OPTS)
-  res.json({ user: { id: user.id, email: user.email, fullName: user.fullName } })
+  res.json({ user: publicUser(user) })
 })
 
 router.post('/login', async (req, res) => {
@@ -40,10 +51,12 @@ router.post('/login', async (req, res) => {
 
   const valid = await bcrypt.compare(password, user.passwordHash)
   if (!valid) return res.status(401).json({ error: 'Invalid email or password' })
+  if (user.disabled) return res.status(403).json({ error: 'This account has been disabled. Please contact support.' })
+  touchLastSeen({ ...user, lastSeenAt: null })
 
   const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' })
   res.cookie('token', token, COOKIE_OPTS)
-  res.json({ user: { id: user.id, email: user.email, fullName: user.fullName } })
+  res.json({ user: publicUser(user) })
 })
 
 router.post('/logout', (_req, res) => {
@@ -58,8 +71,9 @@ router.get('/me', async (req, res) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET)
     const user = await prisma.user.findUnique({ where: { id: payload.userId } })
-    if (!user) return res.json({ user: null })
-    res.json({ user: { id: user.id, email: user.email, fullName: user.fullName } })
+    if (!user || user.disabled) return res.json({ user: null })
+    touchLastSeen(user)
+    res.json({ user: publicUser(user) })
   } catch {
     res.json({ user: null })
   }

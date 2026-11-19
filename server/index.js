@@ -6,6 +6,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import authRouter from './routes/auth.js'
 import feedbackRouter from './routes/feedback.js'
+import adminRouter from './routes/admin.js'
 // import stripeRouter from './routes/stripe.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -23,6 +24,7 @@ app.use(express.json())
 
 app.use('/api/auth', authRouter)
 app.use('/api/feedback', feedbackRouter)
+app.use('/api/admin', adminRouter)
 // app.use('/api/stripe', stripeRouter)
 
 // Serve the React frontend in production

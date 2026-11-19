@@ -13,6 +13,8 @@ model User {
   passwordHash String
   fullName     String
   signupRef    String?      // ?ref= tag of the link that brought the user in (beta tracking)
+  disabled     Boolean      @default(false) // set by an admin; blocks sign-in
+  lastSeenAt   DateTime?    // last login or app open (updated at most hourly)
   createdAt    DateTime     @default(now())
   subscription Subscription?
 }

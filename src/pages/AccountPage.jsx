@@ -37,9 +37,14 @@ export default function AccountPage() {
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-8">
           <Link to="/viewer" className="text-amber-500 dark:text-amber-400 font-bold text-xl">AcuMap</Link>
-          <button onClick={handleSignOut} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm transition-colors">
-            Sign out
-          </button>
+          <div className="flex items-center gap-4">
+            {user?.isAdmin && (
+              <Link to="/admin" className="text-amber-600 dark:text-amber-400 hover:underline text-sm font-semibold">Admin</Link>
+            )}
+            <button onClick={handleSignOut} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm transition-colors">
+              Sign out
+            </button>
+          </div>
         </div>
 
         <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Account</h1>

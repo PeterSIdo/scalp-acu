@@ -22,6 +22,13 @@ export const api = {
   feedback: {
     submit: (body) => request('/api/feedback', { method: 'POST', body }),
   },
+  admin: {
+    stats: () => request('/api/admin/stats'),
+    users: () => request('/api/admin/users'),
+    updateUser: (id, body) => request(`/api/admin/users/${id}`, { method: 'PATCH', body }),
+    setPassword: (id, password) => request(`/api/admin/users/${id}/password`, { method: 'POST', body: { password } }),
+    deleteUser: (id) => request(`/api/admin/users/${id}`, { method: 'DELETE' }),
+  },
   stripe: {
     subscription: () => request('/api/stripe/subscription'),
     createCheckout: () => request('/api/stripe/create-checkout', { method: 'POST' }),

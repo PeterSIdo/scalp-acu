@@ -1258,3 +1258,19 @@ afterwards to keep it in sync.
 - acumap-site/index.html: same text, clinic name links to myacupuncture.uk.
 - `vite build` passes. Checked in the browser by the user: fine.
 - Committed and pushed: 37ab7f8 (scalp-app), 0966c34 (acumap-site).
+
+## 2026-11-19 — Admin dashboard (/admin)
+- Admins = emails in the `ADMIN_EMAILS` env var (comma-separated). Must be
+  set on Railway (and in `.env.local` for local dev) or nobody is admin.
+- Schema: `User.disabled` (Boolean, default false) and `User.lastSeenAt`
+  (DateTime?). Additive; applied by the Railway preDeploy `prisma db push`.
+- Server: `server/middleware/requireAdmin.js` (checks the DB, not just the
+  JWT), `server/routes/admin.js` mounted at `/api/admin`: stats, user list,
+  PATCH name/email/disabled, set password, delete (removes subscription row,
+  unlinks feedback and clears its email). Admin can't disable or delete self.
+- Auth: login rejects disabled accounts; `/me` returns `isAdmin`, treats
+  disabled as signed out, updates `lastSeenAt` at most hourly.
+- Client: `src/pages/AdminPage.jsx` (stats, signups by source, search/filter/
+  sort, edit, disable/enable, delete, CSV export), `AdminRoute` guard,
+  "Admin" link on the Account page for admins.
+- `vite build` passes. Not yet tested against a database; not committed.
