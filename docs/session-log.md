@@ -1256,4 +1256,5 @@ afterwards to keep it in sync.
   field on an About section (`aboutApp.js`), rendered by InfoPanel (sections)
   and LandingPage.
 - acumap-site/index.html: same text, clinic name links to myacupuncture.uk.
-- `vite build` passes. Not checked in the browser. Not committed.
+- `vite build` passes. Checked in the browser by the user: fine.
+- Committed and pushed: 37ab7f8 (scalp-app), 0966c34 (acumap-site).
