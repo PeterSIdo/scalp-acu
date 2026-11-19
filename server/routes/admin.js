@@ -108,4 +108,23 @@ router.delete('/users/:id', async (req, res) => {
   }
 })
 
+router.get('/feedback', async (_req, res) => {
+  const rows = await prisma.feedback.findMany({ orderBy: { createdAt: 'desc' } })
+  const ids = [...new Set(rows.map(r => r.userId).filter(Boolean))]
+  const users = await prisma.user.findMany({ where: { id: { in: ids } }, select: { id: true, fullName: true, email: true } })
+  const byId = Object.fromEntries(users.map(u => [u.id, u]))
+  res.json({
+    feedback: rows.map(r => ({ ...r, userName: byId[r.userId]?.fullName ?? null })),
+  })
+})
+
+router.delete('/feedback/:id', async (req, res) => {
+  try {
+    await prisma.feedback.delete({ where: { id: req.params.id } })
+    res.json({ ok: true })
+  } catch {
+    res.status(404).json({ error: 'Feedback not found' })
+  }
+})
+
 export default router

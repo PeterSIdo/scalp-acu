@@ -10,6 +10,7 @@ import ViewerPage from './pages/ViewerPage'
 import AccountPage from './pages/AccountPage'
 import PrivacyPage from './pages/PrivacyPage'
 import AdminPage from './pages/AdminPage'
+import AdminFeedbackPage from './pages/AdminFeedbackPage'
 
 export default function App() {
   return (
@@ -28,6 +29,9 @@ export default function App() {
           } />
           <Route path="/admin" element={
             <AdminRoute><AdminPage /></AdminRoute>
+          } />
+          <Route path="/admin/feedback" element={
+            <AdminRoute><AdminFeedbackPage /></AdminRoute>
           } />
           <Route path="*" element={<Navigate to="/viewer" replace />} />
         </Routes>

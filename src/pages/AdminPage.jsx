@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
+import AdminNav from '../components/layout/AdminNav'
 
 const card = 'bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800'
 const btn = 'text-xs font-semibold px-2.5 py-1 rounded-md border transition-colors disabled:opacity-50'
@@ -160,13 +161,7 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 px-4 py-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <Link to="/viewer" className="text-amber-500 dark:text-amber-400 font-bold text-xl">AcuMap</Link>
-          <div className="flex items-center gap-4 text-sm">
-            <button onClick={load} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Refresh</button>
-            <Link to="/account" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">Account</Link>
-          </div>
-        </div>
+        <AdminNav onRefresh={load} />
 
         <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Admin</h1>
 
@@ -233,7 +228,9 @@ export default function AdminPage() {
                     <div><div className="text-gray-400">Joined</div>{fmtDate(u.createdAt)}</div>
                     <div><div className="text-gray-400">Last seen</div>{relTime(u.lastSeenAt)}</div>
                     <div><div className="text-gray-400">Source</div>{u.signupRef ?? 'direct'}</div>
-                    <div><div className="text-gray-400">Feedback</div>{u.feedbackCount}</div>
+                    <div><div className="text-gray-400">Feedback</div>{u.feedbackCount > 0
+                      ? <Link to={`/admin/feedback?user=${u.id}`} className="text-amber-600 dark:text-amber-400 hover:underline">{u.feedbackCount}</Link>
+                      : 0}</div>
                   </div>
                   <div className="flex gap-1.5">
                     <button className={btnPlain} onClick={() => setEditing(editing === u.id ? null : u.id)}>Edit</button>

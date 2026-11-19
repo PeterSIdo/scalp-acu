@@ -28,6 +28,8 @@ export const api = {
     updateUser: (id, body) => request(`/api/admin/users/${id}`, { method: 'PATCH', body }),
     setPassword: (id, password) => request(`/api/admin/users/${id}/password`, { method: 'POST', body: { password } }),
     deleteUser: (id) => request(`/api/admin/users/${id}`, { method: 'DELETE' }),
+    feedback: () => request('/api/admin/feedback'),
+    deleteFeedback: (id) => request(`/api/admin/feedback/${id}`, { method: 'DELETE' }),
   },
   stripe: {
     subscription: () => request('/api/stripe/subscription'),

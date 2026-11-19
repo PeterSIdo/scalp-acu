@@ -1274,3 +1274,16 @@ afterwards to keep it in sync.
   sort, edit, disable/enable, delete, CSV export), `AdminRoute` guard,
   "Admin" link on the Account page for admins.
 - `vite build` passes. Not yet tested against a database; not committed.
+
+## 2026-11-19 — Admin: feedback page (/admin/feedback)
+- Admin dashboard committed and pushed as bdc8807; ADMIN_EMAILS set on
+  Railway; checked live by the user: works.
+- New `/admin/feedback` (`src/pages/AdminFeedbackPage.jsx`): average star
+  ratings, tallies of choice answers, each response as a card with answers
+  under their question labels (from `src/data/feedbackForm.js`), the user's
+  name/email (mailto link) and the viewer context. Search, filter by rating,
+  "with comments only", delete.
+- Server: `GET /api/admin/feedback`, `DELETE /api/admin/feedback/:id`.
+- Shared admin header `src/components/layout/AdminNav.jsx` (Users/Feedback
+  tabs). Users page: feedback count links to `/admin/feedback?user=<id>`.
+- `vite build` passes. Not committed.
