@@ -17,6 +17,11 @@ export const SOURCES = {
     year: 2001,
     isbn: '7-119-02744-1',
   },
+  // A clinic's own case report, not a book: shown as "Source: <title>".
+  'lothian-massage-acupuncture': {
+    title: 'Lothian Massage & Acupuncture',
+    kind: 'clinic',
+  },
   'zhu-color-atlas': {
     title: "Color Atlas of Zhu's Scalp Acupuncture",
     series: "Zhu's Scalp Acupuncture Clinical Series",

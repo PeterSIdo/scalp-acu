@@ -9,8 +9,20 @@
 //   results?: [{ label, text }],
 //   cases?: [string],
 //   discussion?: [string],
+//   sections?: [{
+//     heading, text?: [string],
+//     list?: 'ol' | 'ul', items?: [string | { text, items: [string] }],
+//     table?: { head: [string], rows: [[string]] },
+//     after?: [string],   // paragraphs below the list/table
+//     note?: string,      // highlighted "Clinical note"
+//   }],
+//   date?: 'YYYY-MM-DD' | free text such as 'September–October 2026',
 //   source?: '<SOURCES id>',
 // }
+//
+// `sections` is for clinic case reports whose headings don't fit the fixed
+// fields above (Client background, Presenting complaint, Treatment, ...).
+// They render in order, after the fixed fields.
 
 // Safety warnings a point can carry (shown with a yellow warning triangle).
 export const POINT_WARNINGS = {
@@ -19,6 +31,120 @@ export const POINT_WARNINGS = {
 }
 
 export const CASES = [
+  {
+    id: 'right-shoulder-pain-master-tung-ynsa',
+    title: 'Right Shoulder Pain with Restricted Arm Elevation',
+    condition: 'Shoulder pain, restricted arm elevation',
+    tags: ['Master Tung', 'Balance Method', 'Auriculotherapy', 'YNSA'],
+    date: 'September–October 2026',
+    sections: [
+      {
+        heading: 'Client background',
+        text: ['Male, 47. Manual worker who often works with his arm above his head.'],
+      },
+      {
+        heading: 'Duration of complaint',
+        text: ['Shoulder problems on and off for more than six months. The latest flare-up started 10 days before his first treatment.'],
+      },
+      {
+        heading: 'Presenting complaint',
+        text: ['He could barely lift his right arm above shoulder height. Pain at shoulder level was 10/10.'],
+      },
+      {
+        heading: 'Treatment: Session 1',
+        list: 'ol',
+        items: [
+          {
+            text: 'Distal Master Tung points, needled on the opposite (left) side:',
+            items: [
+              '77.18 Shen Guan',
+              '77.22–77.23 Ce San Li / Ce Xia San Li (Beside Three Miles), or',
+              '77.24–77.25 Zu Qian Jin / Zu Wu Jin (Leg Thousand Gold / Leg Five Gold). These are especially useful when the patient can’t reach behind the lower back.',
+            ],
+          },
+          'Moving the Qi: with the needles in, he was encouraged to move the shoulder gently.',
+          {
+            text: 'Guiding points on the affected (right) side:',
+            items: [
+              '22.05 Ling Gu, for chronic pain',
+              '22.04 Da Bai, for acute pain',
+              'San Cha San, a very effective guiding point for rotator cuff and posterior shoulder pain',
+            ],
+          },
+        ],
+        note: 'Shen Guan is the main point for frozen shoulder and general shoulder pain because it reaches both the front and the back of the shoulder.',
+      },
+      {
+        heading: 'Treatment: Session 2',
+        text: ['Same protocol as Session 1, plus:'],
+        list: 'ul',
+        items: [
+          'Auriculotherapy: electro-stimulation, then ear seeds on the Shoulder and Shoulder Joint points',
+          'YNSA: a single needle at the C point on the affected side',
+        ],
+      },
+      {
+        heading: 'Sessions 3–6',
+        text: ['Four more treatments, once a week.'],
+      },
+      {
+        heading: 'Outcome',
+        table: {
+          head: ['Stage', 'Flexion (forward)', 'Abduction (lateral)'],
+          rows: [
+            ['Before treatment', '~90°, barely above shoulder level (pain 10/10)', '—'],
+            ['After Session 1', '~135°', '~120°'],
+            ['After Session 2', '~140–145°', '~135°'],
+            ['After Session 6', 'Full range (180°), moving with confidence', 'Full range (180°)'],
+          ],
+        },
+        after: [
+          'Angles measured from the arm at the side (0°) to fully overhead (180°).',
+          'The pain returned three days after Session 1. After Session 2 the improvement held and continued over the weekly sessions.',
+        ],
+      },
+    ],
+    source: 'lothian-massage-acupuncture',
+  },
+  {
+    id: 'right-elbow-pain-balance-method-ear',
+    title: 'Right Elbow Pain Treated with Balance Method and Auriculotherapy',
+    condition: 'Elbow pain',
+    tags: ['Auriculotherapy', 'Ear Seeds', 'Balance Method'],
+    date: '2026-10-20',
+    sections: [
+      {
+        heading: 'Client background',
+        text: ['Female, 69. In good general health, with good mobility and a bright, positive outlook.'],
+      },
+      {
+        heading: 'Presenting complaint',
+        text: ['Mild pain in the right elbow. It sits at the proximal radio-ulnar joint, close to the humerus, between the LI and SJ channels.'],
+      },
+      {
+        heading: 'Relevant history',
+        text: ['Blood pressure, currently under control.'],
+      },
+      {
+        heading: 'Treatment',
+        list: 'ol',
+        items: [
+          'Balance method acupuncture: the opposite (left) knee was treated on its medial side, below the knee, along the SP and LV channels.',
+          'Auricular acupuncture: the elbow point was needled.',
+          'Ear seeds: before she left, an ear seed was placed on the elbow point of the affected (right) ear.',
+        ],
+      },
+      {
+        heading: 'Outcome',
+        list: 'ul',
+        items: [
+          'Second visit: her elbow had improved, and she also said she felt more vital in general. She asked to continue treatment and wanted to learn how to use ear seeds at home, so she was shown how.',
+          'A few days later: she said the elbow was free of symptoms. She plans to come back to learn more about auriculotherapy and how it can be used.',
+        ],
+      },
+    ],
+    source: 'lothian-massage-acupuncture',
+  },
   {
     id: 'headache-gb20',
     title: 'Headache',

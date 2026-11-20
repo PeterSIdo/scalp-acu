@@ -55,16 +55,16 @@ export default function LandingPage() {
 
       {/* About */}
       <section className="max-w-3xl mx-auto px-8 py-16">
-        <h2 className="text-3xl font-bold mb-8 text-center">{ABOUT_APP.name}</h2>
-        <div className="space-y-6">
+        <h2 className="text-2xl font-bold mb-6 text-center">{ABOUT_APP.name}</h2>
+        <div className="space-y-5">
           {ABOUT_APP.sections.map(section => (
             <div key={section.title}>
-              <h3 className="text-lg font-semibold text-amber-500 dark:text-amber-400 mb-2">{section.title}</h3>
+              <h3 className="text-base font-semibold text-amber-500 dark:text-amber-400 mb-1.5">{section.title}</h3>
               {section.paragraphs.map((text, i) => (
-                <p key={i} className="text-gray-600 dark:text-gray-400 leading-relaxed mb-2">{text}</p>
+                <p key={i} className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-2">{text}</p>
               ))}
               {section.link && (
-                <a href={section.link.href} target="_blank" rel="noopener noreferrer" className="text-amber-600 dark:text-amber-400 underline">{section.link.label}</a>
+                <a href={section.link.href} target="_blank" rel="noopener noreferrer" className="text-sm text-amber-600 dark:text-amber-400 underline">{section.link.label}</a>
               )}
             </div>
           ))}

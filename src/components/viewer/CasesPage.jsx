@@ -38,10 +38,16 @@ function MoreCasesNote({ count }) {
 
 const hasWarnings = c => c.points?.some(p => p.warnings?.length)
 
-function CaseList({ cases, lockedCount, selectedId, onSelect }) {
+// Every tag used by the given cases, alphabetical.
+const allTags = cases => [...new Set(cases.flatMap(c => c.tags ?? []))].sort((a, b) => a.localeCompare(b))
+
+function CaseList({ cases, lockedCount, selectedId, onSelect, activeTags, onToggleTag }) {
   const [query, setQuery] = useState('')
   const q = query.trim().toLowerCase()
-  const list = q ? cases.filter(c => caseText(c).includes(q)) : cases
+  const list = cases.filter(c =>
+    (!q || caseText(c).includes(q)) &&
+    activeTags.every(t => c.tags?.includes(t)))
+  const tags = allTags(cases)
   return (
     <div>
       <input
@@ -51,6 +57,33 @@ function CaseList({ cases, lockedCount, selectedId, onSelect }) {
         placeholder="Search condition, point, method…"
         className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 text-base md:text-sm px-2 py-1.5 rounded border border-gray-300 dark:border-gray-700 focus:border-amber-500 focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600"
       />
+      {tags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mt-2">
+          {tags.map(t => {
+            const on = activeTags.includes(t)
+            return (
+              <button
+                key={t}
+                type="button"
+                onClick={() => onToggleTag(t)}
+                aria-pressed={on}
+                className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border transition-colors ${
+                  on
+                    ? 'bg-amber-500 border-amber-500 text-white'
+                    : 'bg-[#63ECE1]/25 border-transparent text-black dark:text-gray-200 hover:border-amber-500'
+                }`}
+              >
+                {t}
+              </button>
+            )
+          })}
+          {activeTags.length > 0 && (
+            <button type="button" onClick={() => onToggleTag(null)} className="text-[11px] px-1 text-gray-500 hover:text-amber-500 underline">
+              Clear
+            </button>
+          )}
+        </div>
+      )}
       <ul className="mt-2">
         {list.map(c => (
           <li key={c.id}>
@@ -82,15 +115,81 @@ function CaseList({ cases, lockedCount, selectedId, onSelect }) {
   )
 }
 
-function Article({ c }) {
+// ISO dates are formatted; anything else (e.g. 'September–October 2026') shows as written.
+const formatDate = d => /^\d{4}-\d{2}-\d{2}$/.test(d)
+  ? new Date(`${d}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  : d
+
+// A section list. An item is a string, or { text, items } for a nested
+// bullet list under it.
+function SectionList({ items, ordered }) {
+  const Tag = ordered ? 'ol' : 'ul'
+  return (
+    <Tag className={`${ordered ? 'list-decimal' : 'list-disc'} pl-5 space-y-1.5`}>
+      {items.map((it, i) => typeof it === 'string'
+        ? <li key={i} className={BODY}>{it}</li>
+        : (
+          <li key={i} className={BODY}>
+            {it.text}
+            <ul className="list-[circle] pl-5 mt-1 space-y-1">
+              {it.items.map((s, j) => <li key={j}>{s}</li>)}
+            </ul>
+          </li>
+        ))}
+    </Tag>
+  )
+}
+
+// A section table: { head: [string], rows: [[string]] }. Scrolls sideways on narrow screens.
+function SectionTable({ table }) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm border-collapse">
+        <thead>
+          <tr>
+            {table.head.map(h => (
+              <th key={h} className="text-left font-semibold text-black dark:text-gray-100 border-b border-gray-300 dark:border-gray-700 px-2 py-1.5">{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {table.rows.map((r, i) => (
+            <tr key={i} className="border-b border-gray-200 dark:border-gray-800">
+              {r.map((cell, j) => (
+                <td key={j} className={`${BODY} align-top px-2 py-1.5 ${j === 0 ? 'font-semibold whitespace-nowrap' : ''}`}>{cell}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function Article({ c, onTagClick }) {
   const src = c.source && SOURCES[c.source]
   return (
     <article>
       <h1 className="text-xl font-bold text-black dark:text-white">{c.title}</h1>
+      {(c.date || src?.kind === 'clinic') && (
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          {c.date && formatDate(c.date)}
+          {c.date && src?.kind === 'clinic' && ' · '}
+          {src?.kind === 'clinic' && src.title}
+        </p>
+      )}
       {c.tags?.length > 0 && (
         <div className="flex flex-wrap gap-1.5 mt-2">
           {c.tags.map(t => (
-            <span key={t} className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#63ECE1]/40 text-black dark:text-gray-200">{t}</span>
+            <button
+              key={t}
+              type="button"
+              onClick={() => onTagClick(t)}
+              title={`Show all cases tagged ${t}`}
+              className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#63ECE1]/40 text-black dark:text-gray-200 hover:bg-amber-500/30"
+            >
+              {t}
+            </button>
           ))}
         </div>
       )}
@@ -154,7 +253,25 @@ function Article({ c }) {
         </>
       )}
 
-      {src && (
+      {c.sections?.map(sec => (
+        <section key={sec.heading}>
+          <h2 className={H2}>{sec.heading}</h2>
+          {sec.text?.map((t, i) => <p key={i} className={`${BODY} mb-2`}>{t}</p>)}
+          {sec.items?.length > 0 && <SectionList items={sec.items} ordered={sec.list === 'ol'} />}
+          {sec.table && <SectionTable table={sec.table} />}
+          {sec.after?.map((t, i) => <p key={i} className={`${BODY} mt-2`}>{t}</p>)}
+          {sec.note && (
+            <p className={`${BODY} mt-2 rounded border-l-4 border-amber-500 bg-amber-500/10 px-3 py-2`}>
+              <span className="font-semibold">Clinical note: </span>{sec.note}
+            </p>
+          )}
+        </section>
+      ))}
+
+      {src?.kind === 'clinic' && (
+        <p className="text-gray-500 text-xs leading-relaxed mt-6">Source: {src.title}</p>
+      )}
+      {src && src.kind !== 'clinic' && (
         <p className="text-gray-500 text-xs leading-relaxed mt-6">
           Reference: <span className="italic">{src.title}</span> by {src.author}
           {src.publisher && `, ${src.publisher}`}{src.year && `, ${src.year}`}.
@@ -171,8 +288,20 @@ export default function CasesPage({ isGuest = false }) {
   const lockedCount = CASES.length - cases.length
   const [selectedId, setSelectedId] = useState(cases[0]?.id ?? null)
   const [listOpen, setListOpen] = useState(false)
+  const [activeTags, setActiveTags] = useState([])
   const selected = cases.find(c => c.id === selectedId)
-  const listProps = { cases, lockedCount, selectedId, onSelect: select }
+  const listProps = { cases, lockedCount, selectedId, onSelect: select, activeTags, onToggleTag: toggleTag }
+
+  // Toggle one tag in the filter; null clears it.
+  function toggleTag(t) {
+    setActiveTags(prev => t === null ? [] : prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t])
+  }
+
+  // A tag on the open article: filter by just that tag and show the list.
+  function filterByTag(t) {
+    setActiveTags([t])
+    setListOpen(true)
+  }
 
   function select(id) {
     setSelectedId(id)
@@ -202,7 +331,7 @@ export default function CasesPage({ isGuest = false }) {
 
         <div className="md:flex-1 md:min-h-0 md:overflow-y-auto scroll-touch">
           <div className="max-w-3xl mx-auto bg-white dark:bg-gray-950 rounded-lg shadow p-5 md:p-6">
-            {selected ? <Article c={selected} /> : <p className={BODY}>Pick a case from the list.</p>}
+            {selected ? <Article c={selected} onTagClick={filterByTag} /> : <p className={BODY}>Pick a case from the list.</p>}
           </div>
         </div>
       </div>
